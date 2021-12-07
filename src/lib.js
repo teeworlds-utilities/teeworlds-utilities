@@ -41,7 +41,7 @@ class TwAsset
     {
         this.type = type.toUpperCase()
         this.path = path
-        this.elements = []
+        this.elements = {}
 
         this.img
         this.canvas
@@ -49,26 +49,29 @@ class TwAsset
         this.data
     }
 
-    isSizeLegal ()
+    _isSizeLegal ()
     {
-        return (this.img.width / this.img.height == this.data.ratio)
+        if (!this.data || !this.img)
+            return (0)
+    
+        const ratio = this.data.size.w / this.data.size.h
+
+        return (this.img.width / this.img.height == ratio)
     }
 
-    
-    _cutAll ()
+    _getMultiplier ()
     {
-        for (const [k, v] of Object.entries(this.data.elements)) {
-            const obj = this.ctx.getImageData(v[0], v[1], v[2], v[3])
-            const element = new TwElement(k, obj)
-            this.elements.push(element)
-        }
+        if (!this.data || !this.img)
+            return (0)
+
+        return (this.img.width / this.data.size.w)
     }
     
     async preprocess ()
     {
         // Check the asset type
         if (Object.keys(data).includes(this.type) == false)
-        throw (new InvalidAssetType("Invalid asset type"))    
+            throw (new InvalidAssetType("Invalid asset type"))    
         this.data = data[this.type]
         
         // Load image
@@ -79,7 +82,7 @@ class TwAsset
         }
         
         // Check the image size
-        if (this.isSizeLegal() == false)
+        if (this._isSizeLegal() == false)
         throw (new InvalidFile("Wrong image size"))
         
         // If everything is OK, it creates the canvas and the context
@@ -88,27 +91,59 @@ class TwAsset
         this.ctx.drawImage(this.img, 0, 0)
     }
     
-    extractAll (dirname)
+    extractAll ()
     {
-        this._cutAll()
-        for (const element of this.elements)
-        element.save(dirname)
+        for (const [name, _] of Object.entries(this.data.elements)) {
+            const element = this._cut(name)
+            this.elements[name] = element
+        }
     }
 
-    extract (name, dirname)
+    _isCut (name)
+    {
+        return (Object.keys(this.elements).includes(name))
+    }
+
+    _cut (name)
     {
         if (Object.keys(this.data.elements).includes(name) == false)
             throw (new InvalidElementType("Unauthorized element type"))
-    
-        const d = this.data.elements[name]
+        if (this._isCut(name))
+            return (this.elements[name])
+
+        const multiplier = this._getMultiplier()
+        const d = this.data.elements[name].map(x => x * multiplier)
         const obj = this.ctx.getImageData(d[0], d[1], d[2], d[3])
         const element = new TwElement(name, obj)
 
-        element.save(dirname)
+        return (element)
+    }
+
+    extract (name)
+    {
+        const element = this._cut(name)
+
+        this.elements[name] = element
+    }
+
+    save (dirname)
+    {
+        for (const element of Object.values(this.elements))
+            element.save(dirname)
     }
 }
 
-class TwAssetMerge {
+class TwAssetUrl extends TwAsset
+{
+    constructor ()
+    {
+        // TODO
+        this.path
+    }
+}
+
+class TwAssetMerge
+{
     // TODO
 }
 

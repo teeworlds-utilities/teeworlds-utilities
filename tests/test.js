@@ -1,12 +1,17 @@
 const image = require("../src/lib");
 
+const SRC = "./data/greyfox.png"
+
 const extractSkin = async () => {
-    const asset = new image.TwAsset("./data/default.png", "skin")
+    const asset = new image.TwAsset(SRC, "skin")
 
     try {
         await asset.preprocess()
-        //asset.extractAll("./tmp")
-        asset.extract("foot", "./tmp")
+        //asset.extractAll()
+        asset.extract("foot")
+        asset.extract("foot")
+        asset.extract("hand")
+        asset.save("./tmp")
     } catch (err) {
         console.log(err)
     }
@@ -15,6 +20,6 @@ const extractSkin = async () => {
 
 const extractGameskin = async () => {
     ;
-}
+} 
 
 extractSkin()

@@ -18,7 +18,7 @@ Because they are going to be use as filename.
 */
 
 const SKIN = {
-    "ratio": 2,
+    "size": { "w": 256, "h": 128 },
     "elements": {
         "body": [0, 0, 96, 96],
         "body_shadow": [96, 0, 96, 96],
@@ -31,7 +31,14 @@ const SKIN = {
         "blink_eye": [128, 96, 32, 32],
         "happy_eye": [160, 96, 32, 32],
         "cross_eye": [192, 96, 32, 32],
-        "scary_eyE": [224, 96, 32, 32]
+        "scary_eye": [224, 96, 32, 32]
+    }
+}
+
+const GAMESKIN = {
+    "ratio": 2,
+    "elements": {
+        "hammer_crosshair": [0, 0, 64, 64]
     }
 }
 
