@@ -133,7 +133,8 @@ dist
 .svelte-kit
 
 # Folder with test image
-data/
 tmp/
+game/
+emoticons/
 
 # End of https://www.toptal.com/developers/gitignore/api/node
