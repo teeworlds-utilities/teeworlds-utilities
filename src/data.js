@@ -89,7 +89,7 @@ const GAMESKIN = {
     }
 }
 
-const EMOTICONS = {
+const EMOTICON = {
     "size": { "w": 512, "h": 512 },
     "elements": {
         "1": [0, 0, 128, 128],
@@ -114,5 +114,5 @@ const EMOTICONS = {
 module.exports = {
     SKIN,
     GAMESKIN,
-    EMOTICONS
+    EMOTICON
 }

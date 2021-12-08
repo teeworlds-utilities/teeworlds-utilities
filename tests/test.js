@@ -1,15 +1,10 @@
 const { TwAssetExtractor, TwAssetChanger } = require("../src/lib")
 
-const SRC_SKIN = "./data/greyfox.png"
-const DEST_SKIN = "./data/default.png"
-const SRC_GAME = "./data/game.png"
-const SRC_EMOTICONS = "./data/emoticons.png"
-
 extractTest = async () => {
     // Url or path to local file
 
     const asset = new TwAssetExtractor("gameskin", "https://media.discordapp.net/attachments/778030245436719124/846108332347097098/starwarsedited.png")
-    //const asset = new TwAssetExtractor("emoticons", "./data/emoticons.png")
+    //const asset = new TwAssetExtractor("emoticons", "file path")
 
     try {
         // Load the img
@@ -34,11 +29,15 @@ ChangeTest = async () => {
     // Url or path to local file
 
     // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
-    const asset = new TwAssetChanger("skin", SRC_SKIN, DEST_SKIN)
+    const asset = new TwAssetChanger("gameskin", 
+    "https://images-ext-1.discordapp.net/external/nz2MlRvLcVywmc4oOi9r0Ad0ZScJquv2Jlr4aFkBvoE/https/api.skins.tw/database/gameskins/8WRx0AHpOlOrBB48vqAVBnqGNKyuNd8pz5DK1zjk.png",
+    "https://images-ext-1.discordapp.net/external/qf9tG9-wX6CyaiM23iRE1kgvdYZoDZuQJexlA8_oyQQ/https/api.skins.tw/database/gameskins/ERCZ9JjslTT6eLV5lnLB0ls3SNSAY9wUeVMWJzjA.png",
+    "https://images-ext-2.discordapp.net/external/WJgFzky1G0aO9t6ElQqEWqGsI0__Xpym7U5ctvvSTfM/https/api.skins.tw/database/gameskins/s60Mye1GF5a7SnrzTxGRwJCCvjc1QdZ31jKuJ5fz.png")
+
     try {
         await asset.preprocess()
-        asset.change("body", "foot")
-        asset.save("./ttt")
+        asset.change("gun", "hammer", "shotgun", "gun_cursor")
+        asset.save("./tmp")
     } catch (err) {
         console.log(err) 
     }
