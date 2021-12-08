@@ -1,7 +1,7 @@
 {
     "name": "@b0th/tw-utils",
     "description": "Teeworlds asset utilities (merge, extract, etc...)",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "dependencies": {
         "canvas": "^2.8.0",
         "fs": "0.0.1-security"
@@ -9,5 +9,12 @@
     "main": "./src/index.js",
     "scripts": {
         "test": "node ./tests/test.js"
-    }
+    },
+
+    "keywords": [
+        "teeworlds",
+        "teeworlds api",
+        "teeworlds utils",
+        "teeworlds asset"
+    ]
 }
