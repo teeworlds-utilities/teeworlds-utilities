@@ -10,68 +10,53 @@ class TwElement
     {
         this.name = name
         this.imgData = imgData
+        this.canvas = createCanvas(this.imgData.width, this.imgData.height)
+    }
+
+    setCanvas ()
+    {
+        const ctx = this.canvas.getContext("2d")
+
+        ctx.putImageData(this.imgData, 0, 0)
     }
 
     save (dirname)
     {
-        const canvas = createCanvas(this.imgData.width, this.imgData.height)
-        const ctx = canvas.getContext("2d")
-        
         // Create directory if it doesnt exist
         if (!fs.existsSync(dirname))
             fs.mkdirSync(dirname)
         
-        // Draw the element
-        ctx.putImageData(this.imgData, 0, 0)
-
         // Save the element
-        const buffer = canvas.toBuffer('image/png')
+        const buffer = this.canvas.toBuffer('image/png')
         fs.writeFileSync(`${dirname}/${this.name}.png`, buffer)
     }
 
-    replace (dst)
+
+    replace (dest)
     {
         // TODO
     }
 }
 
-class TwAsset 
+class TwAssetBase
 {
-    constructor (path, type="SKIN")
+    constructor (path, type="gameskin")
     {
         this.type = type.toUpperCase()
         this.path = path
         this.elements = {}
-
+        
         this.img
         this.canvas
         this.ctx
         this.data
     }
 
-    _isSizeLegal ()
-    {
-        if (!this.data || !this.img)
-            return (0)
-    
-        const ratio = this.data.size.w / this.data.size.h
-
-        return (this.img.width / this.img.height == ratio)
-    }
-
-    _getMultiplier ()
-    {
-        if (!this.data || !this.img)
-            return (0)
-
-        return (this.img.width / this.data.size.w)
-    }
-    
     async preprocess ()
     {
         // Check the asset type
         if (Object.keys(data).includes(this.type) == false)
-            throw (new InvalidAssetType("Invalid asset type"))    
+            throw (new InvalidAssetType("Invalid asset type"))
         this.data = data[this.type]
         
         // Load image
@@ -82,15 +67,38 @@ class TwAsset
         }
         
         // Check the image size
-        if (this._isSizeLegal() == false)
-        throw (new InvalidFile("Wrong image size"))
+        if (this._isRatioLegal() == false)
+            throw (new InvalidFile("Wrong image ratio"))
         
         // If everything is OK, it creates the canvas and the context
         this.canvas = createCanvas(this.img.width, this.img.height)
         this.ctx = this.canvas.getContext("2d")
         this.ctx.drawImage(this.img, 0, 0)
     }
+
+    _isRatioLegal ()
+    {
+        if (!this.data || !this.img)
+            return (0)
     
+        const ratio = this.data.size.w / this.data.size.h
+
+        return (this.img.width / this.img.height == ratio)
+    }
+
+    _isAssetTypeLegal ()
+    {
+        
+    }
+
+    _getMultiplier ()
+    {
+        if (!this.data || !this.img)
+            return (0)
+
+        return (this.img.width / this.data.size.w)
+    }
+
     extractAll ()
     {
         for (const [name, _] of Object.entries(this.data.elements)) {
@@ -114,7 +122,8 @@ class TwAsset
         const multiplier = this._getMultiplier()
         const d = this.data.elements[name].map(x => x * multiplier)
         const obj = this.ctx.getImageData(d[0], d[1], d[2], d[3])
-        const element = new TwElement(name, obj)
+        var element = new TwElement(name, obj)
+        element.setCanvas()
 
         return (element)
     }
@@ -125,7 +134,10 @@ class TwAsset
 
         this.elements[name] = element
     }
+}
 
+class TwAssetExtractor extends TwAssetBase
+{
     save (dirname)
     {
         for (const element of Object.values(this.elements))
@@ -133,21 +145,17 @@ class TwAsset
     }
 }
 
-class TwAssetUrl extends TwAsset
+class TwAssetChanger extends TwAssetBase
 {
-    constructor ()
+    paste (dest)
     {
         // TODO
-        this.path
+        for (const element of Object.values(this.elements))
+            element.replace(dest)
     }
 }
 
-class TwAssetMerge
-{
-    // TODO
-}
-
 module.exports = {
-    TwAsset,
-    TwAssetMerge
+    TwAssetExtractor,
+    TwAssetChanger
 }

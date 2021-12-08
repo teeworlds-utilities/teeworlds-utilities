@@ -19,7 +19,6 @@ class InvalidElementType extends Error {
     }
 }
 
-
 module.exports = {
     InvalidFile,
     InvalidAssetType,

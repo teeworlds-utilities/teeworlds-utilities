@@ -134,7 +134,5 @@ dist
 
 # Folder with test image
 tmp/
-game/
-emoticons/
 
 # End of https://www.toptal.com/developers/gitignore/api/node
