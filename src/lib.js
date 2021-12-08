@@ -30,17 +30,11 @@ class TwElement
         const buffer = this.canvas.toBuffer('image/png')
         fs.writeFileSync(`${dirname}/${this.name}.png`, buffer)
     }
-
-
-    replace (dest)
-    {
-        // TODO
-    }
 }
 
 class TwAssetBase
 {
-    constructor (path, type="gameskin")
+    constructor (type, path)
     {
         this.type = type.toUpperCase()
         this.path = path
@@ -86,11 +80,6 @@ class TwAssetBase
         return (this.img.width / this.img.height == ratio)
     }
 
-    _isAssetTypeLegal ()
-    {
-        
-    }
-
     _getMultiplier ()
     {
         if (!this.data || !this.img)
@@ -112,27 +101,28 @@ class TwAssetBase
         return (Object.keys(this.elements).includes(name))
     }
 
-    _cut (name)
+    _cut (name, multiplier)
     {
         if (Object.keys(this.data.elements).includes(name) == false)
             throw (new InvalidElementType("Unauthorized element type"))
         if (this._isCut(name))
             return (this.elements[name])
 
-        const multiplier = this._getMultiplier()
-        const d = this.data.elements[name].map(x => x * multiplier)
-        const obj = this.ctx.getImageData(d[0], d[1], d[2], d[3])
-        var element = new TwElement(name, obj)
+        const m = multiplier || this._getMultiplier()
+        const d = this.data.elements[name].map(x => x * m)
+        const imgData = this.ctx.getImageData(d[0], d[1], d[2], d[3])
+        var element = new TwElement(name, imgData)
         element.setCanvas()
 
         return (element)
     }
 
-    extract (name)
+    extract (...names)
     {
-        const element = this._cut(name)
-
-        this.elements[name] = element
+        for (const name of names) {
+            const element = this._cut(name)
+            this.elements[name] = element
+        }
     }
 }
 
@@ -145,13 +135,76 @@ class TwAssetExtractor extends TwAssetBase
     }
 }
 
-class TwAssetChanger extends TwAssetBase
+class TwAssetChanger
 {
-    paste (dest)
+    constructor (type, src, ...dests)
     {
-        // TODO
-        for (const element of Object.values(this.elements))
-            element.replace(dest)
+        this.src = src
+        this.dests = dests
+        this.type = type.toUpperCase()
+        this.data = data[this.type]
+    }
+
+    async preprocess ()
+    {
+        // Preprocess the source image
+        this.src = new TwAssetBase(this.type, this.src)
+        await this.src.preprocess()
+
+        // Preprocess the destination images
+        for (let i = 0; i < this.dests.length ; i++) {
+            this.dests[i] = new TwAssetBase(this.type, this.dests[i])
+            await this.dests[i].preprocess()
+        }
+    }
+
+    change (...names)
+    {
+        const image = this.src.img
+        for (const name of names) {
+            
+            if (Object.keys(this.data.elements).includes(name) == false)
+                throw (new InvalidElementType("Unauthorized element type"))
+
+            const d = this.data.elements[name]
+            for (let i = 0; i < this.dests.length; i++) {
+                // Get multipliers
+                const dest_m = this.dests[i].img.width / image.width
+                const src_m = this.src._getMultiplier()
+
+                // Sources position
+                const sx = d[0] * src_m
+                const sy = d[1] * src_m
+
+                // Source size
+                const sw = d[2] * src_m
+                const sh = d[3] * src_m
+
+                // Destination position
+                const dx = sx * dest_m
+                const dy = sy * dest_m
+
+                // Destination size
+                const dw = sw * dest_m
+                const dh = sh * dest_m
+                // Apply
+                this.dests[i].ctx.clearRect(dx, dy, dw, dh);
+                this.dests[i].ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
+            }
+        }
+    }
+    
+    save (dirname)
+    {
+        for (const dest of this.dests) {
+            const filename = dest.path.split('/').pop()
+
+            if (!fs.existsSync(dirname))
+                fs.mkdirSync(dirname)
+    
+            const buffer = dest.canvas.toBuffer('image/png')
+            fs.writeFileSync(`${dirname}/${filename}`, buffer)
+        }
     }
 }
 

@@ -135,4 +135,7 @@ dist
 # Folder with test image
 tmp/
 
+# Just a todo file
+todo
+
 # End of https://www.toptal.com/developers/gitignore/api/node

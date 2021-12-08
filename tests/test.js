@@ -1,11 +1,15 @@
 const { TwAssetExtractor, TwAssetChanger } = require("../src/lib")
 
 const SRC_SKIN = "./data/greyfox.png"
+const DEST_SKIN = "./data/default.png"
 const SRC_GAME = "./data/game.png"
 const SRC_EMOTICONS = "./data/emoticons.png"
 
 extractTest = async () => {
-    const asset = new TwAssetExtractor("https://api.skins.tw/database/emoticons/mIIEcMZz1BSqnsmh9vfmtsE4e08wgK19RsuGEdaR.png", "emoticons")
+    // Url or path to local file
+
+    const asset = new TwAssetExtractor("gameskin", "https://media.discordapp.net/attachments/778030245436719124/846108332347097098/starwarsedited.png")
+    //const asset = new TwAssetExtractor("emoticons", "./data/emoticons.png")
 
     try {
         // Load the img
@@ -15,9 +19,9 @@ extractTest = async () => {
         asset.extractAll()
 
         // Or Extract selected elements
-        //asset.extract("foot")
-        //asset.extract("foot")
-        //asset.extract("hand")
+        //asset.extract("1", "4", "9", "14")
+        //asset.extract("grenade", "gun")
+        //asset.extract("hammer_cursor")
 
         // Save locally the image
         asset.save("./tmp")
@@ -26,4 +30,19 @@ extractTest = async () => {
     }
 }
 
-extractTest()
+ChangeTest = async () => {
+    // Url or path to local file
+
+    // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
+    const asset = new TwAssetChanger("skin", SRC_SKIN, DEST_SKIN)
+    try {
+        await asset.preprocess()
+        asset.change("body", "foot")
+        asset.save("./ttt")
+    } catch (err) {
+        console.log(err) 
+    }
+}
+
+//extractTest()
+//ChangeTest()
