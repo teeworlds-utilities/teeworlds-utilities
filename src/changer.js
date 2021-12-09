@@ -23,7 +23,7 @@ class TwAssetChanger extends TwAssetBase
 
     change (...names)
     {
-        var sx, sy, sw, sh, dx, dy, dw, dh, size_m, pos_m
+        var sw, sh, dx, dy, dw, dh, size_m, pos_m
 
         this.extract(...names)
 
@@ -31,28 +31,23 @@ class TwAssetChanger extends TwAssetBase
             const d = this.data.elements[name]
             for (var i = 0; i < this.dests.length; i++) {
 
+                // Multipliers
                 size_m = this.dests[i].img.width / this.img.width
                 pos_m = this.dests[i]._getMultiplier()
 
-                // Sources position
-                sx = 0
-                sy = 0
-
-                // Source size
+                // Source
                 sw = element.canvas.width
                 sh = element.canvas.height
-
-                // Destination position
+                
+                // Destination
                 dx = d[0] * pos_m
                 dy = d[1] * pos_m
-
-                // Destination size
                 dw = sw * size_m
                 dh = sh * size_m
 
                 // Apply
                 this.dests[i].ctx.clearRect(dx, dy, dw, dh);
-                this.dests[i].ctx.drawImage(element.canvas, sx, sy, sw, sh, dx, dy, dw, dh)
+                this.dests[i].ctx.drawImage(element.canvas, 0, 0, sw, sh, dx, dy, dw, dh)
             }
         }
     }
@@ -61,7 +56,6 @@ class TwAssetChanger extends TwAssetBase
     {
         for (const dest of this.dests) {
             const filename = dest.path.split("/").pop()
-
             saveInDir(dirname, filename, dest.canvas)
         }
     }

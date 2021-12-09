@@ -69,4 +69,28 @@ const ChangeTest = async () => {
         console.log(err) 
     }
 }
+
+```
+
+#### Skin renderer
+```js
+const { TwAssetExtractor } = require("@b0th/tw-utils")
+
+const renderTest = async () => {
+    // Url or path to local file
+
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/G9JKA2lDW6bIHPoK9i7sGeNIPxVvY6FF9UJctMUD.png")
+
+    try {
+        await asset.preprocess()
+        //asset.render()
+        asset.render("happy_eye")
+
+        // Save locally the image in ./tmp
+
+        asset.saveRender("./tmp")
+    } catch (err) {
+        console.log(err)
+    }
+}
 ```

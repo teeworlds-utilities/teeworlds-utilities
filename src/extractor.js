@@ -35,6 +35,7 @@ class TwAssetBase
 
         this.elements
         this.img
+        this.rCanvas
         this.canvas
         this.ctx
         this.data
@@ -73,9 +74,6 @@ class TwAssetBase
 
     _isRatioLegal ()
     {
-        if (!this.data || !this.img)
-            return (0)
-    
         const ratio = this.data.size.w / this.data.size.h
 
         return (this.img.width / this.img.height == ratio)
@@ -83,9 +81,6 @@ class TwAssetBase
 
     _getMultiplier ()
     {
-        if (!this.data || !this.img)
-            return (0)
-
         return (this.img.width / this.data.size.w)
     }
 
@@ -126,6 +121,54 @@ class TwAssetBase
             const element = this._cut(name)
             this.elements[name] = element
         }
+    }
+
+    render (eye="default_eye")
+    {
+        if (this.type != "SKIN")
+            throw (new InvalidAssetType("You cant render the asset"))
+
+        this.extract("body", "body_shadow", "foot", "foot_shadow", eye)
+            
+        var c
+        const m = this._getMultiplier()
+        const rCanvas = createCanvas(
+            this.elements["body"].canvas.width + (12 * m),
+            this.elements["body"].canvas.height + (12 * m)
+        )
+        const rCtx = rCanvas.getContext("2d")
+        const cx = (6 * m)
+
+        c = this.elements["foot_shadow"].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 6 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
+        c = this.elements["foot"].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 6 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
+        c = this.elements["body_shadow"].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 12 * m, cx + 0 * m, c.width, c.height)
+        c = this.elements["foot_shadow"].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 28 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
+        c = this.elements["body"].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 12 * m, cx + 0 * m, c.width, c.height)
+        c = this.elements["foot"].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 28 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
+        c = this.elements[eye].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 51 * m, cx + 29 * m, c.width * 1.05, c.height * 1.1)
+        c = this.elements[eye].canvas
+        rCtx.save()
+        rCtx.scale(-1, 1)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, cx + -95 * m, cx + 29 * m, c.width * 1.05, c.height * 1.1)
+        rCtx.restore()
+
+        this.rCanvas = rCanvas
+    }
+
+    saveRender (dirname)
+    {
+        const filename = this.path.split("/").pop()
+        if (!this.rCanvas)
+            return (84)
+
+        saveInDir(dirname, "render_" + filename, this.rCanvas)
     }
 }
 
