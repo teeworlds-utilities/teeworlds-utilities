@@ -3,7 +3,7 @@ const { TwAssetExtractor, TwAssetChanger } = require("../src/index")
 const extractTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("gameskin", "https://media.discordapp.net/attachments/778030245436719124/846108332347097098/starwarsedited.png")
+    const asset = new TwAssetExtractor("emoticon", "https://api.skins.tw/database/emoticons/xUPkjK1YRo7oNjVQ7Tid2RIEuXGD5ziX7MJRVa3s.png")
     //const asset = new TwAssetExtractor("emoticons", "file path")
 
     try {
@@ -43,5 +43,5 @@ const ChangeTest = async () => {
     }
 }
 
-//extractTest()
+extractTest()
 ChangeTest()

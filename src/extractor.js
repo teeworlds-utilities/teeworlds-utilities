@@ -1,7 +1,7 @@
 const data = require("./data")
 const { InvalidFile, InvalidAssetType, InvalidElementType } = require("./error")
+const { saveInDir } = require("./utils")
 
-const fs = require("fs")
 const { loadImage, createCanvas } = require("canvas")
 
 class TwElement
@@ -22,13 +22,7 @@ class TwElement
 
     save (dirname)
     {
-        // Create directory if it doesnt exist
-        if (!fs.existsSync(dirname))
-            fs.mkdirSync(dirname)
-        
-        // Save the element
-        const buffer = this.canvas.toBuffer("image/png")
-        fs.writeFileSync(`${dirname}/${this.name}.png`, buffer)
+        saveInDir(dirname, this.name + ".png", this.canvas)
     }
 }
 

@@ -1,6 +1,5 @@
-const fs = require("fs")
-
 const { TwAssetBase } = require("./extractor")
+const { saveInDir } = require("./utils")
 
 class TwAssetChanger extends TwAssetBase
 {
@@ -63,11 +62,7 @@ class TwAssetChanger extends TwAssetBase
         for (const dest of this.dests) {
             const filename = dest.path.split("/").pop()
 
-            if (!fs.existsSync(dirname))
-                fs.mkdirSync(dirname)
-    
-            const buffer = dest.canvas.toBuffer("image/png")
-            fs.writeFileSync(`${dirname}/${filename}`, buffer)
+            saveInDir(dirname, filename, dest.canvas)
         }
     }
 }
