@@ -46,6 +46,12 @@ class TwAssetBase
         this.data
     }
 
+    async changeSrc (filename)
+    {
+        this.path = filename
+        await this.preprocess()
+    }
+
     async preprocess ()
     {
         // Check the asset type

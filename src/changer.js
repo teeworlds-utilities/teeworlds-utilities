@@ -10,12 +10,6 @@ class TwAssetChanger extends TwAssetBase
         this.dests = dests
     }
 
-    async changeSrc (filename)
-    {
-        this.path = filename
-        await super.preprocess()
-    }
-
     async preprocess ()
     {
         // Preprocess the source image
@@ -30,35 +24,36 @@ class TwAssetChanger extends TwAssetBase
 
     change (...names)
     {
-        var sx, sy, sw, sh, dx, dy, dw, dh
-        const image = this.img
+        var sx, sy, sw, sh, dx, dy, dw, dh, size_m, pos_m
 
         this.extract(...names)
 
         for (const [name, element] of Object.entries(this.elements)) {
             const d = this.data.elements[name]
-            for (let i = 0; i < this.dests.length; i++) {
-                const dest_m = this.dests[i].img.width / image.width
+            for (var i = 0; i < this.dests.length; i++) {
+
+                size_m = this.dests[i].img.width / this.img.width
+                pos_m = this.dests[i]._getMultiplier()
 
                 // Sources position
-                sx = d[0]
-                sy = d[1]
+                sx = 0
+                sy = 0
 
                 // Source size
                 sw = element.canvas.width
                 sh = element.canvas.height
 
                 // Destination position
-                dx = sx * dest_m
-                dy = sy * dest_m
+                dx = d[0] * pos_m
+                dy = d[1] * pos_m
 
                 // Destination size
-                dw = sw * dest_m
-                dh = sh * dest_m
+                dw = sw * size_m
+                dh = sh * size_m
 
                 // Apply
                 this.dests[i].ctx.clearRect(dx, dy, dw, dh);
-                this.dests[i].ctx.drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
+                this.dests[i].ctx.drawImage(element.canvas, sx, sy, sw, sh, dx, dy, dw, dh)
             }
         }
     }

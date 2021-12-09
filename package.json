@@ -1,7 +1,7 @@
 {
     "name": "@b0th/tw-utils",
     "description": "Teeworlds asset utilities (merge, extract, etc...)",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "dependencies": {
         "canvas": "^2.8.0",
         "fs": "0.0.1-security"

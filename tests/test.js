@@ -30,18 +30,18 @@ ChangeTest = async () => {
 
     // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
     const asset = new TwAssetChanger("gameskin",
-    "https://images-ext-2.discordapp.net/external/_UPwoXfGQusIM27Lcmt-TV24NgM0MITY7epMXUm88Ig/https/api.skins.tw/database/gameskins/E1aon7KGT89pkYufukGxhr6HQqr2ADXplk27CO4L.png",
-    "https://media.discordapp.net/attachments/904367949220040704/918225247365373962/kkub.png"
+    "https://api.skins.tw/database/gameskins/CBu1DENdEAFV3v6VBvQkrAESEHIcpLgf8zZG3J9w.png",
+    "https://api.skins.tw/database/gameskins/96wfbwDtzM1q77yahyv36HgKn64s6TVqcRwghZG3.png",
     )
 
     try {
         await asset.preprocess()
-        asset.change("hook", "shotgun", "grenade", "heart")
+        asset.change("hammer", "flag_red", "shield", "grenade")
         asset.save("./tmp")
     } catch (err) {
         console.log(err) 
     }
 }
 
-extractTest()
+//extractTest()
 ChangeTest()
