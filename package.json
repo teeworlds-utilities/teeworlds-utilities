@@ -4,11 +4,12 @@
     "version": "1.0.5",
     "dependencies": {
         "canvas": "^2.8.0",
-        "fs": "0.0.1-security"
+        "fs": "0.0.1-security",
+        "npx": "^10.2.2"
     },
     "main": "./src/index.js",
     "scripts": {
-        "test": "node ./tests/test.js"
+        "test": "npx eslint ./src/*.js && node ./tests/test.js"
     },
     "keywords": [
         "teeworlds",

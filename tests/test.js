@@ -1,6 +1,6 @@
 const { TwAssetExtractor, TwAssetChanger } = require("../src/index")
 
-extractTest = async () => {
+const extractTest = async () => {
     // Url or path to local file
 
     const asset = new TwAssetExtractor("gameskin", "https://media.discordapp.net/attachments/778030245436719124/846108332347097098/starwarsedited.png")
@@ -25,7 +25,7 @@ extractTest = async () => {
     }
 }
 
-ChangeTest = async () => {
+const ChangeTest = async () => {
     // Url or path to local file
 
     // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)

@@ -22,7 +22,7 @@ You can check `tests/test.js` too.
 ```js
 const { TwAssetExtractor } = require("@b0th/tw-utils")
 
-extractTest = async () => {
+const extractTest = async () => {
     // Url or path to local file
 
     const asset = new TwAssetExtractor("gameskin", "url")
@@ -53,7 +53,7 @@ extractTest = async () => {
 ```js
 const { TwAssetChanger } = require("@b0th/tw-utils")
 
-ChangeTest = async () => {
+const ChangeTest = async () => {
     // Url or path to local file
 
     const asset = new TwAssetChanger("skin", "src", "dest1", "dest_url2", "dest3")
