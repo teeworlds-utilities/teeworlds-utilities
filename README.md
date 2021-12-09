@@ -12,6 +12,7 @@ Asset categories are :
 - skin
 - gameskin
 - emoticon
+
 check `src/data.js`
 
 You can check `tests/test.js` too.
