@@ -27,7 +27,7 @@ class TwElement
             fs.mkdirSync(dirname)
         
         // Save the element
-        const buffer = this.canvas.toBuffer('image/png')
+        const buffer = this.canvas.toBuffer("image/png")
         fs.writeFileSync(`${dirname}/${this.name}.png`, buffer)
     }
 }
@@ -128,7 +128,7 @@ class TwAssetBase
 
     extractAll ()
     {
-        for (const [name, _] of Object.entries(this.data.elements)) {
+        for (const name of Object.keys(this.data.elements)) {
             const element = this._cut(name)
             this.elements[name] = element
         }

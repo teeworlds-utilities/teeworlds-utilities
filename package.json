@@ -10,11 +10,13 @@
     "scripts": {
         "test": "node ./tests/test.js"
     },
-
     "keywords": [
         "teeworlds",
         "teeworlds api",
         "teeworlds utils",
         "teeworlds asset"
-    ]
+    ],
+    "devDependencies": {
+        "eslint": "^8.4.1"
+    }
 }

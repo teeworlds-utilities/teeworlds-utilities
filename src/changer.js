@@ -61,12 +61,12 @@ class TwAssetChanger extends TwAssetBase
     save (dirname)
     {
         for (const dest of this.dests) {
-            const filename = dest.path.split('/').pop()
+            const filename = dest.path.split("/").pop()
 
             if (!fs.existsSync(dirname))
                 fs.mkdirSync(dirname)
     
-            const buffer = dest.canvas.toBuffer('image/png')
+            const buffer = dest.canvas.toBuffer("image/png")
             fs.writeFileSync(`${dirname}/${filename}`, buffer)
         }
     }
