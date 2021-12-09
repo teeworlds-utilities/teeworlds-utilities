@@ -39,9 +39,8 @@ extractTest = async () => {
         //asset.extract("grenade", "gun", etc...)
         //asset.extract("hammer_cursor", etc...)
 
-        // Save locally the image
+        // Save locally the image in ./tmp
 
-        // ./tmp -> directory name
         asset.save("./tmp")
     } catch (err) {
         console.log(err)
@@ -57,15 +56,14 @@ const { TwAssetChanger } = require("@b0th/tw-utils")
 ChangeTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
+    const asset = new TwAssetChanger("skin", "src", "dest1", "dest_url2", "dest3")
     
     try {
         await asset.preprocess()
         asset.change("gun", "hammer", "shotgun", "gun_cursor")
 
-        // Save locally the image
+        // Save locally the image in ./tmp
 
-        // ./tmp -> directory name
         asset.save("./tmp")
     } catch (err) {
         console.log(err) 

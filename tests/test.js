@@ -1,4 +1,4 @@
-const { TwAssetExtractor, TwAssetChanger } = require("../src/lib")
+const { TwAssetExtractor, TwAssetChanger } = require("../src/index")
 
 extractTest = async () => {
     // Url or path to local file
@@ -29,19 +29,19 @@ ChangeTest = async () => {
     // Url or path to local file
 
     // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
-    const asset = new TwAssetChanger("gameskin", 
-    "https://images-ext-1.discordapp.net/external/nz2MlRvLcVywmc4oOi9r0Ad0ZScJquv2Jlr4aFkBvoE/https/api.skins.tw/database/gameskins/8WRx0AHpOlOrBB48vqAVBnqGNKyuNd8pz5DK1zjk.png",
-    "https://images-ext-1.discordapp.net/external/qf9tG9-wX6CyaiM23iRE1kgvdYZoDZuQJexlA8_oyQQ/https/api.skins.tw/database/gameskins/ERCZ9JjslTT6eLV5lnLB0ls3SNSAY9wUeVMWJzjA.png",
-    "https://images-ext-2.discordapp.net/external/WJgFzky1G0aO9t6ElQqEWqGsI0__Xpym7U5ctvvSTfM/https/api.skins.tw/database/gameskins/s60Mye1GF5a7SnrzTxGRwJCCvjc1QdZ31jKuJ5fz.png")
+    const asset = new TwAssetChanger("gameskin",
+    "https://images-ext-2.discordapp.net/external/_UPwoXfGQusIM27Lcmt-TV24NgM0MITY7epMXUm88Ig/https/api.skins.tw/database/gameskins/E1aon7KGT89pkYufukGxhr6HQqr2ADXplk27CO4L.png",
+    "https://media.discordapp.net/attachments/904367949220040704/918225247365373962/kkub.png"
+    )
 
     try {
         await asset.preprocess()
-        asset.change("gun", "hammer", "shotgun", "gun_cursor")
+        asset.change("hook", "shotgun", "grenade", "heart")
         asset.save("./tmp")
     } catch (err) {
         console.log(err) 
     }
 }
 
-//extractTest()
-//ChangeTest()
+extractTest()
+ChangeTest()

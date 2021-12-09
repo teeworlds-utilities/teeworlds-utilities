@@ -1,1 +1,4 @@
-module.exports = require("./lib.js")
+module.exports = {
+    ...require("./extractor"),
+    ...require("./changer")
+}
