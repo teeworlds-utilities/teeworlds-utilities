@@ -5,22 +5,30 @@ class InvalidFile extends Error {
     }
 }
 
-class InvalidAssetType extends Error {
+class InvalidAsset extends Error {
     constructor (msg) {
         super(msg)
-        this.name = "InvalidAssetType"
+        this.name = "InvalidAsset"
     }
 }
 
-class InvalidElementType extends Error {
+class InvalidElement extends Error {
     constructor (msg) {
         super(msg)
-        this.name = "InvalidElementType"
+        this.name = "InvalidElement"
+    }
+}
+
+class InvalidColor extends Error {
+    constructor (msg) {
+        super(msg)
+        this.name = "InvalidColor"
     }
 }
 
 module.exports = {
     InvalidFile,
-    InvalidAssetType,
-    InvalidElementType
+    InvalidAsset,
+    InvalidElement,
+    InvalidColor
 }

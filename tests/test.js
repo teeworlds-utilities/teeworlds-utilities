@@ -46,11 +46,28 @@ const ChangeTest = async () => {
 const renderTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/G9JKA2lDW6bIHPoK9i7sGeNIPxVvY6FF9UJctMUD.png")
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
 
     try {
         await asset.preprocess()
         //asset.render()
+        asset.render("scary_eye")
+        asset.saveRender("./tmp")
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const colorTest = async () => {
+    // Url or path to local file
+
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
+
+    try {
+        await asset.preprocess()
+        asset.extract("body", "foot")
+        asset.setColorAll("255, 0, 0", "default")
+        asset.save("./tmp")
         asset.render("happy_eye")
         asset.saveRender("./tmp")
     } catch (err) {
@@ -61,3 +78,4 @@ const renderTest = async () => {
 //extractTest()
 //ChangeTest()
 //renderTest()
+//colorTest()

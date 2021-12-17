@@ -1,6 +1,7 @@
 const data = require("./data")
-const { InvalidFile, InvalidAssetType, InvalidElementType } = require("./error")
+const { InvalidFile, InvalidAsset, InvalidElement, InvalidColor } = require("./error")
 const { saveInDir } = require("./utils")
+const { COLOR_MODE, Color } = require("./color")
 
 const { loadImage, createCanvas } = require("canvas")
 
@@ -11,6 +12,36 @@ class TwElement
         this.name = name
         this.imgData = imgData
         this.canvas = createCanvas(this.imgData.width, this.imgData.height)
+    }
+
+    setColor (color, mode)
+    {
+        var buffer = this.imgData.data
+        var r, g, b, a, pixel
+
+        if (Object.keys(COLOR_MODE).includes(mode) == false)
+            throw (new InvalidColor("This color mode doesn't exist " + mode))
+
+        for (var byte = 0; byte < buffer.length; byte += 4) {
+            // Get pixel
+            r = buffer[byte]
+            g = buffer[byte + 1]
+            b = buffer[byte + 2]
+            a = buffer[byte + 3]
+
+            // Get the new pixel
+            pixel = new Color(r, g, b, a)
+            // Apply color to the pixel
+            COLOR_MODE[mode](pixel, color)
+
+            // Replace the pixel in the buffer
+            buffer[byte] = pixel.r
+            buffer[byte + 1] = pixel.g
+            buffer[byte + 2] = pixel.b
+            buffer[byte + 3] = pixel.a
+        }
+        // Apply new buffer to the canvas
+        this.setCanvas()
     }
 
     setCanvas ()
@@ -51,19 +82,19 @@ class TwAssetBase
     {
         // Check the asset type
         if (Object.keys(data).includes(this.type) == false)
-            throw (new InvalidAssetType("Invalid asset type"))
+            throw (new InvalidAsset("Invalid asset type " + this.type))
         this.data = data[this.type]
         
         // Load image
         try {
             this.img = await loadImage(this.path)
         } catch (err) {
-            throw (new InvalidFile("Unable to open the file"))
+            throw (new InvalidFile("Unable to get the image " + this.path))
         }
         
         // Check the image size
         if (this._isRatioLegal() == false)
-            throw (new InvalidFile("Wrong image ratio"))
+            throw (new InvalidFile("Wrong image ratio " + this.path))
         
         // If everything is OK, it creates the canvas and the context
         this.canvas = createCanvas(this.img.width, this.img.height)
@@ -89,14 +120,14 @@ class TwAssetBase
         return (Object.keys(this.elements).includes(name))
     }
 
-    _cut (name, multiplier)
+    _cut (name)
     {
         if (Object.keys(this.data.elements).includes(name) == false)
-            throw (new InvalidElementType("Unauthorized element type"))
+            throw (new InvalidElement("Unauthorized element type " + name))
         if (this._isCut(name))
             return (this.elements[name])
 
-        const m = multiplier || this._getMultiplier()
+        const m = this._getMultiplier()
         const d = this.data.elements[name].map(x => x * m)
         const imgData = this.ctx.getImageData(d[0], d[1], d[2], d[3])
 
@@ -123,10 +154,46 @@ class TwAssetBase
         }
     }
 
+    _getColorArg(color)
+    {
+        const sColor = color.split(",")
+        
+        if (sColor.length < 3 || sColor.length > 4)
+            throw (new InvalidColor("Mininum and maximum bytes count: 3 and 4"))
+
+        for (var i = 0; i < sColor.length; i++) {
+            var byte = sColor[i].match(/\d+/)
+            if (!byte)
+                throw (new InvalidColor("Invalid color format " + color +
+                "\ngood format: \"255, 0, 12\" or \"255, 0, 12, 255\""))
+            byte = parseInt(byte)
+            if (byte < 0 || byte > 255)
+                throw (new InvalidColor("Mininum and maximum byte value: 0 and 255"))
+            sColor[i] = byte
+        }
+        return (new Color(...sColor))
+    }
+
+    setColor (color, mode, ...names)
+    {
+        color = this._getColorArg(color)
+
+        for (const name of names) {
+            if (Object.keys(this.elements).includes(name) == false)
+                throw (new InvalidElement("Element has never been extracted " + name))
+            this.elements[name].setColor(color, mode)
+        }
+    }
+
+    setColorAll (color, mode)
+    {
+        this.setColor(color, mode, ...Object.keys(this.elements))
+    }
+
     render (eye="default_eye")
     {
         if (this.type != "SKIN")
-            throw (new InvalidAssetType("You cant render the asset"))
+            throw (new InvalidAsset("You can't render the asset " + this.type))
 
         this.extract("body", "body_shadow", "foot", "foot_shadow", eye)
             
@@ -152,7 +219,7 @@ class TwAssetBase
         c = this.elements["foot"].canvas
         rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 28 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
         c = this.elements[eye].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 51 * m, cx + 29 * m, c.width * 1.05, c.height * 1.1)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 50 * m, cx + 29 * m, c.width * 1.05, c.height * 1.1)
         c = this.elements[eye].canvas
         rCtx.save()
         rCtx.scale(-1, 1)

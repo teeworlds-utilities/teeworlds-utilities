@@ -138,4 +138,7 @@ tmp/
 # Just a todo file
 todo
 
+# Personnals tests
+tests/ptest.js
+
 # End of https://www.toptal.com/developers/gitignore/api/node

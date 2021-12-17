@@ -1,10 +1,15 @@
 # 🐞 tw-utils
 
-### How to install dependencies ?
+### Install
 
 ```bash
 npm i @b0th/tw-utils
 ```
+
+### Contact
+
+Feel free to contact me if you have any questions 
+**Discord**: `b0th#6474`
 
 ### Getting started
 
@@ -80,7 +85,7 @@ const { TwAssetExtractor } = require("@b0th/tw-utils")
 const renderTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/G9JKA2lDW6bIHPoK9i7sGeNIPxVvY6FF9UJctMUD.png")
+    const asset = new TwAssetExtractor("skin", "url")
 
     try {
         await asset.preprocess()
@@ -89,6 +94,37 @@ const renderTest = async () => {
 
         // Save locally the image in ./tmp
 
+        asset.saveRender("./tmp")
+    } catch (err) {
+        console.log(err)
+    }
+}
+```
+
+#### Changing Color
+
+HSL color mode will be added in a future update
+
+```js
+const { TwAssetExtractor } = require("@b0th/tw-utils")
+
+const colorTest = async () => {
+    // Url or path to local file
+
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
+
+    try {
+        await asset.preprocess()
+        asset.extract("body")
+
+        // Apply color to the body
+        asset.setColor("255, 0, 0", "default", "body")
+
+        // Save locally the image in ./tmp
+        asset.save("./tmp")
+
+        asset.render("happy_eye")
+        // Save locally the image in ./tmp
         asset.saveRender("./tmp")
     } catch (err) {
         console.log(err)
