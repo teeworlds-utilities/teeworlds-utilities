@@ -66,6 +66,11 @@ const ChangeTest = async () => {
     
     try {
         await asset.preprocess()
+        // Extract the needed elements
+        asset.extract("gun", "hammer", "shotgun", "gun_cursor")
+        //asset.extractAll()
+
+        // Change this elements on the dest(s)
         asset.change("gun", "hammer", "shotgun", "gun_cursor")
 
         // Save locally the image in ./tmp
@@ -75,7 +80,6 @@ const ChangeTest = async () => {
         console.log(err) 
     }
 }
-
 ```
 
 #### Skin renderer
@@ -119,11 +123,11 @@ const colorTest = async () => {
 
         // Apply color to the body
         asset.setColor("255, 0, 0", "default", "body")
+        //asset.setColorAll("255, 0, 0", "default")
 
-        // Save locally the image in ./tmp
-        asset.save("./tmp")
-
+        // Render with a red body
         asset.render("happy_eye")
+
         // Save locally the image in ./tmp
         asset.saveRender("./tmp")
     } catch (err) {

@@ -30,12 +30,14 @@ const ChangeTest = async () => {
 
     // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
     const asset = new TwAssetChanger("gameskin",
-    "https://api.skins.tw/database/gameskins/CBu1DENdEAFV3v6VBvQkrAESEHIcpLgf8zZG3J9w.png",
     "https://api.skins.tw/database/gameskins/96wfbwDtzM1q77yahyv36HgKn64s6TVqcRwghZG3.png",
+    "https://api.skins.tw/database/gameskins/CBu1DENdEAFV3v6VBvQkrAESEHIcpLgf8zZG3J9w.png",
     )
 
     try {
         await asset.preprocess()
+        asset.extract("hammer", "flag_red", "shield", "grenade")
+        asset.setColorAll("255, 0, 0", "default")
         asset.change("hammer", "flag_red", "shield", "grenade")
         asset.save("./tmp")
     } catch (err) {

@@ -1,5 +1,6 @@
 const { TwAssetBase } = require("./extractor")
 const { saveInDir } = require("./utils")
+const { InvalidElement } = require("./error")
 
 class TwAssetChanger extends TwAssetBase
 {
@@ -23,12 +24,13 @@ class TwAssetChanger extends TwAssetBase
 
     change (...names)
     {
-        var sw, sh, dx, dy, dw, dh, size_m, pos_m
+        var sw, sh, dx, dy, dw, dh, size_m, pos_m, d, element
 
-        this.extract(...names)
-
-        for (const [name, element] of Object.entries(this.elements)) {
-            const d = this.data.elements[name]
+        for (const name of names) {
+            if (Object.keys(this.elements).includes(name) == false)
+                throw (new InvalidElement("Element has never been extracted " + name))
+            d = this.data.elements[name]
+            element = this.elements[name]
             for (var i = 0; i < this.dests.length; i++) {
 
                 // Multipliers
