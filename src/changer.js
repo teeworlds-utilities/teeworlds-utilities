@@ -54,10 +54,10 @@ class TwAssetChanger extends TwAssetBase
         }
     }
     
-    save (dirname)
+    save (dirname, name)
     {
         for (const dest of this.dests) {
-            const filename = dest.path.split("/").pop()
+            const filename = name || dest.path.split("/").pop()
             saveInDir(dirname, filename, dest.canvas)
         }
     }

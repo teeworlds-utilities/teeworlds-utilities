@@ -39,7 +39,7 @@ const ChangeTest = async () => {
         asset.extract("hammer", "flag_red", "shield", "grenade")
         asset.setColorAll("255, 0, 0", "default")
         asset.change("hammer", "flag_red", "shield", "grenade")
-        asset.save("./tmp")
+        asset.save("./tmp", "test_new.png")
     } catch (err) {
         console.log(err) 
     }
@@ -71,7 +71,7 @@ const colorTest = async () => {
         asset.setColorAll("255, 0, 0", "default")
         asset.save("./tmp")
         asset.render("happy_eye")
-        asset.saveRender("./tmp")
+        asset.saveRender("./tmp", "sheesh.png")
     } catch (err) {
         console.log(err)
     }

@@ -229,9 +229,9 @@ class TwAssetBase
         this.rCanvas = rCanvas
     }
 
-    saveRender (dirname)
+    saveRender (dirname, name)
     {
-        const filename = this.path.split("/").pop()
+        const filename = name || this.path.split("/").pop()
         if (!this.rCanvas)
             return (84)
 

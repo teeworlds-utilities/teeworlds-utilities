@@ -76,6 +76,7 @@ const ChangeTest = async () => {
         // Save locally the image in ./tmp
 
         asset.save("./tmp")
+        // asset.save("./tmp", "optional_name.png")
     } catch (err) {
         console.log(err) 
     }
@@ -99,6 +100,7 @@ const renderTest = async () => {
         // Save locally the image in ./tmp
 
         asset.saveRender("./tmp")
+        // asset.saveRender("./tmp", "optional_name.png")
     } catch (err) {
         console.log(err)
     }
