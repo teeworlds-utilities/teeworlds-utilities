@@ -1,4 +1,4 @@
 module.exports = {
-    ...require("./extractor"),
+    ...require("./asset"),
     ...require("./changer")
 }

@@ -1,4 +1,4 @@
-const { TwAssetBase } = require("./extractor")
+const { TwAssetBase } = require("./asset")
 const { saveInDir } = require("./utils")
 const { InvalidElement } = require("./error")
 

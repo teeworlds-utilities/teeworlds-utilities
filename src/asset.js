@@ -11,7 +11,8 @@ class TwElement
     {
         this.name = name
         this.imgData = imgData
-        this.canvas = createCanvas(this.imgData.width, this.imgData.height)
+        this.canvas = createCanvas(imgData.width, imgData.height)
+        this.ctx = this.canvas.getContext("2d")
     }
 
     setColor (color, mode)
@@ -29,9 +30,8 @@ class TwElement
             b = buffer[byte + 2]
             a = buffer[byte + 3]
 
-            // Get the new pixel
+            // Overwriting the pixel
             pixel = new Color(r, g, b, a)
-            // Apply color to the pixel
             COLOR_MODE[mode](pixel, color)
 
             // Replace the pixel in the buffer
@@ -46,9 +46,7 @@ class TwElement
 
     setCanvas ()
     {
-        const ctx = this.canvas.getContext("2d")
-
-        ctx.putImageData(this.imgData, 0, 0)
+        this.ctx.putImageData(this.imgData, 0, 0)
     }
 
     save (dirname)
@@ -236,6 +234,41 @@ class TwAssetBase
             return (84)
 
         saveInDir(dirname, "render_" + filename, this.rCanvas)
+    }
+
+    async setHat (path = "./data/xmas_hat.png", sx = 0, sy = 0, size = 128)
+    {
+        const eKeys = Object.keys(this.elements)
+        if (this.name != "SKIN" && (!eKeys.includes("body") || !eKeys.includes("body_shadow")))
+            throw (new InvalidAsset("Only available for skin and you must extract body and body_shadow"))
+
+        // The ideal size for a hat is the same as the one of the body,
+        // it is also possible to make several frames in a single 
+        // image as data/xmas_hat.png
+
+        const body = this.elements.body
+        const bodyS = this.elements.body_shadow
+
+        try {
+            const hat = await loadImage(path)
+            const m = (body.canvas.width / size)
+            
+            // Add the hat
+            body.ctx.drawImage(hat, sx, sy, size, size, 0, 0, size * m, size * m)
+            const diff = parseInt(((size * m * 1.05) - (size * m)) / 2)
+
+            // Add the hat to the shadow
+            bodyS.ctx.drawImage(hat, sx, sy, size, size, -diff - 0.5, 
+                -diff - 0.2, size * m * 1.05, size * m * 1.05)
+
+            // Apply black color to the hat + shadow
+            bodyS.ctx.globalCompositeOperation = "source-atop"
+            bodyS.ctx.fillStyle = "black"
+            bodyS.ctx.fillRect(0, 0, bodyS.canvas.width, bodyS.canvas.height);
+
+        } catch (err) {
+            throw (new InvalidFile("Unable to get the image " + path))
+        }
     }
 }
 

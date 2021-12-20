@@ -46,6 +46,9 @@ const extractTest = async () => {
         //asset.extract("grenade", "gun", etc...)
         //asset.extract("hammer_cursor", etc...)
 
+        // Add a hat (xmas hat by default)
+        // await asset.setHat()
+
         // Save locally the image in ./tmp
 
         asset.save("./tmp")

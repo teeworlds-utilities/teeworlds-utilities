@@ -3,7 +3,7 @@ const { TwAssetExtractor, TwAssetChanger } = require("../src/index")
 const extractTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("particule", "https://raw.githubusercontent.com/TeeworldsDB/graphictemplates/master/grids/grid_particles.png")
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
     //const asset = new TwAssetExtractor("emoticons", "file path")
 
     try {
@@ -11,12 +11,15 @@ const extractTest = async () => {
         await asset.preprocess()
 
         // Extract every element on the image
-        asset.extractAll()
+        asset.extract("body", "body_shadow")
 
         // Or Extract selected elements
-        //asset.extract("1", "4", "9", "14")
-        //asset.extract("grenade", "gun")
-        //asset.extract("hammer_cursor")
+        //  asset.extract("1", "4", "9", "14")
+        //  asset.extract("grenade", "gun")
+        //  asset.extract("hammer_cursor")
+
+        // Add a hat (xmas hat by default)
+        // await asset.setHat()
 
         // Save locally the image
         asset.save("./tmp")
@@ -52,7 +55,7 @@ const renderTest = async () => {
 
     try {
         await asset.preprocess()
-        //asset.render()
+        // asset.render()
         asset.render("scary_eye")
         asset.saveRender("./tmp")
     } catch (err) {
