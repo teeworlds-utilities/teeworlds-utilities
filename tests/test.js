@@ -3,7 +3,7 @@ const { TwAssetExtractor, TwAssetChanger } = require("../src/index")
 const extractTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("emoticon", "https://api.skins.tw/database/emoticons/xUPkjK1YRo7oNjVQ7Tid2RIEuXGD5ziX7MJRVa3s.png")
+    const asset = new TwAssetExtractor("particule", "https://raw.githubusercontent.com/TeeworldsDB/graphictemplates/master/grids/grid_particles.png")
     //const asset = new TwAssetExtractor("emoticons", "file path")
 
     try {
@@ -77,7 +77,7 @@ const colorTest = async () => {
     }
 }
 
-//extractTest()
+extractTest()
 //ChangeTest()
 //renderTest()
 //colorTest()

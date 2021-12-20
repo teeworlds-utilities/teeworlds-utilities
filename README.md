@@ -17,6 +17,7 @@ Asset categories are :
 - skin
 - gameskin
 - emoticon
+- particule
 
 check `src/data.js`
 
@@ -117,7 +118,7 @@ const { TwAssetExtractor } = require("@b0th/tw-utils")
 const colorTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
+    const asset = new TwAssetExtractor("skin", "url")
 
     try {
         await asset.preprocess()
