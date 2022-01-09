@@ -128,8 +128,9 @@ const colorTest = async () => {
         asset.extract("body")
 
         // Apply color to the body
-        asset.setColor("255, 0, 0", "default", "body")
-        //asset.setColorAll("255, 0, 0", "default")
+        asset.setColor("255, 0, 0", "rgb", "body")
+        //asset.setColor("255, 0, 0", "hsl", "body")
+        //asset.setColorAll("255, 0, 0", "rgb")
 
         // Render with a red body
         asset.render("happy_eye")
