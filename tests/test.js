@@ -40,7 +40,7 @@ const ChangeTest = async () => {
     try {
         await asset.preprocess()
         asset.extract("hammer", "flag_red", "shield", "grenade")
-        asset.setColorAll("255, 0, 0", "default")
+        asset.setColorAll("255, 0, 0", "rgb")
         asset.change("hammer", "flag_red", "shield", "grenade")
         asset.save("./tmp", "test_new.png")
     } catch (err) {
@@ -71,7 +71,7 @@ const colorTest = async () => {
     try {
         await asset.preprocess()
         asset.extract("body", "foot")
-        asset.setColorAll("255, 0, 0", "default")
+        asset.setColor("255, 0, 0", "rgb", "body")
         asset.save("./tmp")
         asset.render("happy_eye")
         asset.saveRender("./tmp", "sheesh.png")
@@ -80,7 +80,7 @@ const colorTest = async () => {
     }
 }
 
-extractTest()
-//ChangeTest()
+//extractTest()
+ChangeTest()
 //renderTest()
-//colorTest()
+colorTest()

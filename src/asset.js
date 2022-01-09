@@ -4,6 +4,7 @@ const { saveInDir } = require("./utils")
 const { COLOR_MODE, Color } = require("./color")
 
 const { loadImage, createCanvas } = require("canvas")
+const convert = require("color-convert")
 
 class TwElement
 {
@@ -160,32 +161,39 @@ class TwAssetBase
             throw (new InvalidColor("Mininum and maximum bytes count: 3 and 4"))
 
         for (var i = 0; i < sColor.length; i++) {
-            var byte = sColor[i].match(/\d+/)
-            if (!byte)
+            var value = sColor[i].match(/\d+/)
+            if (!value)
                 throw (new InvalidColor("Invalid color format " + color +
                 "\ngood format: \"255, 0, 12\" or \"255, 0, 12, 255\""))
-            byte = parseInt(byte)
-            if (byte < 0 || byte > 255)
-                throw (new InvalidColor("Mininum and maximum byte value: 0 and 255"))
-            sColor[i] = byte
+            value = parseInt(value)
+            sColor[i] = value
         }
-        return (new Color(...sColor))
+        return (sColor)
     }
 
-    setColor (color, mode, ...names)
+    _colorConvert (color, standard)
+    {
+        if (standard == "hsl") 
+            return (new Color(...convert.hsl.rgb(...color)))
+        else
+            return (new Color(...color))
+    }
+
+    setColor (color, standard, ...names)
     {
         color = this._getColorArg(color)
-
+        color = this._colorConvert(color, standard)
+        
         for (const name of names) {
             if (Object.keys(this.elements).includes(name) == false)
                 throw (new InvalidElement("Element has never been extracted " + name))
-            this.elements[name].setColor(color, mode)
+            this.elements[name].setColor(color, "default")
         }
     }
 
-    setColorAll (color, mode)
+    setColorAll (color, standard)
     {
-        this.setColor(color, mode, ...Object.keys(this.elements))
+        this.setColor(color, standard, ...Object.keys(this.elements))
     }
 
     render (eye="default_eye")
