@@ -15,7 +15,18 @@ class Color
     }
 }
 
-const defaultOp = (pixel, color) => {
+const blackAndWhite = (pixel, _) =>
+{
+    const newValue = (pixel.r + pixel.g + pixel.b) / 3
+
+    pixel.r = newValue
+    pixel.g = newValue
+    pixel.b = newValue
+}
+
+const defaultOp = (pixel, color) =>
+{
+    blackAndWhite(pixel, color)
     pixel.r = (pixel.r * color.r) / 255
     pixel.g = (pixel.g * color.g) / 255
     pixel.b = (pixel.b * color.b) / 255
