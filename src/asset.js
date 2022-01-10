@@ -171,12 +171,30 @@ class TwAssetBase
         return (sColor)
     }
 
+    // Handling RGB
+    _colorLimitForSkin (color)
+    {
+        const s = color[0] + color[1] + color[2]
+        const average = s / 3
+        const lLimit = 90
+        const rLimit = 192
+
+        if (average < lLimit && color.some(x => x > lLimit) == false)
+            color = color.map(_ => lLimit)
+        if (average > rLimit && color.some(x => x < rLimit) == false)
+            color = color.map(_ => rLimit)
+        return (color)
+    }
+
     _colorConvert (color, standard)
     {
         if (standard == "hsl") 
-            return (new Color(...convert.hsl.rgb(...color)))
-        else
+            color = convert.hsl.rgb(...color)
+        if (this.type != "SKIN")
             return (new Color(...color))
+
+        color = this._colorLimitForSkin(color)
+        return (new Color(...color))
     }
 
     setColor (color, standard, ...names)
@@ -225,11 +243,11 @@ class TwAssetBase
         c = this.elements["foot"].canvas
         rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 28 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
         c = this.elements[eye].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 50 * m, cx + 29 * m, c.width * 1.05, c.height * 1.1)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 50 * m, cx + 26 * m, c.width * 1.05, c.height * 1.1)
         c = this.elements[eye].canvas
         rCtx.save()
         rCtx.scale(-1, 1)
-        rCtx.drawImage(c, 0, 0, c.width, c.height, cx + -95 * m, cx + 29 * m, c.width * 1.05, c.height * 1.1)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, cx + -95 * m, cx + 26 * m, c.width * 1.05, c.height * 1.1)
         rCtx.restore()
 
         this.rCanvas = rCanvas

@@ -71,7 +71,7 @@ const colorTest = async () => {
     try {
         await asset.preprocess()
         asset.extract("body", "foot")
-        asset.setColor("255, 0, 0", "rgb", "body")
+        asset.setColor("50, 50, 50", "rgb", "body")
         asset.save("./tmp")
         asset.render("happy_eye")
         asset.saveRender("./tmp", "sheesh.png")
@@ -81,6 +81,6 @@ const colorTest = async () => {
 }
 
 //extractTest()
-ChangeTest()
+//ChangeTest()
 //renderTest()
-colorTest()
+// colorTest()
