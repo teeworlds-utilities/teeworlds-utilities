@@ -1,7 +1,7 @@
 const data = require("./data")
 const { InvalidFile, InvalidAsset, InvalidElement, InvalidColor } = require("./error")
 const { saveInDir } = require("./utils")
-const { COLOR_MODE, Color } = require("./color")
+const { COLOR_MODE, COLOR_FORMAT, Color } = require("./color")
 
 const { loadImage, createCanvas } = require("canvas")
 const convert = require("color-convert")
@@ -153,25 +153,17 @@ class TwAssetBase
         }
     }
 
-    _getColorArg(color)
+    _getColorArg(color, standard)
     {
-        const sColor = color.split(",")
-        
-        if (sColor.length < 3 || sColor.length > 4)
-            throw (new InvalidColor("Mininum and maximum bytes count: 3 and 4"))
+        if (Object.keys(COLOR_FORMAT).includes(standard) == false)
+            throw (new InvalidColor("Invalid color format" +
+            "\nValid formats : rgb, hsl or code"))
 
-        for (var i = 0; i < sColor.length; i++) {
-            var value = sColor[i].match(/\d+/)
-            if (!value)
-                throw (new InvalidColor("Invalid color format " + color +
-                "\ngood format: \"255, 0, 12\" or \"255, 0, 12, 255\""))
-            value = parseInt(value)
-            sColor[i] = value
-        }
-        return (sColor)
+        color = COLOR_FORMAT[standard](color)
+        return(color)
     }
 
-    // Handling RGB
+    // Handling only final format -> RGB
     _colorLimitForSkin (color)
     {
         const s = color[0] + color[1] + color[2]
@@ -188,7 +180,9 @@ class TwAssetBase
 
     _colorConvert (color, standard)
     {
-        if (standard == "hsl") 
+        color = this._getColorArg(color, standard)
+
+        if (standard == "hsl" || standard == "code") 
             color = convert.hsl.rgb(...color)
         if (this.type != "SKIN")
             return (new Color(...color))
@@ -199,7 +193,6 @@ class TwAssetBase
 
     setColor (color, standard, ...names)
     {
-        color = this._getColorArg(color)
         color = this._colorConvert(color, standard)
         
         for (const name of names) {

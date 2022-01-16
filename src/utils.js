@@ -10,6 +10,26 @@ const saveInDir = (dirname, filename, canvas) => {
     fs.writeFileSync(`${dirname}/${filename}`, buffer)
 }
 
+const isDigit = (str) =>
+{
+    for (const char of str) {
+        if ("1234567890".includes(char) == false)
+            return (false)
+    }
+    return (true)
+}
+
+const genChunks = (src, size) =>
+{
+    var ret = []
+
+    for (var i = 0; i < src.length; i += size)
+        ret.push(src.slice(i, i + size))
+    return (ret)
+}
+
 module.exports = {
-    saveInDir
+    saveInDir,
+    isDigit,
+    genChunks
 }
