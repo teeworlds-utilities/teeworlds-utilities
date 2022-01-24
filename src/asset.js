@@ -224,23 +224,23 @@ class TwAssetBase
         const cx = (6 * m)
 
         c = this.elements["foot_shadow"].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 6 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
-        c = this.elements["foot"].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 6 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 4 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
         c = this.elements["body_shadow"].canvas
         rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 12 * m, cx + 0 * m, c.width, c.height)
+        c = this.elements["foot"].canvas
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 4 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
         c = this.elements["foot_shadow"].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 28 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 24 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
         c = this.elements["body"].canvas
         rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 12 * m, cx + 0 * m, c.width, c.height)
         c = this.elements["foot"].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 28 * m, cx + 50 * m, c.width * 1.35, c.height * 1.35)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 24 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
         c = this.elements[eye].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 50 * m, cx + 26 * m, c.width * 1.05, c.height * 1.1)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 49.5 * m, cx + 23 * m, c.width * 1.15, c.height * 1.22)
         c = this.elements[eye].canvas
         rCtx.save()
         rCtx.scale(-1, 1)
-        rCtx.drawImage(c, 0, 0, c.width, c.height, cx + -95 * m, cx + 26 * m, c.width * 1.05, c.height * 1.1)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, cx + -98 * m, cx + 23 * m, c.width * 1.15, c.height * 1.22)
         rCtx.restore()
 
         this.rCanvas = rCanvas

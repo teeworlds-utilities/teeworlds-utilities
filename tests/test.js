@@ -51,12 +51,12 @@ const ChangeTest = async () => {
 const renderTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/cammohat_W.png")
 
     try {
         await asset.preprocess()
         // asset.render()
-        asset.render("scary_eye")
+        asset.render()
         asset.saveRender("./tmp")
     } catch (err) {
         console.log(err)
@@ -82,5 +82,5 @@ const colorTest = async () => {
 
 //extractTest()
 //ChangeTest()
-//renderTest()
+// renderTest()
 // colorTest()
