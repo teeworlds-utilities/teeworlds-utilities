@@ -51,7 +51,7 @@ const ChangeTest = async () => {
 const renderTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/cammohat_W.png")
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/YvpMQvhYrX8lzzbB9VS4E7ay9f5JzD6k4V7QjApg.png")
 
     try {
         await asset.preprocess()

@@ -224,11 +224,11 @@ class TwAssetBase
         const cx = (6 * m)
 
         c = this.elements["foot_shadow"].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 4 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 2 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
         c = this.elements["body_shadow"].canvas
         rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 12 * m, cx + 0 * m, c.width, c.height)
         c = this.elements["foot"].canvas
-        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 4 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
+        rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 2 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
         c = this.elements["foot_shadow"].canvas
         rCtx.drawImage(c, 0, 0, c.width, c.height, -cx + 24 * m, cx + 45 * m, c.width * 1.430, c.height * 1.450)
         c = this.elements["body"].canvas
