@@ -12,31 +12,61 @@ class Color
     }
 }
 
-const rgbHslFormat = (color) =>
+const rgbFormat = (color) =>
 {
     const sColor = color.split(",")
     
     if (sColor.length < 3 || sColor.length > 4)
-        throw (new InvalidColor("Mininum and maximum elements: 3 and 4"))
+        throw (new InvalidColor("Mininum and maximum elements: 3, 4"))
 
     for (var i = 0; i < sColor.length; i++) {
         var value = sColor[i].match(/\d+/)
         if (!value)
-            throw (new InvalidColor("Invalid RGB/HSL color format " + color +
+            throw (new InvalidColor("Invalid RGB color format " + color +
             "\nValid format: \"255, 0, 12\" or \"255, 0, 12, 255\""))
         value = parseInt(value)
+        if (value < 0 || value > 255)
+            throw (new InvalidColor(`RGB color ${value} is not between 0 and 255`))
         sColor[i] = value
     }
     return (sColor)
 }
 
+const hslFormat = (color) =>
+{
+    const sColor = color.split(",")
+    const limits = [360, 100, 100, 255]
+    var limit
+    
+    if (sColor.length < 3 || sColor.length > 4)
+        throw (new InvalidColor("Mininum and maximum elements: 3, 4"))
+
+    for (var i = 0; i < sColor.length; i++) {
+        var value = sColor[i].match(/\d+/)
+        if (!value)
+            throw (new InvalidColor("Invalid HSL color format " + color +
+            "\nValid format: \"360, 100, 100\" or \"123, 12, 12, 255\""))
+        value = parseInt(value)
+        limit = limits[i]
+        if (value < 0 || value > limit)
+            throw (new InvalidColor(`RGB color ${value} is not between 0 and ${limit}`))
+        sColor[i] = value
+    }
+    return (sColor)
+}
+
+// Convert a color code to HSL format
 const codeFormat = (color) =>
 {
     if (isDigit(color) == false)
-        throw (new InvalidColor("Invalid code format" + color +
-        "\nValid format: an integer (min: 0, max: 0xffffff)"))
+        throw (new InvalidColor("Invalid code format " + color +
+        "\nValid format: A value encoded on 6 bytes"))
 
-    color = parseInt(color).toString(16)
+    color = parseInt(color)
+    if (color < 0 || color > 0xffffff)
+        throw (new InvalidColor("Invalid value " + color +
+        "\nValid format: an integer (min: 0, max: 0xffffff)"))
+    color = color.toString(16)
     const l = color.length
     if (l < 6)
         color = "0".repeat(6 - l) + color
@@ -48,8 +78,8 @@ const codeFormat = (color) =>
 }
 
 const COLOR_FORMAT = {
-    "rgb": rgbHslFormat,
-    "hsl": rgbHslFormat,
+    "rgb": rgbFormat,
+    "hsl": hslFormat,
     "code": codeFormat
 }
 

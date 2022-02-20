@@ -156,38 +156,40 @@ class TwAssetBase
     _getColorArg(color, standard)
     {
         if (Object.keys(COLOR_FORMAT).includes(standard) == false)
-            throw (new InvalidColor("Invalid color format" +
-            "\nValid formats : rgb, hsl or code"))
+            throw (new InvalidColor("Invalid color format: " + standard +
+            "\nValid formats : rgb, hsl, code"))
 
         color = COLOR_FORMAT[standard](color)
-        return(color)
+        return (color)
     }
 
-    // Handling only final format -> RGB
-    _colorLimitForSkin (color)
-    {
-        const s = color[0] + color[1] + color[2]
-        const average = s / 3
-        const lLimit = 90
-        const rLimit = 192
-
-        if (average < lLimit && color.some(x => x > lLimit) == false)
-            color = color.map(_ => lLimit)
-        if (average > rLimit && color.some(x => x < rLimit) == false)
-            color = color.map(_ => rLimit)
+    // Only handling HSL format
+    _colorLimitForSkin (color, limit = 52.5)
+    {    
+        if (color[2] < limit)
+            color[2] = limit
         return (color)
     }
 
     _colorConvert (color, standard)
     {
         color = this._getColorArg(color, standard)
+        var rgbFormat
 
-        if (standard == "hsl" || standard == "code") 
-            color = convert.hsl.rgb(...color)
+        if (standard == "rgb") { 
+            rgbFormat = color
+            color = convert.rgb.hsl(...color)
+        } else {
+            rgbFormat = convert.hsl.rgb(...color)
+        }
         if (this.type != "SKIN")
-            return (new Color(...color))
+            return (new Color(...rgbFormat))
 
+        // Preventing full black or full white skins
         color = this._colorLimitForSkin(color)
+
+        // Convert to RGB to apply the color
+        color = convert.hsl.rgb(...color)
         return (new Color(...color))
     }
 

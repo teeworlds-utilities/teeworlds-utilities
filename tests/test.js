@@ -40,7 +40,7 @@ const ChangeTest = async () => {
     try {
         await asset.preprocess()
         asset.extract("hammer", "flag_red", "shield", "grenade")
-        asset.setColorAll("255, 0, 0", "rgb")
+        asset.setColorAll("256, 0, 0", "rgb")
         asset.change("hammer", "flag_red", "shield", "grenade")
         asset.save("./tmp", "test_new.png")
     } catch (err) {
@@ -66,12 +66,16 @@ const renderTest = async () => {
 const colorTest = async () => {
     // Url or path to local file
 
-    const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
+    const asset = new TwAssetExtractor("skin", "https://api.skins.tw//database/skins/brownbear.png")
 
     try {
         await asset.preprocess()
-        asset.extract("body", "foot")
-        asset.setColor("50, 50, 50", "rgb", "body")
+        asset.extract("body", "foot", "happy_eye", "body_shadow", "foot_shadow")
+        asset.setColor("0, 0, 0", "rgb", "body")
+        asset.setColor("0, 0, 0", "rgb", "foot")
+        asset.setColor("0, 0, 0", "rgb", "body_shadow")
+        asset.setColor("0, 0, 0", "rgb", "foot_shadow")
+        asset.setColor("0, 0, 0", "rgb", "happy_eye")
         asset.save("./tmp")
         asset.render("happy_eye")
         asset.saveRender("./tmp", "sheesh.png")
