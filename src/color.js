@@ -94,7 +94,6 @@ const blackAndWhite = (pixel, _) =>
 
 const defaultOp = (pixel, color) =>
 {
-    blackAndWhite(pixel, color)
     pixel.r = (pixel.r * color.r) / 255
     pixel.g = (pixel.g * color.g) / 255
     pixel.b = (pixel.b * color.b) / 255
@@ -102,7 +101,8 @@ const defaultOp = (pixel, color) =>
 }
 
 const COLOR_MODE = {
-    "default": defaultOp
+    "default": defaultOp,
+    "grayscale": blackAndWhite
 }
 
 module.exports = {

@@ -19,12 +19,13 @@ class TwElement
     setColor (color, mode)
     {
         var buffer = this.imgData.data
-        var r, g, b, a, pixel
+        var r, g, b, a, byte
 
         if (Object.keys(COLOR_MODE).includes(mode) == false)
             throw (new InvalidColor("This color mode doesn't exist " + mode))
-
-        for (var byte = 0; byte < buffer.length; byte += 4) {
+        
+        // Apply color on every pixel of the img
+        for (byte = 0; byte < buffer.length; byte += 4) {
             // Get pixel
             r = buffer[byte]
             g = buffer[byte + 1]
@@ -32,7 +33,7 @@ class TwElement
             a = buffer[byte + 3]
 
             // Overwriting the pixel
-            pixel = new Color(r, g, b, a)
+            const pixel = new Color(r, g, b, a)
             COLOR_MODE[mode](pixel, color)
 
             // Replace the pixel in the buffer
@@ -41,8 +42,50 @@ class TwElement
             buffer[byte + 2] = pixel.b
             buffer[byte + 3] = pixel.a
         }
-        // Apply new buffer to the canvas
+
         this.setCanvas()
+    }
+
+    reorderBody()
+    {
+        // For the tee body
+        // Reorder that the average grey is 192,192,192
+        // https://github.com/ddnet/ddnet/blob/master/src/game/client/components/skins.cpp#L227-L263
+
+        var frequencies = Array(256).fill(0)
+        var orgWeight = 0
+        const newWeight = 192
+        const invOrgWeight = 255 - orgWeight
+        const invNewWeight = 255 - newWeight
+        var buffer = this.imgData.data
+        var byte
+
+        // Find the most common frequence
+        for (byte = 0; byte < buffer.length; byte += 4)
+            if(buffer[byte + 3] > 128)
+                frequencies[buffer[byte]]++
+
+        for (let i = 1; i < 256; i++)
+            if(frequencies[orgWeight] < frequencies[i])
+                orgWeight = i;
+
+        for (byte = 0; byte < buffer.length; byte += 4) {
+            var value = buffer[byte];
+
+            if (value <= orgWeight && orgWeight == 0)
+                continue
+			else if(value <= orgWeight)
+                value = Math.trunc(((value / orgWeight) * newWeight));
+			else if(invOrgWeight == 0)
+                value = newWeight;
+			else
+                value = Math.trunc((((value - orgWeight) / 
+                invOrgWeight) * invNewWeight + newWeight));
+            
+			buffer[byte] = value;
+			buffer[byte + 1] = value;
+			buffer[byte + 2] = value;
+        }
     }
 
     setCanvas ()
@@ -200,6 +243,9 @@ class TwAssetBase
         for (const name of names) {
             if (Object.keys(this.elements).includes(name) == false)
                 throw (new InvalidElement("Element has never been extracted " + name))
+            this.elements[name].setColor(color, "grayscale")
+            if (name == "body")
+                this.elements[name].reorderBody()
             this.elements[name].setColor(color, "default")
         }
     }
