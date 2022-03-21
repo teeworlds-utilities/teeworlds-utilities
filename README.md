@@ -23,6 +23,9 @@ check `src/data.js`
 
 You can check `tests/test.js` too.
 
+### REST API example
+[Rendering (with colors) basic API](https://github.com/theobori/tw-utils-api)
+
 #### Asset extractor
 
 
