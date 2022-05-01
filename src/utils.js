@@ -1,6 +1,7 @@
 const fs = require("fs")
 
-const saveInDir = (dirname, filename, canvas) => {
+const saveInDir = (dirname, filename, canvas) =>
+{
     // Create directory if it doesnt exist
     if (!fs.existsSync(dirname))
         fs.mkdirSync(dirname)
@@ -28,8 +29,25 @@ const genChunks = (src, size) =>
     return (ret)
 }
 
+const closestNumber = (n, m) =>
+{
+    const q = Math.floor(n / m)
+    const n1 = m * q
+    var n2
+
+    if ((n * m) > 0) {
+        n2 = m * (q + 1)
+    } else {
+        n2 = m * (q - 1)
+    }
+    if (Math.abs(n - n1) < Math.abs(n - n2))
+        return (n1)
+    return (n2)
+}
+
 module.exports = {
     saveInDir,
     isDigit,
-    genChunks
+    genChunks,
+    closestNumber
 }

@@ -145,3 +145,22 @@ const colorTest = async () => {
     }
 }
 ```
+
+### Asset fix
+
+```js
+const { TwAssetFix } = require("@b0th/tw-utils")
+
+const fixTest = async () =>
+{
+    const asset = new TwAssetFix("skin", "url")
+
+    try {
+        await asset.preprocess()
+        asset.fix()
+        asset.save("./fix")
+    } catch (err) {
+        console.log(err)
+    }
+}
+```

@@ -1,6 +1,7 @@
-const { TwAssetExtractor, TwAssetChanger } = require("../src/index")
+const { TwAssetExtractor, TwAssetChanger, TwAssetFix } = require("../src/index")
 
-const extractTest = async () => {
+const extractTest = async () =>
+{
     // Url or path to local file
 
     const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
@@ -19,16 +20,17 @@ const extractTest = async () => {
         //  asset.extract("hammer_cursor")
 
         // Add a hat (xmas hat by default)
-        // await asset.setHat()
+        await asset.setHat()
 
         // Save locally the image
-        asset.save("./tmp")
+        asset.save("./tmp2")
     } catch (err) {
         console.log(err)
     }
 }
 
-const ChangeTest = async () => {
+const ChangeTest = async () =>
+{
     // Url or path to local file
 
     // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
@@ -40,15 +42,16 @@ const ChangeTest = async () => {
     try {
         await asset.preprocess()
         asset.extract("hammer", "flag_red", "shield", "grenade")
-        asset.setColorAll("256, 0, 0", "rgb")
+        asset.setColorAll("255, 0, 0", "rgb")
         asset.change("hammer", "flag_red", "shield", "grenade")
-        asset.save("./tmp", "test_new.png")
+        asset.save("./tmp2", "test_new.png")
     } catch (err) {
         console.log(err) 
     }
 }
 
-const renderTest = async () => {
+const renderTest = async () =>
+{
     // Url or path to local file
 
     const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/YvpMQvhYrX8lzzbB9VS4E7ay9f5JzD6k4V7QjApg.png")
@@ -57,13 +60,14 @@ const renderTest = async () => {
         await asset.preprocess()
         // asset.render()
         asset.render()
-        asset.saveRender("./tmp")
+        asset.saveRender("./tmp2")
     } catch (err) {
         console.log(err)
     }
 }
 
-const colorTest = async () => {
+const colorTest = async () =>
+{
     // Url or path to local file
 
     const asset = new TwAssetExtractor("skin", "https://api.skins.tw//database/skins/brownbear.png")
@@ -76,15 +80,29 @@ const colorTest = async () => {
         asset.setColor("0, 0, 0", "rgb", "body_shadow")
         asset.setColor("0, 0, 0", "rgb", "foot_shadow")
         asset.setColor("0, 0, 0", "rgb", "happy_eye")
-        asset.save("./tmp")
+        asset.save("./tmp2")
         asset.render("happy_eye")
-        asset.saveRender("./tmp", "sheesh.png")
+        asset.saveRender("./tmp2", "sheesh.png")
     } catch (err) {
         console.log(err)
     }
 }
 
-//extractTest()
-//ChangeTest()
+const fixTest = async () =>
+{
+    const asset = new TwAssetFix("skin", "./tmp/cf_fox.png")
+
+    try {
+        await asset.preprocess()
+        asset.fix()
+        asset.save("fix")
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+// extractTest()
+// ChangeTest()
 // renderTest()
 // colorTest()
+// fixTest()

@@ -19,6 +19,7 @@ Because they are going to be use as filename.
 
 const SKIN = {
     "size": { "w": 256, "h": 128 },
+    "divisor": { "w": 8, "h": 4 },
     "elements": {
         "body": [0, 0, 96, 96],
         "body_shadow": [96, 0, 96, 96],
@@ -37,6 +38,7 @@ const SKIN = {
 
 const GAMESKIN = {
     "size": { "w": 1024, "h": 512 },
+    "divisor": { "w": 32, "h": 16 },
     "elements": {
         "hook": [64, 0, 128, 32],
         "hammer_cursor": [0, 0, 64, 64],
@@ -91,6 +93,7 @@ const GAMESKIN = {
 
 const EMOTICON = {
     "size": { "w": 512, "h": 512 },
+    "divisor": { "w": 4, "h": 4 },
     "elements": {
         "1": [0, 0, 128, 128],
         "2": [128, 0, 128, 128],
@@ -113,6 +116,7 @@ const EMOTICON = {
 
 const PARTICULE = {
     "size": { "w": 512, "h": 512 },
+    "divisor": { "w": 8, "h": 8 },
     "elements": {
         "1": [0, 0, 64, 64],
         "2": [64, 0, 64, 64],
