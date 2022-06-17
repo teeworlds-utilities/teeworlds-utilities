@@ -78,11 +78,11 @@ const ChangeTest = async () => {
         //asset.extractAll()
 
         // Change this elements on the dest(s)
-        asset.change("gun", "hammer", "shotgun", "gun_cursor")
+        .change("gun", "hammer", "shotgun", "gun_cursor")
 
         // Save locally the image in ./tmp
 
-        asset.save("./tmp")
+        .save("./tmp")
         // asset.save("./tmp", "optional_name.png")
     } catch (err) {
         console.log(err) 
@@ -102,11 +102,11 @@ const renderTest = async () => {
     try {
         await asset.preprocess()
         //asset.render()
-        asset.render("happy_eye")
+        .render("happy_eye")
 
         // Save locally the image in ./tmp
 
-        asset.saveRender("./tmp")
+        .saveRender("./tmp")
         // asset.saveRender("./tmp", "optional_name.png")
     } catch (err) {
         console.log(err)
@@ -128,18 +128,18 @@ const colorTest = async () => {
 
     try {
         await asset.preprocess()
-        asset.extract("body")
+        .extract("body")
 
         // Apply color to the body
-        asset.setColor("255, 0, 0", "rgb", "body")
+        .setColor("255, 0, 0", "rgb", "body")
         //asset.setColor("255, 0, 0", "hsl", "body")
         //asset.setColorAll("255, 0, 0", "rgb")
 
         // Render with a red body
-        asset.render("happy_eye")
+        .render("happy_eye")
 
         // Save locally the image in ./tmp
-        asset.saveRender("./tmp")
+        .saveRender("./tmp")
     } catch (err) {
         console.log(err)
     }

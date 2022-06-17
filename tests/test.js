@@ -11,7 +11,7 @@ const extractTest = async () => {
         await asset.preprocess()
 
         // Extract every element on the image
-        asset.extract("body", "body_shadow")
+        asset.extractAll()
 
         // Or Extract selected elements
         //  asset.extract("1", "4", "9", "14")
@@ -39,10 +39,11 @@ const ChangeTest = async () => {
 
     try {
         await asset.preprocess()
+
         asset.extract("hammer", "flag_red", "shield", "grenade")
-        asset.setColorAll("256, 0, 0", "rgb")
-        asset.change("hammer", "flag_red", "shield", "grenade")
-        asset.save("./tmp", "test_new.png")
+        .setColorAll("255, 0, 0", "rgb")
+        .change("hammer", "flag_red", "shield", "grenade")
+        .save("./tmp", "test_new.png")
     } catch (err) {
         console.log(err) 
     }
@@ -57,7 +58,7 @@ const renderTest = async () => {
         await asset.preprocess()
         // asset.render()
         asset.render()
-        asset.saveRender("./tmp")
+        .saveRender("./tmp")
     } catch (err) {
         console.log(err)
     }
@@ -71,20 +72,20 @@ const colorTest = async () => {
     try {
         await asset.preprocess()
         asset.extract("body", "foot", "happy_eye", "body_shadow", "foot_shadow")
-        asset.setColor("0, 0, 0", "rgb", "body")
-        asset.setColor("0, 0, 0", "rgb", "foot")
-        asset.setColor("0, 0, 0", "rgb", "body_shadow")
-        asset.setColor("0, 0, 0", "rgb", "foot_shadow")
-        asset.setColor("0, 0, 0", "rgb", "happy_eye")
-        asset.save("./tmp")
-        asset.render("happy_eye")
-        asset.saveRender("./tmp", "sheesh.png")
+        .setColor("0, 0, 0", "rgb", "body")
+        .setColor("0, 0, 0", "rgb", "foot")
+        .setColor("0, 0, 0", "rgb", "body_shadow")
+        .setColor("0, 0, 0", "rgb", "foot_shadow")
+        .setColor("0, 0, 0", "rgb", "happy_eye")
+        .save("./tmp")
+        .render("happy_eye")
+        .saveRender("./tmp", "sheesh.png")
     } catch (err) {
         console.log(err)
     }
 }
 
-//extractTest()
-//ChangeTest()
-// renderTest()
-// colorTest()
+extractTest()
+ChangeTest()
+renderTest()
+colorTest()

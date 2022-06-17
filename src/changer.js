@@ -52,6 +52,8 @@ class TwAssetChanger extends TwAssetBase
                 this.dests[i].ctx.drawImage(element.canvas, 0, 0, sw, sh, dx, dy, dw, dh)
             }
         }
+
+        return (this)
     }
     
     save (dirname, name)
@@ -60,6 +62,8 @@ class TwAssetChanger extends TwAssetBase
             const filename = name || dest.path.split("/").pop()
             saveInDir(dirname, filename, dest.canvas)
         }
+
+        return (this)
     }
 }
 

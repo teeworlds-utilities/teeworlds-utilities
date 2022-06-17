@@ -186,6 +186,8 @@ class TwAssetBase
             const element = this._cut(name)
             this.elements[name] = element
         }
+
+        return (this)
     }
 
     extractAll ()
@@ -194,6 +196,8 @@ class TwAssetBase
             const element = this._cut(name)
             this.elements[name] = element
         }
+
+        return (this)
     }
 
     _getColorArg(color, standard)
@@ -248,11 +252,15 @@ class TwAssetBase
                 this.elements[name].reorderBody()
             this.elements[name].setColor(color, "default")
         }
+
+        return (this)
     }
 
     setColorAll (color, standard)
     {
         this.setColor(color, standard, ...Object.keys(this.elements))
+
+        return (this)
     }
 
     render (eye="default_eye")
@@ -292,6 +300,8 @@ class TwAssetBase
         rCtx.restore()
 
         this.rCanvas = rCanvas
+
+        return (this)
     }
 
     saveRender (dirname, name)
@@ -301,6 +311,8 @@ class TwAssetBase
             return (84)
 
         saveInDir(dirname, "render_" + filename, this.rCanvas)
+
+        return (this)
     }
 
     async setHat (path = "./data/xmas_hat.png", sx = 0, sy = 0, size = 128)
@@ -336,6 +348,8 @@ class TwAssetBase
         } catch (err) {
             throw (new InvalidFile("Unable to get the image " + path))
         }
+
+        return (this)
     }
 }
 
@@ -345,7 +359,10 @@ class TwAssetExtractor extends TwAssetBase
     {
         for (const element of Object.values(this.elements))
             element.save(dirname)
+
+        return (this)
     }
+
 }
 
 module.exports = {
