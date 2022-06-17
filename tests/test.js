@@ -1,6 +1,7 @@
-const { TwAssetExtractor, TwAssetChanger } = require("../src/index")
+const { TwAssetExtractor, TwAssetChanger, TwAssetFix } = require("../src/index")
 
-const extractTest = async () => {
+const extractTest = async () =>
+{
     // Url or path to local file
 
     const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png")
@@ -19,16 +20,17 @@ const extractTest = async () => {
         //  asset.extract("hammer_cursor")
 
         // Add a hat (xmas hat by default)
-        // await asset.setHat()
+        await asset.setHat()
 
         // Save locally the image
-        asset.save("./tmp")
+        asset.save("./tmp2")
     } catch (err) {
         console.log(err)
     }
 }
 
-const ChangeTest = async () => {
+const ChangeTest = async () =>
+{
     // Url or path to local file
 
     // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
@@ -49,7 +51,8 @@ const ChangeTest = async () => {
     }
 }
 
-const renderTest = async () => {
+const renderTest = async () =>
+{
     // Url or path to local file
 
     const asset = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/YvpMQvhYrX8lzzbB9VS4E7ay9f5JzD6k4V7QjApg.png")
@@ -64,7 +67,8 @@ const renderTest = async () => {
     }
 }
 
-const colorTest = async () => {
+const colorTest = async () =>
+{
     // Url or path to local file
 
     const asset = new TwAssetExtractor("skin", "https://api.skins.tw//database/skins/brownbear.png")

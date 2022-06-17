@@ -6,7 +6,7 @@ class TwAssetChanger extends TwAssetBase
 {
     constructor (type, src, ...dests)
     {
-        super (type, src)
+        super(type, src)
         this.dests = dests
     }
 

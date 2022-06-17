@@ -120,7 +120,7 @@ class TwAssetBase
         await this.preprocess()
     }
 
-    async preprocess ()
+    async preprocess (validRatio = true)
     {
         // Check the asset type
         if (Object.keys(data).includes(this.type) == false)
@@ -135,7 +135,7 @@ class TwAssetBase
         }
         
         // Check the image size
-        if (this._isRatioLegal() == false)
+        if (this._isRatioLegal() == false && validRatio)
             throw (new InvalidFile("Wrong image ratio " + this.path))
         
         // If everything is OK, it creates the canvas and the context
@@ -147,9 +147,12 @@ class TwAssetBase
 
     _isRatioLegal ()
     {
-        const ratio = this.data.size.w / this.data.size.h
+        var ret = true
+        
+        ret &= this.img.width % this.data.divisor.w == 0
+        ret &= this.img.height % this.data.divisor.h == 0
 
-        return (this.img.width / this.img.height == ratio)
+        return (ret)
     }
 
     _getMultiplier ()
