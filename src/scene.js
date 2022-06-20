@@ -210,7 +210,7 @@ class TwSceneMaker
         return (canvas)
     }
 
-    async getFromCache(block)
+    async _getFromCache(block)
     {
         var canvas
         const canvasCache = this.cache.getCanvas(
@@ -229,12 +229,12 @@ class TwSceneMaker
         return (canvas)
     }
 
-    async drawBlocks ()
+    async _drawBlocks ()
     {
         var canvas, params
 
         for (const block of this.blocks.array) {
-            canvas = await this.getFromCache(block)
+            canvas = await this._getFromCache(block)
             params = block.drawImageParameters()
 
             this.ctx.drawImage(canvas, ...params)
@@ -245,6 +245,8 @@ class TwSceneMaker
     saveScene (dirname, filename)
     {
         saveInDir(dirname, filename, this.canvas)
+
+        return (this)
     }
 
     async addTee (path, dx, dy, dw, dh, eye)
@@ -277,13 +279,15 @@ class TwSceneMaker
             object = this.resolveCallback[funcName]
 
             if (object[funcName].constructor.name === "AsyncFunction") {
-                await this.drawBlocks()
+                await this._drawBlocks()
                 await object[funcName](...args)
             } else {
                 object[funcName](...args)
             }
         }
-        await this.drawBlocks()
+        await this._drawBlocks()
+
+        return (this)
     }
 
     async renderFromFile (filepath)
@@ -292,6 +296,8 @@ class TwSceneMaker
         const scheme = JSON.parse(raw)
 
         await this.renderFromScheme(scheme)
+
+        return (this)
     }
 
     pasteCanvas (canvas, dx, dy, dw, dh)
@@ -301,6 +307,8 @@ class TwSceneMaker
             0, 0, canvas.width, canvas.height,
             dx, dy, dw, dh
         )
+
+        return (this)
     }
 }
 

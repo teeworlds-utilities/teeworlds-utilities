@@ -19,15 +19,12 @@ Asset categories are :
 - emoticon
 - particule
 
-check `src/data.js`
-
-You can check `tests/test.js` too.
+You can check `src/data.js` for informations and `tests/test.js` too for more examples.
 
 ### REST API example
 [Rendering (with colors) basic API](https://github.com/theobori/tw-utils-api)
 
 #### Asset extractor
-
 
 ```js
 const { TwAssetExtractor } = require("@b0th/tw-utils")
@@ -74,7 +71,8 @@ const ChangeTest = async () => {
     try {
         await asset.preprocess()
         // Extract the needed elements
-        asset.extract("gun", "hammer", "shotgun", "gun_cursor")
+        asset
+        .extract("gun", "hammer", "shotgun", "gun_cursor")
         //asset.extractAll()
 
         // Change this elements on the dest(s)
@@ -157,8 +155,63 @@ const fixTest = async () =>
 
     try {
         await asset.preprocess()
-        asset.fix()
-        asset.save("./fix")
+    
+        asset
+        .fix()
+        .save("./fix")
+    } catch (err) {
+        console.log(err)
+    }
+}
+```
+
+### Scenes system, basic example
+
+```js
+const { TwAssetExtractor, TwSceneMaker } = require("@b0th/tw-utils")
+
+const fixTest = async () =>
+{
+    const scene = new TwSceneMaker()
+
+    try {
+        // Rendering the scene
+        await scene.renderFromFile("scheme path")
+        scene.saveScene(".", "example.png")
+    } catch (err) {
+        console.log(err)
+    }
+}
+```
+
+### Scenes system, fancy example
+
+```js
+const { TwAssetExtractor, TwSceneMaker } = require("@b0th/tw-utils")
+
+const fixTest = async () =>
+{
+    const scene = new TwSceneMaker()
+    const tee = new TwAssetExtractor("skin", "url")
+
+    try {
+        await tee.preprocess()
+
+        tee
+        .extract("body", "foot")
+        .setColor("0, 0, 0", "rgb", "body")
+        .setColor("0, 0, 0", "rgb", "foot")
+        .render("angry_eye")
+
+        const renderCanvas = tee.rCanvas
+
+        // Rendering the scene
+        await scene.renderFromFile("scheme path")
+        
+        // Pasting the colored tee
+        scene
+        .pasteCanvas(tee.rCanvas, 200, 138, 225, 225)
+        .saveScene(".", "example.png")
     } catch (err) {
         console.log(err)
     }

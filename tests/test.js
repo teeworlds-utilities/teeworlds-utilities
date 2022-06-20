@@ -43,7 +43,8 @@ const ChangeTest = async () =>
     try {
         await asset.preprocess()
 
-        asset.extract("hammer", "flag_red", "shield", "grenade")
+        asset
+        .extract("hammer", "flag_red", "shield", "grenade")
         .setColorAll("255, 0, 0", "rgb")
         .change("hammer", "flag_red", "shield", "grenade")
         .save("./tmp", "test_new.png")
@@ -61,7 +62,8 @@ const renderTest = async () =>
     try {
         await asset.preprocess()
         // asset.render()
-        asset.render()
+        asset
+        .render()
         .saveRender("./tmp")
     } catch (err) {
         console.log(err)
@@ -97,7 +99,8 @@ const sceneTest = async () =>
 
     try {
         await tee.preprocess()
-        tee.extract("body", "foot")
+        tee
+        .extract("body", "foot")
         .setColor("0, 0, 0", "rgb", "body")
         .setColor("0, 0, 0", "rgb", "foot")
         .render("angry_eye")
@@ -113,8 +116,9 @@ const sceneTest = async () =>
         await scene.renderFromFile("./data/scenes/schemes/example.json")
         
         // Pasting assembled tee
-        // scene.pasteCanvas(renderCanvas, 200, 138, 225, 225)
-        scene.saveScene(".", "supertest.png")
+        scene
+        // .pasteCanvas(renderCanvas, 200, 138, 225, 225)
+        .saveScene(".", "example.png")
     } catch (err) {
         console.log(err)
     }

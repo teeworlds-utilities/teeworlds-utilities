@@ -1,5 +1,6 @@
 module.exports = {
     ...require("./asset"),
     ...require("./changer"),
-    ...require("./fix")
+    ...require("./fix"),
+    ...require("./scene")
 }
