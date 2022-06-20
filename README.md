@@ -144,7 +144,7 @@ const colorTest = async () => {
 }
 ```
 
-### Asset fix
+#### Asset fix
 
 ```js
 const { TwAssetFix } = require("@b0th/tw-utils")
@@ -165,7 +165,7 @@ const fixTest = async () =>
 }
 ```
 
-### Scenes system, basic example
+#### Scenes system, basic example
 
 ```js
 const { TwAssetExtractor, TwSceneMaker } = require("@b0th/tw-utils")
@@ -184,7 +184,7 @@ const fixTest = async () =>
 }
 ```
 
-### Scenes system, fancy example
+#### Scenes system, fancy example
 
 ```js
 const { TwAssetExtractor, TwSceneMaker } = require("@b0th/tw-utils")
