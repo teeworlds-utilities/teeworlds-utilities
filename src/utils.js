@@ -17,6 +17,7 @@ const isDigit = (str) =>
         if ("1234567890".includes(char) == false)
             return (false)
     }
+
     return (true)
 }
 
@@ -40,14 +41,27 @@ const closestNumber = (n, m) =>
     } else {
         n2 = m * (q - 1)
     }
+
     if (Math.abs(n - n1) < Math.abs(n - n2))
         return (n1)
+
     return (n2)
+}
+
+const listFile = (path) =>
+{
+    var ret = fs.readdirSync(path, function (err) {
+        if (err)
+            throw err
+    })
+
+    return (ret)
 }
 
 module.exports = {
     saveInDir,
     isDigit,
     genChunks,
-    closestNumber
+    closestNumber,
+    listFile
 }

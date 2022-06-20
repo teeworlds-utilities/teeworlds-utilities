@@ -266,11 +266,12 @@ class TwAssetBase
         return (this)
     }
 
-    render (eye="default_eye")
+    render (eye)
     {
         if (this.type != "SKIN")
             throw (new InvalidAsset("You can't render the asset " + this.type))
 
+        eye = eye || "default_eye"
         this.extract("body", "body_shadow", "foot", "foot_shadow", eye)
             
         var c
@@ -311,7 +312,7 @@ class TwAssetBase
     {
         const filename = name || this.path.split("/").pop()
         if (!this.rCanvas)
-            return (84)
+            return (undefined)
 
         saveInDir(dirname, "render_" + filename, this.rCanvas)
 

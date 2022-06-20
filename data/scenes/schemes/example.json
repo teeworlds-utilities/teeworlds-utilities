@@ -1,0 +1,37 @@
+{
+    "actions": [
+        {
+            "callback": "setRandomBackground",
+            "args": []
+        },
+        {
+            "callback": "addLine",
+            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 0, 320, 576, 320, 64, 64]
+        },
+        {
+            "callback": "addBlock",
+            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 192, 0, 128, 128, 0, 256, 128, 128]
+            
+        },
+        {
+            "callback": "addBlock",
+            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 192, 0, 128, 128, 512, 256, 128, 128]
+        },
+        {
+            "callback": "addLine",
+            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 0, 0, 0, 200, 64, 64]
+        },
+        {
+            "callback": "addLine",
+            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 576, 0, 576, 200, 64, 64]
+        },
+        {
+            "callback": "addLine",
+            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 0, 0, 576, 0, 64, 64]
+        },
+        {
+            "callback": "addTee",
+            "args": ["./data/skins/ronny.4K.png", 200, 142, 225, 225]
+        }
+    ]
+}

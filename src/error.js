@@ -26,9 +26,17 @@ class InvalidColor extends Error {
     }
 }
 
+class InvalidScene extends Error {
+    constructor (msg) {
+        super(msg)
+        this.name = "InvalidScene"
+    }
+}
+
 module.exports = {
     InvalidFile,
     InvalidAsset,
     InvalidElement,
-    InvalidColor
+    InvalidColor,
+    InvalidScene
 }
