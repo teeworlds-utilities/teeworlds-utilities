@@ -165,53 +165,19 @@ const fixTest = async () =>
 }
 ```
 
-#### Scenes system, basic example
+#### Scenes system
 
 ```js
 const { TwAssetExtractor, TwSceneMaker } = require("@b0th/tw-utils")
 
-const fixTest = async () =>
+const sceneTest = async () =>
 {
-    const scene = new TwSceneMaker()
+    const scene = new TwSceneMaker("path_to_scene_JSON")
 
     try {
-        // Rendering the scene
-        await scene.renderFromFile("scheme path")
+        scene.preprocess()
+        await scene.renderScene()
         scene.saveScene(".", "example.png")
-    } catch (err) {
-        console.log(err)
-    }
-}
-```
-
-#### Scenes system, fancy example
-
-```js
-const { TwAssetExtractor, TwSceneMaker } = require("@b0th/tw-utils")
-
-const fixTest = async () =>
-{
-    const scene = new TwSceneMaker()
-    const tee = new TwAssetExtractor("skin", "url")
-
-    try {
-        await tee.preprocess()
-
-        tee
-        .extract("body", "foot")
-        .setColor("0, 0, 0", "rgb", "body")
-        .setColor("0, 0, 0", "rgb", "foot")
-        .render("angry_eye")
-
-        const renderCanvas = tee.rCanvas
-
-        // Rendering the scene
-        await scene.renderFromFile("scheme path")
-        
-        // Pasting the colored tee
-        scene
-        .pasteCanvas(tee.rCanvas, 200, 138, 225, 225)
-        .saveScene(".", "example.png")
     } catch (err) {
         console.log(err)
     }

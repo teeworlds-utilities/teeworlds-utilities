@@ -1,4 +1,6 @@
 const fs = require("fs")
+const { createCanvas, loadImage } = require("canvas")
+const { InvalidFile } = require("./error")
 
 const saveInDir = (dirname, filename, canvas) =>
 {
@@ -58,10 +60,43 @@ const listFile = (path) =>
     return (ret)
 }
 
+const getCanvasFromFile = async (path) =>
+{
+    var img, canvas, ctx
+
+    // Load image
+    try {
+        img = await loadImage(path)
+    } catch (err) {
+        throw (new InvalidFile("Unable to get the image " + path))
+    }
+    
+    // If everything is OK, it creates the canvas and the context
+    canvas = createCanvas(img.width, img.height)
+    ctx = canvas.getContext("2d")
+    ctx.drawImage(img, 0, 0)
+    return (canvas)
+}
+
+const argsChecker = (args, ...neededArgs) =>
+{
+    if (!args)
+        return (false)
+
+    for (const arg of args) {
+        if (neededArgs.includes(arg) == false) {
+            return (false)
+        }
+    }
+    return (true)
+}
+
 module.exports = {
     saveInDir,
     isDigit,
     genChunks,
     closestNumber,
-    listFile
+    listFile,
+    getCanvasFromFile,
+    argsChecker
 }

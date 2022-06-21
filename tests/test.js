@@ -94,31 +94,12 @@ const colorTest = async () =>
 
 const sceneTest = async () =>
 {
-    const scene = new TwSceneMaker()
-    const tee = new TwAssetExtractor("skin", "https://api.skins.tw/database/skins/YvpMQvhYrX8lzzbB9VS4E7ay9f5JzD6k4V7QjApg.png")
+    const scene = new TwSceneMaker("./data/scenes/schemes/example.json")
 
     try {
-        await tee.preprocess()
-        tee
-        .extract("body", "foot")
-        .setColor("0, 0, 0", "rgb", "body")
-        .setColor("0, 0, 0", "rgb", "foot")
-        .render("angry_eye")
-    } catch (err) {
-        console.log(err)
-        return
-    }
-
-    const renderCanvas = tee.rCanvas
-
-    try {
-        // Rendering the scene
-        await scene.renderFromFile("./data/scenes/schemes/example.json")
-        
-        // Pasting assembled tee
-        scene
-        // .pasteCanvas(renderCanvas, 200, 138, 225, 225)
-        .saveScene(".", "example.png")
+        scene.preprocess()
+        await scene.renderScene()
+        scene.saveScene(".", "example.png")
     } catch (err) {
         console.log(err)
     }

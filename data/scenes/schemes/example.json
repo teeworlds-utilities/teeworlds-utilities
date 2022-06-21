@@ -1,37 +1,95 @@
 {
+    "size": {
+        "w": 640,
+        "h": 384
+    },
     "actions": [
         {
-            "callback": "setRandomBackground",
-            "args": []
+            "name": "setRandomBackground",
+            "args": {}
         },
         {
-            "callback": "addLine",
-            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 0, 320, 576, 320, 64, 64]
+            "name": "addBlock",
+            "args": {
+                "mapres": "./data/mapres/example.png",
+                "source": [192, 0, 128, 128],
+                "destination": [0, 256, 128, 128]
+            }
         },
         {
-            "callback": "addBlock",
-            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 192, 0, 128, 128, 0, 256, 128, 128]
-            
+            "name": "addBlock",
+            "args": {
+                "mapres": "./data/mapres/example_game.png",
+                "source": [384, 64, 64, 64],
+                "destination": [64, 64, 64, 64]
+            }
         },
         {
-            "callback": "addBlock",
-            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 192, 0, 128, 128, 512, 256, 128, 128]
+            "name": "addBlock",
+            "args": {
+                "mapres": "./data/mapres/example_game.png",
+                "source": [384, 64, 64, 64],
+                "destination": [64, 192, 64, 64]
+            }
         },
         {
-            "callback": "addLine",
-            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 0, 0, 0, 200, 64, 64]
+            "name": "addBlock",
+            "args": {
+                "mapres": "./data/mapres/example_game.png",
+                "source": [384, 64, 64, 64],
+                "destination": [512, 64, 64, 64]
+            }
         },
         {
-            "callback": "addLine",
-            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 576, 0, 576, 200, 64, 64]
+            "name": "addBlock",
+            "args": {
+                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "source": [192, 0, 128, 128],
+                "destination": [512, 256, 128, 128]
+            }
         },
         {
-            "callback": "addLine",
-            "args": ["https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png", 64, 0, 0, 0, 576, 0, 64, 64]
+            "name": "addLine",
+            "args": {
+                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "source": [64, 0, 64, 64],
+                "point_source": [0, 0],
+                "point_destination": [0, 200]
+            }
         },
         {
-            "callback": "addTee",
-            "args": ["./data/skins/ronny.4K.png", 200, 142, 225, 225]
+            "name": "addLine",
+            "args": {
+                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "source": [64, 0, 64, 64],
+                "point_source": [64, 0],
+                "point_destination": [576, 0]
+            }
+        },
+        {
+            "name": "addLine",
+            "args": {
+                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "source": [64, 0, 64, 64],
+                "point_source": [576, 0],
+                "point_destination": [576, 200]
+            }
+        },
+        {
+            "name": "addLine",
+            "args": {
+                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "source": [64, 0, 64, 64],
+                "point_source": [128, 320],
+                "point_destination": [448, 320]
+            }
+        },
+        {
+            "name": "addTee",
+            "args": {
+                "skin": "./data/skins/ronny.4K.png",
+                "destination": [200, 142, 225, 225]
+            }
         }
     ]
 }

@@ -1,6 +1,6 @@
 const { TwAssetExtractor } = require("./asset")
 const { InvalidFile, InvalidScene } = require("./error")
-const { saveInDir, listFile } = require("./utils")
+const { saveInDir, listFile, getCanvasFromFile, argsChecker } = require("./utils")
 
 const { createCanvas, loadImage } = require("canvas")
 const fs = require("fs");
@@ -8,9 +8,6 @@ const fs = require("fs");
 const SCHEME_FIELDS = {
     "blocks": "actions",
 }
-
-const DEFAULT_W = 640
-const DEFAULT_H = 384
 
 class CanvasCache
 {
@@ -21,111 +18,271 @@ class CanvasCache
 
     addCanvas (key, canvas)
     {
-        if (this.getCanvas(key, canvas.width, canvas.heigth))
+        if (this.getCanvas(key))
             return
 
-        this.cache[key] = {
-            canvas: canvas,
-            ctx: canvas.getContext("2d")
-        }
+        this.cache[key] = canvas
     }
 
-    getCanvas (key, w, h)
+    getCanvas (key)
     {
         if (Object.keys(this.cache).includes(key) == false)
             return (null)
         
         const canvas = this.cache[key]
-
-        if (canvas.canvas.width != w && canvas.canvas.heigth !=h)
-            return (null)
         
         return (canvas)
     }
 }
 
-class TwSceneBlock
+class Entity
 {
-    constructor (
-        path,
-        sx, sy, sw, sh,
-        dx, dy, dw, dh
-    )
+    constructor (imgData)
     {
-        this.path = path
-
-        this.setSource(sx, sy, sw, sh)
-        this.setDest(dx, dy, dw, dh)
-    }
-
-    setSource (x, y, w ,h)
-    {
-        this.sx = x
-        this.sy = y
-        this.sw = w
-        this.sh = h
-    }
-
-    setDest (x, y, w ,h)
-    {
-        this.dx = x
-        this.dy = y
-        this.dw = w
-        this.dh = h
-    }
-
-    drawImageParameters ()
-    {
-        var properties = Object.getOwnPropertyNames(this)
+        this.imgData = imgData
+        this.canvas = createCanvas(imgData.width, imgData.height)
+        this.ctx = this.canvas.getContext("2d")
         
-        properties = properties.filter(prop => prop != "path")
-        properties = properties.map(prop => this[prop])
+        this.fillCanvas()
+    }
 
-        return (properties)
+    fillCanvas ()
+    {
+        this.ctx.putImageData(this.imgData, 0, 0)
     }
 }
 
-class TwSceneBlocks
+class Part extends Entity
+{
+    constructor (imgData, destination)
+    {
+        super(imgData)
+        this.destination = destination
+    }
+}
+
+class Scheme
+{
+    static DEFAULT_KEYS = ["size", "actions"]
+
+    constructor (path)
+    {
+        this.path = path
+        this.data = undefined
+    }
+
+    _checkScheme ()
+    {
+        const args = Object.keys(this.data)
+
+        if (argsChecker(args, ...Scheme.DEFAULT_KEYS) == false)
+            throw (new InvalidScene("Missing arguments for the scheme"))
+    }
+
+    preprocess (scheme = null)
+    {
+        if (this.path) {
+            this.dataFromFile(this.path)
+        } else if (scheme) {
+            this.data = scheme
+        } else {
+            throw (new InvalidScene("Missing scheme"))
+        }
+
+        this._checkScheme()
+    }
+
+    dataFromFile (filepath)
+    {
+        const raw = fs.readFileSync(filepath)
+        const scheme = JSON.parse(raw)
+
+        this.data = scheme
+
+        return (this)
+    }
+}
+
+class Action
+{
+    constructor (object, func, ...needArgs)
+    {
+        this.object = object
+        this.func = func
+        this.needArgs = needArgs
+    }
+
+    async call (args)
+    {
+        const argsNames = Object.keys(args)
+        var argsGoodOrder = []
+
+        if (argsChecker(argsNames, ...this.needArgs) == false)
+            throw (new InvalidScene())
+        
+        for (const arg of this.needArgs) {
+            argsGoodOrder.push(args[arg])
+        }
+        
+        await this.object[this.func](...argsGoodOrder)
+    }
+}
+
+class Actions
 {
     constructor ()
     {
-        this.array = []
+        this.actions = {}
     }
 
-    addBlock (
-        mapresPath,
-        sx, sy, sw, sh,
-        dx, dy, dw, dh
-    )
+    add (name, object, func, ...needArgs)
     {
-        const block = new TwSceneBlock(
-            mapresPath,
-            sx, sy, sw, sh,
-            dx, dy, dw, dh
+        const action = new Action(object, func, ...needArgs)
+        this.actions[name] = action
+    }
+
+    get (name)
+    {
+        if (Object.keys(this.actions).includes(name) == false)
+            return (null)
+        
+        return (this.actions[name])
+    }
+
+    async tryCall (name, args)
+    {
+        var action = this.get(name)
+
+        if (action == null)
+            return
+
+        await action.call(args)
+    }
+}
+
+class TwSceneMaker
+{
+    constructor (path)
+    {
+        this.canvas = undefined
+        this.ctx = undefined
+        
+        this.cache = new CanvasCache()
+        this.scheme = new Scheme(path)
+        this.actions = new Actions()
+        this.parts = []
+    }
+
+    preprocess ()
+    {
+        // Get the scheme
+        this.scheme.preprocess()
+
+        // Add Action(s) in this.actions
+        this.actions.add(
+            "addLine",
+            this, "addLine",
+            "mapres", "source", "point_source", "point_destination"
         )
 
-        this.array.push(block)
+        this.actions.add(
+            "addBlock",
+            this, "addBlock",
+            "mapres", "source", "destination"
+        )
+
+        this.actions.add(
+            "setRandomBackground",
+            this, "setRandomBackground"
+        )
+
+        this.actions.add(
+            "addTee",
+            this, "addTee",
+            "skin", "destination"
+        )
+        
+        this.actions.add(
+            "setBackground",
+            this, "setBackground",
+            "image", "size"
+        )
+
+        // Init the scene canvas (with context)
+        this.initCanvas()
+
+        return (this)
     }
 
-    reset ()
+    initCanvas ()
     {
-        this.array = []
+        const w = this.scheme.data["size"]["w"]
+        const h = this.scheme.data["size"]["h"]
+
+        this.canvas = createCanvas(w, h)
+        this.ctx = this.canvas.getContext("2d")
     }
 
-    // block is just a model that will be duplicate
-    addLine (path, ssx, ssy, sx, sy, dx, dy, w, h)
+    saveScene (dirname, filename)
     {
+        saveInDir(dirname, filename, this.canvas)
+
+        return (this)
+    }
+
+    async execScheme ()
+    {
+        const actions = this.scheme.data["actions"]
+
+        for (const action of actions)
+        {
+            if (argsChecker(Object.keys(action), "name", "args") == false)
+                continue
+
+            await this.actions.tryCall(
+                action["name"],
+                action["args"]
+            )
+        }
+
+        return (this)
+    }
+
+    async renderScene ()
+    {
+        await this.execScheme()
+
+        for (const part of this.parts) {
+            this.ctx.drawImage(
+                part.canvas,
+                0, 0, part.canvas.width, part.canvas.height,
+                ...part.destination
+            )
+        }
+    }
+
+    async addLine (mapres, source, point_source, point_destination)
+    {
+        var [sx, sy] = point_source
+        var [dx, dy] = point_destination
+        var [w, h] = source.slice(2, 4)
+        var destination
+
         if (sx == dx && sy == dy)
             throw (new InvalidScene("Wrong usage"))
 
         if (sx > dx && sy > dy)
-            this.addLine(path, dx, dy, sx, sy, w, h)
+            this.addLine(
+                mapres, source,
+                point_destination, point_source
+            )
 
         while (sx <= dx && sy <= dy) {
-            this.addBlock(
-                path,
-                ssx, ssy, w, h,
-                sx, sy, w, h
+            destination = [sx, sy, w, h]
+            await this.addBlock(
+                mapres,
+                source,
+                destination
             )
 
             if (sx == dx && sy == dy)
@@ -137,178 +294,85 @@ class TwSceneBlocks
         }
     }
 
-    setRandomBackground(sceneW = DEFAULT_W, sceneH = DEFAULT_H)
+    async addBlock (mapres, source, destination)
+    {
+        const canvas = await this.getCanvasFromCache(mapres)
+        const ctx = canvas.getContext("2d")
+        const imgData = ctx.getImageData(...source)
+
+        const part = new Part(imgData, destination)
+
+        this.parts.push(part)
+    }
+
+    async setRandomBackground ()
     {
         const path = "./data/scenes/backgrounds/"
         const backgrounds = listFile(path)
         const index = Math.floor(Math.random() * (backgrounds.length - 1))
         const background = path + backgrounds[index]
 
-
-        this.addBlock(
-            background,
-            0, 0, 800, 256,
-            0, 0, sceneW, sceneH
+        await this.setBackground(
+            background, 
+            [
+                this.scheme.data["size"]["w"],
+                this.scheme.data["size"]["h"]
+            ]
         )
     }
 
-    setBackground (path, w, h, sceneW = DEFAULT_W, sceneH = DEFAULT_H)
+    async addTee (skin, destination)
     {
-        this.addBlock(
-            path,
-            0, 0, w, h,
-            0, 0, sceneW, sceneH
-        )
-    }
-}
-
-class TwSceneMaker
-{
-    constructor (w = DEFAULT_W, h = DEFAULT_H)
-    {
-        this.canvas = createCanvas(w, h)
-        this.ctx = this.canvas.getContext("2d")
-
-        this.blocks = new TwSceneBlocks()
-        this.cache = new CanvasCache()
-
-        this.resolveCallback = {
-            "setRandomBackground": this.blocks,
-            "setBackground": this.blocks,
-            "addBlock": this.blocks,
-            "addLine": this.blocks,
-            "addTee": this
-        }
-    }
-
-    _isValidMapres (img)
-    {
-        var ret = true
-        
-        ret &= img.width == 1024
-        ret &= img.height == 1024
-
-        return (ret)
-    }
-
-    async _getCanvasFromMapres (path)
-    {
-        var img, canvas, ctx
-
-        // Load image
-        try {
-            img = await loadImage(path)
-        } catch (err) {
-            throw (new InvalidFile("Unable to get the image " + path))
-        }
-        
-        // If everything is OK, it creates the canvas and the context
-        canvas = createCanvas(img.width, img.height)
-        ctx = canvas.getContext("2d")
-        ctx.drawImage(img, 0, 0)
-
-        return (canvas)
-    }
-
-    async _getFromCache(block)
-    {
-        var canvas
-        const canvasCache = this.cache.getCanvas(
-            block.path,
-            block.w,
-            block.h
-        )
-
-        if (canvasCache != null) {
-            canvas = canvasCache.canvas
-        } else {
-            canvas = await this._getCanvasFromMapres(block.path)
-            this.cache.addCanvas(block.path, canvas)
-        }
-
-        return (canvas)
-    }
-
-    async _drawBlocks ()
-    {
-        var canvas, params
-
-        for (const block of this.blocks.array) {
-            canvas = await this._getFromCache(block)
-            params = block.drawImageParameters()
-
-            this.ctx.drawImage(canvas, ...params)
-        }
-        this.blocks.reset()
-    }
-
-    saveScene (dirname, filename)
-    {
-        saveInDir(dirname, filename, this.canvas)
-
-        return (this)
-    }
-
-    async addTee (path, dx, dy, dw, dh, eye)
-    {
-        const tee = new TwAssetExtractor("skin", path)
+        const tee = new TwAssetExtractor("skin", skin)
 
         try {
             await tee.preprocess()
-            tee.render(eye)
+            tee.render()
         } catch (err) {
             console.log(err)
             return
         }
 
-        this.pasteCanvas(tee.rCanvas, dx, dy, dw, dh)
-    }
+        const ctx = tee.rCanvas.getContext("2d")
 
-    // Scheme example in "./data/scenes/basic_grass.json"
-    async renderFromScheme (scheme)
-    {
-        // Adding blocks
-        var funcName, args, object
-        for (const action of scheme[SCHEME_FIELDS["blocks"]]) {
-            funcName = action["callback"]
-            args = action["args"]
-
-            if (Object.keys(this.resolveCallback).includes(funcName) == false)
-                continue
-            
-            object = this.resolveCallback[funcName]
-
-            if (object[funcName].constructor.name === "AsyncFunction") {
-                await this._drawBlocks()
-                await object[funcName](...args)
-            } else {
-                object[funcName](...args)
-            }
-        }
-        await this._drawBlocks()
-
-        return (this)
-    }
-
-    async renderFromFile (filepath)
-    {
-        const raw = fs.readFileSync(filepath)
-        const scheme = JSON.parse(raw)
-
-        await this.renderFromScheme(scheme)
-
-        return (this)
-    }
-
-    pasteCanvas (canvas, dx, dy, dw, dh)
-    {
-        this.ctx.drawImage(
-            canvas,
-            0, 0, canvas.width, canvas.height,
-            dx, dy, dw, dh
+        const imgData = ctx.getImageData(
+            0, 0,
+            tee.rCanvas.width, tee.rCanvas.height
         )
+        const part = new Part(imgData, destination)
+        this.parts.push(part)
+    }
 
-        return (this)
+    async setBackground (image, size)
+    {
+        const canvas = await this.getCanvasFromCache(image)
+        const ctx = canvas.getContext("2d")
+
+        const imgData = ctx.getImageData(
+            0, 0,
+            canvas.width, canvas.height
+        )
+        const part = new Part(imgData, [
+            0, 0,
+            ...size
+        ])
+
+        this.parts.push(part)
+    }
+
+    async getCanvasFromCache(path)
+    {
+        var canvas
+        const canvasCache = this.cache.getCanvas(path)
+
+        if (canvasCache != null) {
+            canvas = canvasCache
+        } else {
+            canvas = await getCanvasFromFile(path)
+            this.cache.addCanvas(path, canvas)
+        }
+
+        return (canvas)
     }
 }
 
