@@ -8,9 +8,9 @@
         "fs": "0.0.1-security",
         "npx": "^10.2.2"
     },
-    "main": "./src/index.js",
+    "main": "./lib/index.js",
     "scripts": {
-        "test": "npx eslint ./src/*.js && node ./tests/test.js"
+        "test": "npx eslint ./lib/*.js && node ./tests/test.js"
     },
     "keywords": [
         "teeworlds",

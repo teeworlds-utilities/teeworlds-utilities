@@ -43,6 +43,14 @@
         {
             "name": "addBlock",
             "args": {
+                "mapres": "./data/mapres/example_game.png",
+                "source": [384, 64, 64, 64],
+                "destination": [512, 192, 64, 64]
+            }
+        },
+        {
+            "name": "addBlock",
+            "args": {
                 "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
                 "source": [192, 0, 128, 128],
                 "destination": [512, 256, 128, 128]

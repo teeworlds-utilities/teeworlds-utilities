@@ -19,7 +19,7 @@ Asset categories are :
 - emoticon
 - particule
 
-You can check `src/data.js` for informations and `tests/test.js` too for more examples.
+You can check `lib/data.js` for informations and `tests/test.js` too for more examples.
 
 ### REST API example
 [Rendering (with colors) basic API](https://github.com/theobori/tw-utils-api)
@@ -168,7 +168,7 @@ const fixTest = async () =>
 #### Scenes system
 
 ```js
-const { TwAssetExtractor, TwSceneMaker } = require("@b0th/tw-utils")
+const { TwSceneMaker } = require("@b0th/tw-utils")
 
 const sceneTest = async () =>
 {
@@ -176,6 +176,7 @@ const sceneTest = async () =>
 
     try {
         scene.preprocess()
+        // scene.preprocess(custom_scheme)
         await scene.renderScene()
         scene.saveScene(".", "example.png")
     } catch (err) {
@@ -183,3 +184,7 @@ const sceneTest = async () =>
     }
 }
 ```
+
+#### Cards
+
+TODO

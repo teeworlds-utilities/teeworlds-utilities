@@ -1,5 +1,5 @@
-const { TwAssetExtractor, TwAssetChanger, TwAssetFix } = require("../src/index")
-const { TwSceneMaker } = require("../src/scene")
+const { TwAssetExtractor, TwAssetChanger, TwAssetFix } = require("../lib/index")
+const { TwSceneMaker } = require("../lib/scene")
 
 const extractTest = async () =>
 {
