@@ -92,16 +92,23 @@ const colorTest = async () =>
     }
 }
 
-const sceneTest = async () =>
+const sceneTest = async (name) =>
 {
-    const scene = new TwSceneMaker("./data/scenes/schemes/example.json")
+    const scene = new TwSceneMaker("./data/scenes/schemes/" + name + ".json")
 
     try {
         scene.preprocess()
         await scene.renderScene()
-        scene.saveScene(".", "example.png")
+        scene.saveScene("./scenes", name + ".png")
     } catch (err) {
         console.log(err)
+    }
+}
+
+const defaultScenes = async (...scenes) =>
+{
+    for (const scene of scenes) {
+        await sceneTest(scene)
     }
 }
 
@@ -109,4 +116,12 @@ const sceneTest = async () =>
 // ChangeTest()
 // renderTest()
 // colorTest()
-sceneTest()
+
+// defaultScenes(
+//     "example",
+//     "generic",
+//     "generic_armor",
+//     "grass",
+//     "grass_house"
+// )
+    

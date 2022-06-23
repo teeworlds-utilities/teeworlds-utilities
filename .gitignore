@@ -135,6 +135,9 @@ dist
 # Folder with test image
 tmp/
 
+#Scenes tests
+scenes/
+
 # Just a todo file
 todo
 
