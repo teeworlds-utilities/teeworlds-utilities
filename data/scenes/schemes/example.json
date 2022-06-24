@@ -6,7 +6,9 @@
     "actions": [
         {
             "name": "setRandomBackground",
-            "args": {}
+            "args": {
+                "folder": ""
+            }
         },
         {
             "name": "addBlock",
