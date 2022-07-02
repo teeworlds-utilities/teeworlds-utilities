@@ -1,0 +1,48 @@
+{
+    "size": {
+        "w": 640,
+        "h": 384
+    },
+    "actions": [
+        {
+            "name": "setBackground",
+            "args": {
+                "image": "./data/scenes/backgrounds/stronghold.png"
+            }
+        },
+        {
+            "name": "addLine",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [0, 64, 64, 64],
+                "point_source": [0, 320],
+                "point_destination": [640, 320]
+            }
+        },
+        {
+            "name": "addBlock",
+            "args": {
+                "mapres": "data/mapres/grass_doodads.png",
+                "source": [0, 704, 320, 320],
+                "destination": [320, 0, 320, 320]
+            }
+        },
+        {
+            "name": "addLine",
+            "args": {
+                "mapres": "./data/mapres/grass_doodads.png",
+                "source": [640, 128, 64, 64],
+                "point_source": [0, 256],
+                "point_destination": [640, 256]
+            }
+        },
+        {
+            "name": "addBlock",
+            "args": {
+                "mapres": "data/mapres/grass_doodads.png",
+                "source": [64, 0, 192, 192],
+                "destination": [0, 128, 192, 192]
+            }
+        }
+    ]
+}

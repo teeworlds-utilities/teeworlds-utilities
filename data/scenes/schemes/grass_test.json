@@ -1,0 +1,65 @@
+{
+    "size": {
+        "w": 640,
+        "h": 384
+    },
+    "actions": [
+        {
+            "name": "setBackground",
+            "args": {
+                "image": "./data/scenes/backgrounds/stronghold.png"
+            }
+        },
+        {
+            "name": "addSquare",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [640, 384, 64, 64],
+                "topLeft": [0, 64],
+                "bottomRight": [576, 384]
+            }
+        },
+        {
+            "name": "addLine",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [0, 64, 64, 64],
+                "point_source": [64, 320],
+                "point_destination": [448, 320]
+            }
+        },
+        {
+            "name": "addBlock",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [64, 128, 64, 64],
+                "destination": [512, 320, 64, 64]
+            }
+        },
+        {
+            "name": "addBlock",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [64, 192, 64, 64],
+                "destination": [0, 320, 64, 64]
+            }
+        },
+        {
+            "name": "addLine",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [64, 64, 64, 64],
+                "point_source": [0, 128],
+                "point_destination": [0, 256]
+            }
+        },
+        {
+            "name": "addBlock",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [64, 128, 64, 64],
+                "destination": [0, 64, 64, 64]
+            }
+        }
+    ]
+}

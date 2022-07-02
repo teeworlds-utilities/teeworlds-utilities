@@ -1,0 +1,42 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "target": "ES2016"
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "defaultSeverity": "error",
+  "jsRules": {},
+  "rules": {
+      "ter-indent": [true, 4],
+      "max-line-length": [true, 80],
+      "no-multi-spaces": true,
+      "no-consecutive-blank-lines": [true, 4],
+      "whitespace": [
+          true,
+          "check-branch",
+          "check-operator",
+          "check-module",
+          "check-separator",
+          "check-rest-spread",
+          "check-type",
+          "check-typecast",
+          "check-type-operator",
+          "check-preblock"
+      ],
+      "no-unsafe-any": true,
+      "no-irregular-whitespace": true,
+      "semicolon": [true, "always", "ignore-bound-class-methods"],
+      "quotemark": [true, "double", "avoid-escape"],
+      "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
+      "interface-name": [true, "never-prefix"],
+      "object-literal-sort-keys": false,
+      "ordered-imports": false,
+      "@typescript-eslint/no-explicit-any": "off"
+  },
+  "rulesDirectory": []
+}

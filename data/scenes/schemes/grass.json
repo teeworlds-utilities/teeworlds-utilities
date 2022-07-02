@@ -1,0 +1,23 @@
+{
+    "size": {
+        "w": 640,
+        "h": 384
+    },
+    "actions": [
+        {
+            "name": "setBackground",
+            "args": {
+                "image": "./data/scenes/backgrounds/stronghold.png"
+            }
+        },
+        {
+            "name": "addLine",
+            "args": {
+                "mapres": "./data/mapres/grass_main.png",
+                "source": [0, 64, 64, 64],
+                "point_source": [0, 320],
+                "point_destination": [640, 320]
+            }
+        }
+    ]
+}
