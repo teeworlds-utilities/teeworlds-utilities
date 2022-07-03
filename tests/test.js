@@ -1,8 +1,9 @@
-// const {TwAssetExtractor, TwAssetChanger, TwAssetFix} = require('../src/index');
-// const {TwSceneMaker} = require('../src/scene');
-
-import {TwAssetExtractor, TwAssetChanger} from '../src/index';
-import {TwSceneMaker} from '../src/scene';
+const {
+  TwAssetExtractor,
+  TwAssetChanger,
+  TwAssetFix,
+  TwSceneMaker
+} = require('../build/main/index');
 
 const extractTest = async () => {
   // Url or path to local file
@@ -26,7 +27,7 @@ const extractTest = async () => {
     //  asset.extract("hammer_cursor")
 
     // Add a hat (xmas hat by default)
-    await asset.setHat();
+    await asset.setHat('./data/xmas_hat.png');
 
     // Save locally the image
     asset.save('./tmp2');
@@ -100,7 +101,7 @@ const colorTest = async () => {
   }
 };
 
-const sceneTest = async (name: string) => {
+const sceneTest = async (name) => {
   const scene = new TwSceneMaker('./data/scenes/schemes/' + name + '.json');
 
   try {
@@ -112,7 +113,7 @@ const sceneTest = async (name: string) => {
   }
 };
 
-const defaultScenes = async (...scenes: string[]) => {
+const defaultScenes = async (...scenes) => {
   for (const scene of scenes) {
     await sceneTest(scene);
   }
@@ -122,5 +123,4 @@ extractTest();
 ChangeTest();
 renderTest();
 colorTest();
-
 defaultScenes('example', 'generic', 'generic_armor', 'grass', 'grass_house');

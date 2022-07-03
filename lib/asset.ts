@@ -434,7 +434,7 @@ class TwAssetBase {
   }
 
   async setHat(
-    path = './data/xmas_hat.png',
+    path: string,
     sx = 0,
     sy = 0,
     size = 128

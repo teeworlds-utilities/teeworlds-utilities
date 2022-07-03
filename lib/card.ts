@@ -65,11 +65,13 @@ class TwCardBase {
   name: string;
   canvas: Canvas;
   ctx: CanvasRenderingContext2D;
+  tab: CardTab;
 
   constructor(name: string, w: number, h: number) {
     this.name = name;
     this.canvas = createCanvas(w, h);
     this.ctx = this.canvas.getContext('2d');
+    this.tab = new CardTab(10, 10, 50, 20)
   }
 }
 

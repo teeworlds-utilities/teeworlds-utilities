@@ -1,37 +1,48 @@
 {
   "name": "@b0th/tw-utils",
-  "description": "Teeworlds asset utilities (merge, extract, etc...)",
-  "version": "1.2.7",
+  "description": "Teeworlds asset utilities used by skins.tw (merge, extract, rendering, scenes, etc...)",
+  "version": "1.2.8",
+  "license": "MIT",
   "dependencies": {
     "canvas": "^2.9.1",
     "color-convert": "^2.0.1",
     "fs": "0.0.1-security",
-    "npx": "^10.2.2"
+    "npm-run-all": "^4.1.5"
   },
-  "main": "./lib/index.js",
+  "engines": {
+    "npm": ">=8.0.0",
+    "node": ">=16.11.1"
+  },
+  "files": [
+    "build/main",
+    "LICENSE",
+    "README.md"
+  ],
+  "main": "build/main/index.js",
   "scripts": {
-    "lint": "gts lint",
-    "clean": "gts clean",
-    "compile": "tsc",
-    "fix": "gts fix",
-    "prepare": "npm run compile",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "build": "run-p build:*",
+    "build:main": "tsc -p tsconfig.json",
+    "test": "npm run build && node tests/test.js"
   },
   "keywords": [
     "teeworlds",
     "teeworlds api",
     "teeworlds utils",
-    "teeworlds asset"
+    "teeworlds asset",
+    "teeworlds skins",
+    "ddnet",
+    "teeskins",
+    "teedata",
+    "skins.tw"
   ],
   "devDependencies": {
     "@types/color-convert": "^2.0.0",
     "@types/node": "^14.11.2",
     "@typescript-eslint/eslint-plugin": "^5.30.3",
     "eslint": "^8.4.1",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "gts": "^3.1.0",
     "typescript": "^4.5.5"
   }
 }

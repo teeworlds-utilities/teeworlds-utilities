@@ -7,7 +7,7 @@
         {
             "name": "setRandomBackground",
             "args": {
-                "folder": ""
+                "folder": "./data/scenes/backgrounds/"
             }
         },
         {

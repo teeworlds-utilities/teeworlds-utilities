@@ -316,7 +316,7 @@ class TwSceneMaker {
   }
 
   async setRandomBackground(bg_folder: string) {
-    const path = bg_folder || './data/scenes/backgrounds/';
+    const path = bg_folder;
     const backgrounds = listFile(path);
     const index = Math.floor(Math.random() * (backgrounds.length - 1));
     const background = path + backgrounds[index];
