@@ -1,7 +1,7 @@
 import * as data from './data';
 import {InvalidFile, InvalidAsset, InvalidElement} from './error';
 import {saveInDir} from './utils';
-import {COLOR_MODE, COLOR_FORMAT, Color} from './color';
+import {ColorOperations, COLOR_FORMAT, ColorRGBA} from './color';
 
 import {
   loadImage,
@@ -30,7 +30,7 @@ class TwElement {
     this.ctx = this.canvas.getContext('2d');
   }
 
-  setColor(color: Color, mode: keyof typeof COLOR_MODE) {
+  setColor(color: ColorRGBA, mode: ColorOperations) {
     const buffer = this.imgData.data;
 
     // Apply color on every pixel of the img
@@ -42,8 +42,8 @@ class TwElement {
       const a = buffer[byte + 3];
 
       // Overwriting the pixel
-      const pixel = new Color(r, g, b, a);
-      COLOR_MODE[mode](pixel, color);
+      const pixel = new ColorRGBA(r, g, b, a);
+      pixel[mode](color);
 
       // Replace the pixel in the buffer
       buffer[byte] = pixel.r;
@@ -239,7 +239,7 @@ class TwAssetBase {
   private colorConvert(
     color: string,
     standard: keyof typeof COLOR_FORMAT
-  ): Color {
+  ): ColorRGBA {
     let colorValues = this.getColorArg(color, standard);
     let rgbFormat: ColorValues;
 
@@ -250,7 +250,7 @@ class TwAssetBase {
       rgbFormat = convert.hsl.rgb(...colorValues);
     }
     if (this.type !== 'SKIN') {
-      return new Color(...rgbFormat);
+      return new ColorRGBA(...rgbFormat);
     }
 
     // Preventing full black or full white skins
@@ -258,7 +258,7 @@ class TwAssetBase {
 
     // Convert to RGB to apply the color
     colorValues = convert.hsl.rgb(...colorValues);
-    return new Color(...colorValues);
+    return new ColorRGBA(...colorValues);
   }
 
   setColor(
@@ -272,13 +272,13 @@ class TwAssetBase {
       if (Object.keys(this.elements).includes(name) === false)
         throw new InvalidElement('Element has never been extracted ' + name);
 
-      this.elements[name].setColor(c, 'grayscale');
+      this.elements[name].setColor(c, 'blackAndWhite');
 
       if (name === 'body') {
         this.elements[name].reorderBody();
       }
 
-      this.elements[name].setColor(c, 'default');
+      this.elements[name].setColor(c, 'basicOperation');
     }
 
     return this;
@@ -313,92 +313,50 @@ class TwAssetBase {
     c = this.elements['foot_shadow'].canvas;
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      -cx + 2 * m,
-      cx + 45 * m,
-      c.width * 1.43,
-      c.height * 1.45
+      0, 0, c.width, c.height,
+      -cx + 2 * m, cx + 45 * m, c.width * 1.43, c.height * 1.45
     );
 
     c = this.elements['body_shadow'].canvas;
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      -cx + 12 * m,
-      cx + 0 * m,
-      c.width,
-      c.height
+      0, 0, c.width, c.height,
+      -cx + 12 * m, cx + 0 * m, c.width, c.height
     );
 
     c = this.elements['foot'].canvas;
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      -cx + 2 * m,
-      cx + 45 * m,
-      c.width * 1.43,
-      c.height * 1.45
+      0, 0, c.width, c.height,
+      -cx + 2 * m, cx + 45 * m, c.width * 1.43, c.height * 1.45
     );
 
     c = this.elements['foot_shadow'].canvas;
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      -cx + 24 * m,
-      cx + 45 * m,
-      c.width * 1.43,
-      c.height * 1.45
+      0, 0, c.width, c.height,
+      -cx + 24 * m, cx + 45 * m, c.width * 1.43, c.height * 1.45
     );
 
     c = this.elements['body'].canvas;
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      -cx + 12 * m,
-      cx + 0 * m,
-      c.width,
-      c.height
+      0, 0, c.width, c.height,
+      -cx + 12 * m, cx + 0 * m, c.width, c.height
     );
 
     c = this.elements['foot'].canvas;
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      -cx + 24 * m,
-      cx + 45 * m,
-      c.width * 1.43,
-      c.height * 1.45
+      0, 0, c.width, c.height,
+      -cx + 24 * m, cx + 45 * m, c.width * 1.43, c.height * 1.45
     );
 
     c = this.elements[eye].canvas;
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      -cx + 49.5 * m,
-      cx + 23 * m,
-      c.width * 1.15,
-      c.height * 1.22
+      0, 0, c.width, c.height,
+      -cx + 49.5 * m, cx + 23 * m, c.width * 1.15, c.height * 1.22
     );
 
     c = this.elements[eye].canvas;
@@ -406,14 +364,8 @@ class TwAssetBase {
     rCtx.scale(-1, 1);
     rCtx.drawImage(
       c,
-      0,
-      0,
-      c.width,
-      c.height,
-      cx + -98 * m,
-      cx + 23 * m,
-      c.width * 1.15,
-      c.height * 1.22
+      0, 0, c.width, c.height,
+      cx + -98 * m, cx + 23 * m, c.width * 1.15, c.height * 1.22
     );
     rCtx.restore();
 
@@ -467,14 +419,8 @@ class TwAssetBase {
       // Add the hat to the shadow
       bodyS.ctx.drawImage(
         hat,
-        sx,
-        sy,
-        size,
-        size,
-        -diff - 0.5,
-        -diff - 0.2,
-        size * m * 1.05,
-        size * m * 1.05
+        sx, sy, size, size,
+        -diff - 0.5, -diff - 0.2, size * m * 1.05, size * m * 1.05
       );
 
       // Apply black color to the hat + shadow

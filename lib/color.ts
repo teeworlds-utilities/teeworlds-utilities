@@ -1,17 +1,66 @@
 import {InvalidColor} from './error';
 import {isDigit, genChunks} from './utils';
 
-class Color {
+interface IColor {
+  readonly from: number;
+  readonly to: number;
+  readonly average: number;
+
+  isInRange: (value: number) => boolean;
+  blackAndWhite: (color: this) => void;
+  basicOperation: (color: this) => void;
+};
+
+class ColorRGBA implements IColor {
   r: number;
   g: number;
   b: number;
   a: number;
 
-  constructor(r: number, g: number, b: number, a = 255) {
+  private readonly _from = 0;
+  private readonly _to = 255;
+
+  constructor(
+    r: number,
+    g: number,
+    b: number,
+    a = 255
+  ) {
     this.r = r;
     this.g = g;
     this.b = b;
     this.a = a;
+  }
+
+  get from() {
+    return this._from;
+  }
+
+  get to() {
+    return this._to;
+  }
+
+  get average(): number {
+    return (this.r + this.g + this.b) / 3;
+  }
+
+  isInRange(value: number): boolean {
+    return value >= this._from && value <= this._to;
+  }
+
+  blackAndWhite(_: ColorRGBA) {
+    const average = this.average;
+  
+    this.r = average;
+    this.g = average;
+    this.b = average;
+  }
+
+  basicOperation(color: ColorRGBA) {
+    this.r = (this.r * color.r) / this._to;
+    this.g = (this.g * color.g) / this._to;
+    this.b = (this.b * color.b) / this._to;
+    this.a = (this.a * color.a) / this._to;
   }
 }
 
@@ -102,30 +151,14 @@ function codeFormat(color: string): number[] {
   return chunks;
 }
 
-function blackAndWhite(pixel: Color, _: unknown) {
-  const newValue = (pixel.r + pixel.g + pixel.b) / 3;
-
-  pixel.r = newValue;
-  pixel.g = newValue;
-  pixel.b = newValue;
-}
-
-function defaultOp(pixel: Color, color: Color) {
-  pixel.r = (pixel.r * color.r) / 255;
-  pixel.g = (pixel.g * color.g) / 255;
-  pixel.b = (pixel.b * color.b) / 255;
-  pixel.a = (pixel.a * color.a) / 255;
-}
-
 const COLOR_FORMAT = {
   rgb: rgbFormat,
   hsl: hslFormat,
   code: codeFormat,
 };
 
-const COLOR_MODE = {
-  default: defaultOp,
-  grayscale: blackAndWhite,
-};
+type ColorOperations = 
+'basicOperation'
+| 'blackAndWhite';
 
-export {COLOR_MODE, COLOR_FORMAT, Color};
+export {ColorOperations, COLOR_FORMAT, IColor, ColorRGBA};

@@ -48,14 +48,8 @@ class TwAssetChanger extends TwAssetBase {
         this.dests[i].ctx.clearRect(dx, dy, dw, dh);
         this.dests[i].ctx.drawImage(
           element.canvas,
-          0,
-          0,
-          sw,
-          sh,
-          dx,
-          dy,
-          dw,
-          dh
+          0, 0, sw, sh,
+          dx, dy, dw, dh
         );
       }
     }

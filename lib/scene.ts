@@ -71,8 +71,9 @@ class Scheme {
   private checkScheme() {
     const args = Object.keys(this.data);
 
-    if (argsChecker(args, ...Scheme.DEFAULT_KEYS) === false)
+    if (argsChecker(args, ...Scheme.DEFAULT_KEYS) === false) {
       throw new InvalidScene('Missing arguments for the scheme');
+    }
   }
 
   preprocess(scheme = null) {
@@ -384,14 +385,8 @@ class TwSceneMaker {
   ): this {
     this.ctx.drawImage(
       canvas,
-      0,
-      0,
-      canvas.width,
-      canvas.height,
-      dx,
-      dy,
-      dw,
-      dh
+      0, 0, canvas.width, canvas.height,
+      dx, dy, dw, dh
     );
 
     return this;
