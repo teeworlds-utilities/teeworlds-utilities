@@ -6,7 +6,7 @@ import {
 } from 'canvas';
 
 // Register Teeworlds font
-registerFont('./data/fonts/komikax.ttf', { family: 'Komikax' })
+registerFont(__dirname + '/data/fonts/komikax.ttf', { family: 'Komikax' })
 
 import ICard from './interfaces/card';
 import Margin from './types/margin';

@@ -7,7 +7,7 @@ import {
 import ITextDescriptor from './interfaces/textDescriptor';
 import ITextBox from './interfaces/textBox';
 import Margin from './types/margin';
-import { roundedImage, saveInDir } from './utils';
+import { roundedImage } from './utils';
 
 abstract class AbstractTextZone implements ITextBox {
   title?: ITextDescriptor;
@@ -174,43 +174,8 @@ class CanvasTextZone extends AbstractTextZone {
     
     return this;
   }
-
-  testSave(dirname: string, filename: string) {
-    saveInDir(dirname, filename, this.canvas);
-  }
 }
 
 export {
   CanvasTextZone
 };
-
-
-async function test() {
-  new CanvasTextZone(200, 150)
-    .setColor('rgba(0, 0, 0, 0.35)')
-    .setTitle(
-      {
-        x: 0,
-        y: 20,
-        size: 32,
-        font: 'serif',
-        color: 'white',
-        value: 'azertyuiop'
-      }
-    )
-    .setContent(
-      {
-        x: 0,
-        y: 50,
-        size: 16,
-        font: 'serif',
-        color: 'white',
-        value: 'abcdefghijklmnopqrstuvwxyzrtegrtgtgrthrthrthrthrthrthrthh0123456789abcdefghijklmnop'
-      }
-    )
-    .process()
-    .testSave('card', 'zone.png');
-}
-
-test();
-
