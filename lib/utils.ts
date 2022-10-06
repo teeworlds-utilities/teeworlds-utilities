@@ -4,13 +4,16 @@ import {
   createCanvas,
   loadImage,
   CanvasRenderingContext2D,
+  Image,
 } from 'canvas';
 
 import {InvalidFile} from './error';
 
 function saveInDir(dirname: string, filename: string, canvas: Canvas) {
   // Create directory if it doesnt exist
-  if (!fs.existsSync(dirname)) fs.mkdirSync(dirname);
+  if (fs.existsSync(dirname) === false) {
+    fs.mkdirSync(dirname);
+  }
 
   // Save the element, only PNGs
   const buffer = canvas.toBuffer('image/png');
@@ -19,7 +22,9 @@ function saveInDir(dirname: string, filename: string, canvas: Canvas) {
 
 function isDigit(str: string): boolean {
   for (const char of str) {
-    if ('1234567890'.includes(char) === false) return false;
+    if ('1234567890'.includes(char) === false) {
+      return false;
+    }
   }
 
   return true;
@@ -28,7 +33,9 @@ function isDigit(str: string): boolean {
 function genChunks(src: string, size: number): string[] {
   const ret: string[] = [];
 
-  for (let i = 0; i < src.length; i += size) ret.push(src.slice(i, i + size));
+  for (let i = 0; i < src.length; i += size) {
+    ret.push(src.slice(i, i + size));
+  }
 
   return ret;
 }
@@ -36,7 +43,7 @@ function genChunks(src: string, size: number): string[] {
 function closestNumber(n: number, m: number): number {
   const q = Math.floor(n / m);
   const n1 = m * q;
-  let n2;
+  let n2: number;
 
   if (n * m > 0) {
     n2 = m * (q + 1);
@@ -44,7 +51,9 @@ function closestNumber(n: number, m: number): number {
     n2 = m * (q - 1);
   }
 
-  if (Math.abs(n - n1) < Math.abs(n - n2)) return n1;
+  if (Math.abs(n - n1) < Math.abs(n - n2)) {
+    return n1;
+  }
 
   return n2;
 }
@@ -56,7 +65,7 @@ function listFile(path: string): string[] {
 }
 
 async function getCanvasFromFile(path: string): Promise<Canvas> {
-  let img;
+  let img: Image;
 
   // Load image
   try {
@@ -102,6 +111,27 @@ function roundRect(
   ctx.fill();
 }
 
+function roundedImage(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
 export {
   saveInDir,
   isDigit,
@@ -111,4 +141,5 @@ export {
   getCanvasFromFile,
   argsChecker,
   roundRect,
+  roundedImage
 };

@@ -2,7 +2,8 @@ const {
   TwAssetExtractor,
   TwAssetChanger,
   TwAssetFix,
-  TwSceneMaker
+  TwSceneMaker,
+  TwPersonalCard
 } = require('../build/main/index');
 
 const extractTest = async () => {
@@ -119,8 +120,27 @@ const defaultScenes = async (...scenes) => {
   }
 };
 
-extractTest();
-ChangeTest();
-renderTest();
-colorTest();
-defaultScenes('example', 'generic', 'generic_armor', 'grass', 'grass_house');
+const cardTest = async () => {
+  const card = new TwPersonalCard()
+    .setUsername('Nagi01 {LAN}')
+    .setSince('2014')
+    .setGamemode('Vanilla GCTF FNG Gores ')
+    .setClan('Fu and many others')
+    .setDescription('im the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earthim the best human on earth');
+
+  try {
+    await card.setRandomBackground('./data/scenes/backgrounds/');
+    await card.process();
+    
+    card.save('card', 'nagi.png');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// extractTest();
+// ChangeTest();
+// renderTest();
+// colorTest();
+// defaultScenes('example', 'generic', 'generic_armor', 'grass', 'grass_house');
+cardTest();
