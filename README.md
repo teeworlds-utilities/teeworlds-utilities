@@ -19,7 +19,7 @@ Asset categories are :
 - emoticon
 - particule
 
-You can check `lib/data.js` for informations and `tests/test.js` too for more examples.
+You can check `lib/data.ts` for informations and `tests/test.js` too for more examples.
 
 ### REST API example
 [Rendering (with colors) basic API](https://github.com/theobori/tw-utils-api)
@@ -27,12 +27,12 @@ You can check `lib/data.js` for informations and `tests/test.js` too for more ex
 #### Asset extractor
 
 ```js
-const { TwAssetExtractor } = require("@b0th/tw-utils")
+const { TwAssetExtractor } = require('@b0th/tw-utils')
 
 const extractTest = async () => {
   // Url or path to local file
 
-  const asset = new TwAssetExtractor("gameskin", "url")
+  const asset = new TwAssetExtractor('gameskin', 'url')
 
   try {
     // Load the img
@@ -42,13 +42,13 @@ const extractTest = async () => {
     asset.extractAll()
   
     // Or Extract selected elements
-    //asset.extract("1", "4", "9", "14", etc...)
-    //asset.extract("grenade", "gun", etc...)
-    //asset.extract("hammer_cursor", etc...)
+    //asset.extract('1', '4', '9', '14', etc...)
+    //asset.extract('grenade', 'gun', etc...)
+    //asset.extract('hammer_cursor', etc...)
     // Add a hat (xmas hat by default)
     // await asset.setHat()
     // Save locally the image in ./tmp
-    asset.save("./tmp")
+    asset.save('./tmp')
   } catch (err) {
     console.log(err)
   }
@@ -58,27 +58,27 @@ const extractTest = async () => {
 #### Asset Changer
 
 ```js
-const { TwAssetChanger } = require("@b0th/tw-utils")
+const { TwAssetChanger } = require('@b0th/tw-utils')
 
 const ChangeTest = async () => {
   // Url or path to local file
 
-  const asset = new TwAssetChanger("skin", "src", "dest1", "dest_url2", "dest3")
+  const asset = new TwAssetChanger('skin', 'src', 'dest1', 'dest_url2', 'dest3')
     
   try {
     await asset.preprocess()
   
     // Extract the needed elements
     asset
-    .extract("gun", "hammer", "shotgun", "gun_cursor")
+    .extract('gun', 'hammer', 'shotgun', 'gun_cursor')
     //asset.extractAll()
   
     // Change this elements on the dest(s)
-    .change("gun", "hammer", "shotgun", "gun_cursor")
+    .change('gun', 'hammer', 'shotgun', 'gun_cursor')
   
     // Save locally the image in ./tmp
-    .save("./tmp")
-    // asset.save("./tmp", "optional_name.png")
+    .save('./tmp')
+    // asset.save('./tmp', 'optional_name.png')
   } catch (err) {
     console.log(err) 
   }
@@ -87,22 +87,22 @@ const ChangeTest = async () => {
 
 #### Skin renderer
 ```js
-const { TwAssetExtractor } = require("@b0th/tw-utils")
+const { TwAssetExtractor } = require('@b0th/tw-utils')
 
 const renderTest = async () => {
   // Url or path to local file
 
-  const asset = new TwAssetExtractor("skin", "url")
+  const asset = new TwAssetExtractor('skin', 'url')
 
   try {
      await asset.preprocess()
     //asset.render()
-    .render("happy_eye")
+    .render('happy_eye')
     
     // Save locally the image in ./tmp
-    .saveRender("./tmp")
+    .saveRender('./tmp')
     
-    // asset.saveRender("./tmp", "optional_name.png")
+    // asset.saveRender('./tmp', 'optional_name.png')
   } catch (err) {
     console.log(err)
   }
@@ -114,27 +114,27 @@ const renderTest = async () => {
 HSL color mode will be added in a future update
 
 ```js
-const { TwAssetExtractor } = require("@b0th/tw-utils")
+const { TwAssetExtractor } = require('@b0th/tw-utils')
 
 const colorTest = async () => {
   // Url or path to local file
 
-  const asset = new TwAssetExtractor("skin", "url")
+  const asset = new TwAssetExtractor('skin', 'url')
 
   try {
     await asset.preprocess()
-    .extract("body")
+    .extract('body')
 
     // Apply color to the body
-    .setColor("255, 0, 0", "rgb", "body")
-    //asset.setColor("255, 0, 0", "hsl", "body")
-    //asset.setColorAll("255, 0, 0", "rgb")
+    .setColor('255, 0, 0', 'rgb', 'body')
+    //asset.setColor('255, 0, 0', 'hsl', 'body')
+    //asset.setColorAll('255, 0, 0', 'rgb')
 
     // Render with a red body
-    .render("happy_eye")
+    .render('happy_eye')
 
     // Save locally the image in ./tmp
-    .saveRender("./tmp")
+    .saveRender('./tmp')
   } catch (err) {
       console.log(err)
   }
@@ -144,18 +144,18 @@ const colorTest = async () => {
 #### Asset fix
 
 ```js
-const { TwAssetFix } = require("@b0th/tw-utils")
+const { TwAssetFix } = require('@b0th/tw-utils')
 
 const fixTest = async () =>
 {
-  const asset = new TwAssetFix("skin", "url")
+  const asset = new TwAssetFix('skin', 'url')
 
   try {
     await asset.preprocess()
     
     asset
     .fix()
-    .save("./fix")
+    .save('./fix')
   } catch (err) {
      console.log(err)
   }
@@ -165,17 +165,17 @@ const fixTest = async () =>
 #### Scenes system
 
 ```js
-const { TwSceneMaker } = require("@b0th/tw-utils")
+const { TwSceneMaker } = require('@b0th/tw-utils')
 
 const sceneTest = async () =>
 {
-  const scene = new TwSceneMaker("path_to_scene_JSON")
+  const scene = new TwSceneMaker('path_to_scene_JSON')
 
   try {
     scene.preprocess()
     // scene.preprocess(custom_scheme)
     await scene.renderScene()
-    scene.saveScene(".", "example.png")
+    scene.saveScene('.', 'example.png')
   } catch (err) {
     console.log(err)
   }
@@ -185,7 +185,7 @@ const sceneTest = async () =>
 #### Personal Teeworlds card
 
 ```js
-const { TwPersonalCard } = require("@b0th/tw-utils")
+const { TwPersonalCard } = require('@b0th/tw-utils')
 
 const sceneTest = async () =>
 {

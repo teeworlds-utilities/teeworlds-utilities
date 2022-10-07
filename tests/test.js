@@ -13,7 +13,7 @@ const extractTest = async () => {
     'skin',
     'https://api.skins.tw/database/skins/7n8qP5OyLUVwIB8q9hJaHvYAOArvsaMwtf2mWHDZ.png'
   );
-  //const asset = new TwAssetExtractor("emoticons", "file path")
+  //const asset = new TwAssetExtractor('emoticons', 'file path')
 
   try {
     // Load the img
@@ -23,9 +23,9 @@ const extractTest = async () => {
     asset.extractAll();
 
     // Or Extract selected elements
-    //  asset.extract("1", "4", "9", "14")
-    //  asset.extract("grenade", "gun")
-    //  asset.extract("hammer_cursor")
+    //  asset.extract('1', '4', '9', '14')
+    //  asset.extract('grenade', 'gun')
+    //  asset.extract('hammer_cursor')
 
     // Add a hat (xmas hat by default)
     await asset.setHat('./data/xmas_hat.png');
@@ -40,7 +40,7 @@ const extractTest = async () => {
 const ChangeTest = async () => {
   // Url or path to local file
 
-  // const asset = new TwAssetChanger("skin", src, dest1, dest_url2, dest3)
+  // const asset = new TwAssetChanger('skin', src, dest1, dest_url2, dest3)
   const asset = new TwAssetChanger(
     'gameskin',
     'https://api.skins.tw/database/gameskins/96wfbwDtzM1q77yahyv36HgKn64s6TVqcRwghZG3.png',
@@ -120,6 +120,21 @@ const defaultScenes = async (...scenes) => {
   }
 };
 
+const fixTest = async () =>
+{
+  const asset = new TwAssetFix('skin', 'data/skins/bad_size_skin_2.png');
+
+  try {
+    await asset.preprocess()
+    
+    asset
+    .fix()
+    .save('./fix')
+  } catch (err) {
+     console.error(err)
+  }
+}
+
 const cardTest = async () => {
   const card = new TwPersonalCard()
     .setUsername('Nagi01 {LAN}')
@@ -138,9 +153,10 @@ const cardTest = async () => {
   }
 }
 
+fixTest();
 // extractTest();
 // ChangeTest();
 // renderTest();
 // colorTest();
 // defaultScenes('example', 'generic', 'generic_armor', 'grass', 'grass_house');
-cardTest();
+// cardTest();

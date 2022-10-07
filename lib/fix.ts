@@ -5,8 +5,9 @@ import {Canvas, createCanvas} from 'canvas';
 import {InvalidAsset} from './error';
 
 class TwAssetFix extends TwAssetBase {
-  fixedWidth!: number;
-  fixedHeight!: number;
+  private fixedWidth!: number;
+  private fixedHeight!: number;
+
   fixedCanvas!: Canvas;
 
   constructor(type: string, src: string) {
@@ -21,9 +22,12 @@ class TwAssetFix extends TwAssetBase {
     let ret = true;
     const divisorWidth = this.data.divisor.w;
     const divisorHeight = this.data.divisor.h;
+    const ratio = divisorWidth / divisorHeight;
 
     this.fixedWidth = closestNumber(this.img.width, divisorWidth);
     this.fixedHeight = closestNumber(this.img.height, divisorHeight);
+
+    this.fixedWidth = ratio * this.fixedHeight;
 
     ret &&= this.fixedWidth === this.img.width;
     ret &&= this.fixedHeight === this.img.height;
@@ -31,7 +35,7 @@ class TwAssetFix extends TwAssetBase {
     return ret;
   }
 
-  fix() {
+  fix(): this {
     if (this.getFixedSize() === true)
       throw new InvalidAsset(`Already have a good format ${this.path}`);
 
@@ -50,6 +54,8 @@ class TwAssetFix extends TwAssetBase {
       this.fixedWidth,
       this.fixedHeight
     );
+
+    return this;
   }
 
   save(dirname: string, name: string | undefined) {
