@@ -146,4 +146,6 @@ todo
 # Personnals tests
 tests/ptest.js
 
+fix/
+
 # End of https://www.toptal.com/developers/gitignore/api/node

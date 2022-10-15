@@ -154,9 +154,9 @@ const cardTest = async () => {
 }
 
 fixTest();
-// extractTest();
-// ChangeTest();
-// renderTest();
-// colorTest();
-// defaultScenes('example', 'generic', 'generic_armor', 'grass', 'grass_house');
-// cardTest();
+extractTest();
+ChangeTest();
+renderTest();
+colorTest();
+defaultScenes('example', 'generic', 'generic_armor', 'grass', 'grass_house');
+cardTest();
