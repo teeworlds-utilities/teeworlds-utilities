@@ -1,6 +1,8 @@
-# ❤️ tw-utils
+# ❤️ teeworlds-utilities
 
-![tests](https://github.com/teeworlds-utilities/tw-utils/actions/workflows/tests.yml/badge.svg)
+![tests](https://github.com/teeworlds-utilities/teeworlds-utilities/actions/workflows/tests.yml/badge.svg)
+
+Formerly known as `tw-utils` or `@b0th/tw-utils`.
 
 ## 📖 Build and run
 
@@ -13,7 +15,7 @@ You only need the following requirements:
 To install the npm package, you should run the following command.
 
 ```bash
-npm i @b0th/tw-utils
+npm i teeworlds-utilities
 ```
 
 ## 🤝 Contribute
@@ -28,6 +30,8 @@ There are some unitary test written for `jest`. You can run them with the follow
 npm run test
 ```
 
+If you want to debug, you should set the environment variable `DEBUG` to `true`, it will enable **`Logger.debug`** to output.
+
 # ⭐ Use cases
 
 If you want to see examples of how to use the library, you can check the **`**.test.ts`** files, such as [asset](./lib/asset/asset.test.ts).
@@ -36,5 +40,5 @@ If you want to see examples of how to use the library, you can check the **`**.t
 
 - [x] Unitary tests
 - [ ] Documentation
-- [ ] CI/CD pipeline
+- [x] CI/CD pipeline
 - [x] Log environment variable

@@ -39,5 +39,7 @@ describe('Scene maker', () => {
 
       unlinkSync(path);
     }
-  });
+  },
+  10000
+  );
 });

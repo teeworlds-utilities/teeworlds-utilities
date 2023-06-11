@@ -26,7 +26,7 @@ export function fixAssetSize(asset: IAsset): boolean {
     fixedWidth === canvas.width
     && fixedHeight === canvas.height
   ) {
-    Logger.info(metadata.name + ' already has a good size.')
+    Logger.debug(metadata.name + ' already has a good size.')
     return false
   }
 
