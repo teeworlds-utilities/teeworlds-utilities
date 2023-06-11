@@ -1,7 +1,7 @@
 {
   "name": "teeworlds-utilities",
   "description": "Teeworlds asset utilities used by skins.tw",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "dependencies": {
     "canvas": "^2.9.1",
@@ -18,12 +18,13 @@
   },
   "files": [
     "build/main",
+    "build/data",
     "LICENSE",
     "README.md"
   ],
   "main": "build/main/index.js",
   "scripts": {
-    "build": "run-p build:* && cp --parents ./data/fonts/* ./build/main",
+    "build": "run-p build:* && cp --parents ./data/fonts/* ./build",
     "build:main": "tsc -p tsconfig.json",
     "test": "jest --verbose"
   },
