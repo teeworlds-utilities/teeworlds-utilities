@@ -1,5 +1,3 @@
-// import { unlinkSync } from 'fs';
-
 import Skin from './asset/skin';
 import { fixAssetSize } from './fix';
 

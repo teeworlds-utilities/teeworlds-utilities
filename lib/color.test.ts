@@ -1,4 +1,5 @@
 import { ColorRGB, ColorHSL, ColorTwCode } from './color'
+import { Logger } from './logger';
 
 describe('Color converting', () => {
   test('From RGB to HSL', () => {
@@ -19,7 +20,7 @@ describe('Color converting', () => {
     const code = new ColorTwCode(7929728)
     const hsl = code.hsl()
 
-    console.log(hsl.toArray())
+    Logger.debug(hsl.toArray().toString());
 
     expect(hsl.toArray()).toStrictEqual([ 169.41176470588235, 100, 75.29411764705883 ]);
   });
