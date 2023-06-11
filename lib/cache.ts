@@ -29,12 +29,6 @@ export default class Cache<T> {
     return true;
   }
 
-  set_and_get(key: string, value: T): T {
-    this.set(key, value);
-
-    return this.get(key);
-  }
-
   reset(): this {
     this.store = {};
     

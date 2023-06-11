@@ -5,21 +5,22 @@ import {
   registerFont
 } from 'canvas';
 
-// Register Teeworlds font
-registerFont(__dirname + '/data/fonts/komikax.ttf', { family: 'Komikax' })
-
-import ICard from './interfaces/card';
-import Margin from './types/margin';
-
-import { CanvasTextZone } from './textBox';
+import {
+  CanvasTextZone,
+  Margin,
+  ITextDescriptor
+} from './textBox';
 
 import {
   getCanvasFromFile,
   roundedImage,
-  saveInDir
+  saveCanvas
 } from './utils/canvas';
+
 import { files } from './utils/files'
-import ITextDescriptor from './interfaces/textDescriptor';
+
+// Register Teeworlds font
+registerFont(__dirname + '/../data/fonts/komikax.ttf', { family: 'Komikax' })
 
 enum CardTitle {
   USERNAME = 'Username',
@@ -29,6 +30,12 @@ enum CardTitle {
   DESCRIPTION = 'Description',
 }
 
+export interface ICard {
+  process(): Promise<this>;
+  save: (dirname: string, filename: string) => this;
+  setBackground: (path: string) => Promise<this>;
+  setRandomBackground: (dirpath: string) => Promise<this>;
+}
 
 abstract class AbstractCanvasCard implements ICard {
   margin: Margin = {
@@ -156,14 +163,14 @@ abstract class AbstractCanvasCard implements ICard {
     return this;
   }
 
-  save(dirname: string, filename: string): this {
-    saveInDir(dirname, filename, this.canvas);
+  save(path: string): this {
+    saveCanvas(path, this.canvas);
     
     return this;
   }
 }
 
-class TwPersonalCard extends AbstractCanvasCard {
+export class PersonalCard extends AbstractCanvasCard {
   constructor() {
     super(400, 460);
   }
@@ -335,8 +342,3 @@ class TwPersonalCard extends AbstractCanvasCard {
     return this;
   }
 }
-
-export {
-  TwPersonalCard
-};
-

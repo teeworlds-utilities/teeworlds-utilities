@@ -1,208 +1,40 @@
-# 🐞 tw-utils
+# ❤️ tw-utils
 
-### Install
+![tests](https://github.com/teeworlds-utilities/tw-utils/actions/workflows/tests.yml/badge.svg)
+
+## 📖 Build and run
+
+You only need the following requirements:
+
+- [NodeJS](https://nodejs.org/en/download)
+  - 18.x
+  - 20.x
+
+To install the npm package, you should run the following command.
 
 ```bash
 npm i @b0th/tw-utils
 ```
 
-### Contact
+## 🤝 Contribute
 
-Feel free to contact me if you have any questions 
-**Discord**: `b0th#6474`
+If you want to help the project, you can follow the guidelines in [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-### Getting started
+## 🧪 Tests
 
-Asset categories are : 
-- skin
-- gameskin
-- emoticon
-- particule
+There are some unitary test written for `jest`. You can run them with the following command:
 
-You can check `lib/data.ts` for informations and `tests/test.js` too for more examples.
-
-### REST API example
-[Rendering (with colors) basic API](https://github.com/theobori/tw-utils-api)
-
-#### Asset extractor
-
-```js
-const { TwAssetExtractor } = require('@b0th/tw-utils')
-
-const extractTest = async () => {
-  // Url or path to local file
-
-  const asset = new TwAssetExtractor('gameskin', 'url')
-
-  try {
-    // Load the img
-    await asset.preprocess()
-    
-    // Extract every element on the image
-    asset.extractAll()
-  
-    // Or Extract selected elements
-    //asset.extract('1', '4', '9', '14', etc...)
-    //asset.extract('grenade', 'gun', etc...)
-    //asset.extract('hammer_cursor', etc...)
-    // Add a hat (xmas hat by default)
-    // await asset.setHat()
-    // Save locally the image in ./tmp
-    asset.save('./tmp')
-  } catch (err) {
-    console.log(err)
-  }
-}
+```bash
+npm run test
 ```
 
-#### Asset Changer
+# ⭐ Use cases
 
-```js
-const { TwAssetChanger } = require('@b0th/tw-utils')
+If you want to see examples of how to use the library, you can check the **`**.test.ts`** files, such as [asset](./lib/asset/asset.test.ts).
 
-const ChangeTest = async () => {
-  // Url or path to local file
+## 🎉 Tasks
 
-  const asset = new TwAssetChanger('skin', 'src', 'dest1', 'dest_url2', 'dest3')
-    
-  try {
-    await asset.preprocess()
-  
-    // Extract the needed elements
-    asset
-    .extract('gun', 'hammer', 'shotgun', 'gun_cursor')
-    //asset.extractAll()
-  
-    // Change this elements on the dest(s)
-    .change('gun', 'hammer', 'shotgun', 'gun_cursor')
-  
-    // Save locally the image in ./tmp
-    .save('./tmp')
-    // asset.save('./tmp', 'optional_name.png')
-  } catch (err) {
-    console.log(err) 
-  }
-}
-```
-
-#### Skin renderer
-```js
-const { TwAssetExtractor } = require('@b0th/tw-utils')
-
-const renderTest = async () => {
-  // Url or path to local file
-
-  const asset = new TwAssetExtractor('skin', 'url')
-
-  try {
-     await asset.preprocess()
-    //asset.render()
-    .render('happy_eye')
-    
-    // Save locally the image in ./tmp
-    .saveRender('./tmp')
-    
-    // asset.saveRender('./tmp', 'optional_name.png')
-  } catch (err) {
-    console.log(err)
-  }
-}
-```
-
-#### Changing Color
-
-HSL color mode will be added in a future update
-
-```js
-const { TwAssetExtractor } = require('@b0th/tw-utils')
-
-const colorTest = async () => {
-  // Url or path to local file
-
-  const asset = new TwAssetExtractor('skin', 'url')
-
-  try {
-    await asset.preprocess()
-    .extract('body')
-
-    // Apply color to the body
-    .setColor('255, 0, 0', 'rgb', 'body')
-    //asset.setColor('255, 0, 0', 'hsl', 'body')
-    //asset.setColorAll('255, 0, 0', 'rgb')
-
-    // Render with a red body
-    .render('happy_eye')
-
-    // Save locally the image in ./tmp
-    .saveRender('./tmp')
-  } catch (err) {
-      console.log(err)
-  }
-}
-```
-
-#### Asset fix
-
-```js
-const { TwAssetFix } = require('@b0th/tw-utils')
-
-const fixTest = async () =>
-{
-  const asset = new TwAssetFix('skin', 'url')
-
-  try {
-    await asset.preprocess()
-    
-    asset
-    .fix()
-    .save('./fix')
-  } catch (err) {
-     console.log(err)
-  }
-}
-```
-
-#### Scenes system
-
-```js
-const { TwSceneMaker } = require('@b0th/tw-utils')
-
-const sceneTest = async () =>
-{
-  const scene = new TwSceneMaker('path_to_scene_JSON')
-
-  try {
-    scene.preprocess()
-    // scene.preprocess(custom_scheme)
-    await scene.renderScene()
-    scene.saveScene('.', 'example.png')
-  } catch (err) {
-    console.log(err)
-  }
-}
-```
-
-#### Personal Teeworlds card
-
-```js
-const { TwPersonalCard } = require('@b0th/tw-utils')
-
-const sceneTest = async () =>
-{
-  const card = new TwPersonalCard()
-    .setUsername('Player')
-    .setSince('year')
-    .setGamemode('mode1 mode2 mode3 mode4, etc..')
-    .setClan('clan1 clan2 clan3, etc..')
-    .setDescription('long description..');
-
-  try {
-    await card.setRandomBackground('./data/scenes/backgrounds/');
-    await card.process();
-
-    card.save('card', 'me.png');
-  } catch (error) {
-    console.error(error);
-  }
-}
-```
+- [x] Unitary tests
+- [ ] Documentation
+- [ ] CI/CD pipeline
+- [x] Log environment variable

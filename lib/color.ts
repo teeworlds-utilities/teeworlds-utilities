@@ -147,13 +147,17 @@ export class ColorHSL implements IColor {
     return this;
   }
 
+  /**
+   * Upgrade
+   * @returns 
+   */
   twCode(): IColor {
     let code = (this._h * 0xff) / 360;
 
     code <<= 8;
-    code |= (this._s * 100) / 0xff;
+    code |= (this._s * 0xff) / 100;
     code <<= 8;
-    code |= (this._l * 100) / 0xff;
+    code |= ((this._l * 0xff) / 100 - 128) * 2;
 
     return new ColorTwCode(code);
   }

@@ -8,12 +8,11 @@ import {
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { AssetKind, AssetPart, IAssetPartMetadata, getAssetPartMetadata, getAssetPartsMetadata, scaleMetadata } from "./part";
+import { AssetKind, AssetHelpSize, AssetPart, IAssetPartMetadata, getAssetPartMetadata, getAssetPartsMetadata, scaleMetadata } from "./part";
 import { AssetError, FileError } from "../error";
 import { getNameFromPath } from "../utils/util";
 import { canvasFromImageData, cloneCanvas, saveCanvas } from "../utils/canvas";
 import { ColorRGBA, IColor } from "../color";
-import { AssetHelpSize } from "./size";
 import Cache, { hashCacheKey } from "../cache";
 
 /**
@@ -243,6 +242,7 @@ let cacheMinimalAsset = new Cache<IMinimalAsset>;
 export interface IAsset extends IMinimalAsset {
   multiplier: number;
 
+  setVerification: (value: boolean) => this;
   getPartMetadata(assetPart: AssetPart): IAssetPartMetadata
   colorPart: (color: IColor, assetPart: AssetPart) => this;
   colorParts: (color: IColor, ...assetParts: AssetPart[]) => this 
@@ -261,6 +261,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   declare protected originalCanvas: Canvas;
 
   private partSaveDirectory: string;
+  private verification: boolean;
   private id: string;
   
   /**
@@ -277,6 +278,13 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
     this.partSaveDirectory = '.';
     this.id = uuidv4();
+    this.verification = true;
+  }
+
+  setVerification(value: boolean): this {
+    this.verification = value;
+    
+    return this;
   }
 
   protected _getPartMetadata(assetPart: T): IAssetPartMetadata {
@@ -306,8 +314,12 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   private hasValidAspectRatio(canvas?: Canvas): boolean {
     const _canvas = canvas || this.canvas
 
+    if (this.verification === false) {
+      return true;
+    }
+
     return _canvas.width % this.metadata.divisor.w === 0
-    && _canvas.height % this.metadata.divisor.h === 0;
+      && _canvas.height % this.metadata.divisor.h === 0;
   }
 
   /**
@@ -351,7 +363,9 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
       byteColor.b = buffer[byte + 2];
       byteColor.a = buffer[byte + 3];
 
-      byteColor.applyColor(colorRGBA);
+      byteColor
+        .blackAndWhite()
+        .applyColor(colorRGBA);
 
       buffer[byte] = byteColor.r;
       buffer[byte + 1] = byteColor.g;

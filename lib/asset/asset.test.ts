@@ -5,6 +5,8 @@ import { GameskinPart, SkinPart } from './part';
 import { ColorRGB } from '../color';
 
 const SKIN = 'data/skins/ahl_red_nanami.png';
+// const DEFAULT_NANAMI = 'data/skins/ahl_red_nanami.png';
+const TERRORIST = 'data/skins/Terrorist.png';
 const GAMESKIN = 'data/gameskins/ahl_red.png';
 const GAMESKIN_SRC = 'data/gameskins/cellegen_grid.png';
 const GAMESKIN_4K = 'data/gameskins/4k.png';
@@ -137,15 +139,21 @@ describe('Abstract class Asset', () => {
     const path = 'skin.png'
     const skin = new Skin();
 
-    await skin.loadFromPath(SKIN);
+    await skin.loadFromPath(TERRORIST);
 
     skin
       .colorParts(
-        new ColorRGB(0, 150, 0),
+        new ColorRGB(0, 0, 0),
         SkinPart.BODY,
+        SkinPart.DEFAULT_EYE
+      )
+      .colorPart(
+        new ColorRGB(255, 255, 255),
         SkinPart.FOOT,
       )
-      .render(SkinPart.ANGRY_EYE)
+      .render()
       .saveRenderAs(path);
+
+      unlinkSync('render_' + path);
   });
 });

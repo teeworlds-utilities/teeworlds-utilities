@@ -4,10 +4,36 @@ import {
   createCanvas
 } from 'canvas';
 
-import ITextDescriptor from './interfaces/textDescriptor';
-import ITextBox from './interfaces/textBox';
-import Margin from './types/margin';
 import { roundedImage } from './utils/canvas';
+
+export interface ITextDescriptor {
+  value: string;
+  x: number;
+  y: number;
+  font: string;
+  size: number;
+  color: string;
+}
+
+export type Margin = {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+};
+
+
+export interface ITextBox {
+  title?: ITextDescriptor,
+  content: ITextDescriptor,
+  margin: Margin,
+  color: string;
+  x: number,
+  y: number,
+  w: number,
+  h: number
+}
+
 
 abstract class AbstractTextZone implements ITextBox {
   title?: ITextDescriptor;

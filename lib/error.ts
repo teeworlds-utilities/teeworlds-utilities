@@ -1,3 +1,6 @@
+/**
+ * Abstract class used for every exception.
+ */
 abstract class BaseError extends Error {
   constructor(message: string) {
     super(message);
@@ -6,9 +9,23 @@ abstract class BaseError extends Error {
   }
 }
 
+/**
+ * File exceptions.
+ */
 export class FileError extends BaseError { };
+/**
+ * Asset exceptions.
+ */
 export class AssetError extends BaseError { };
+/**
+ * Asset part exceptions.
+ */
 export class AssetPartError extends BaseError { };
-export class ElementError extends BaseError { };
+/**
+ * Scene exceptions.
+ */
 export class SceneError extends BaseError { };
+/**
+ * Color exceptions.
+ */
 export class ColorError extends BaseError { };

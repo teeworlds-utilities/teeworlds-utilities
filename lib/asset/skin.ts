@@ -1,7 +1,7 @@
 import { Canvas, createCanvas, CanvasRenderingContext2D } from "canvas";
 import { Asset } from "./base";
-import { AssetKind, EyeSkinPart, SkinPart } from "./part";
-import { canvasFromImageData, saveCanvas } from "../utils/canvas";
+import { AssetKind, EyeSkinPart, IAssetPartMetadata, SkinPart } from "./part";
+import { canvasFromImageData, cloneCanvas, saveCanvas } from "../utils/canvas";
 import { ColorHSL, IColor } from "../color";
 
 const SKIN_METADATA = {
@@ -13,11 +13,21 @@ const SKIN_METADATA = {
 const BODY_LIMIT = 52.5;
 
 export default class Skin extends Asset<SkinPart> {
-  private renderCanvas: Canvas;
+  private _renderCanvas: Canvas;
   private renderCtx: CanvasRenderingContext2D;
 
   constructor() {
     super(SKIN_METADATA);
+  }
+
+  /**
+   * The function returns a cloned canvas object.
+   * @returns The `renderCanvas` property is being returned, which is of type
+   * `Canvas`. The value being returned is a cloned copy of the `_renderCanvas`
+   * property.
+   */
+  get renderCanvas(): Canvas {
+    return cloneCanvas(this._renderCanvas);
   }
 
   loadFromCanvas(canvas: Canvas): this {
@@ -25,11 +35,11 @@ export default class Skin extends Asset<SkinPart> {
 
     const bodyMetadata = this._getPartMetadata(SkinPart.BODY);
 
-    this.renderCanvas = createCanvas(
+    this._renderCanvas = createCanvas(
       (bodyMetadata.w + 12) * this.multiplier,
       (bodyMetadata.h + 12) * this.multiplier,
     );
-    this.renderCtx = this.renderCanvas.getContext('2d');
+    this.renderCtx = this._renderCanvas.getContext('2d');
 
     return this;
   }
@@ -49,7 +59,7 @@ export default class Skin extends Asset<SkinPart> {
   colorPart(color: IColor, assetPart: SkinPart): this {
     let hsl = color.hsl() as ColorHSL;
 
-    if (hsl.l > BODY_LIMIT) {
+    if (hsl.l < BODY_LIMIT) {
       hsl.l = BODY_LIMIT;
     }
 
@@ -60,13 +70,12 @@ export default class Skin extends Asset<SkinPart> {
     return super.colorPart(hsl, assetPart);
   }
 
-  reorderBody(assetPart?: SkinPart) {
+  private reorderBody() {
     // For the tee body
     // Reorder that the average grey is 192,192,192
     // https://github.com/ddnet/ddnet/blob/master/src/game/client/components/skins.cpp#L227-L263
 
-    const part = assetPart || SkinPart.BODY;
-    const partMetadata = this.getPartMetadata(part);
+    const partMetadata = this.getPartMetadata(SkinPart.BODY);
 
     let orgWeight = 0;
     const frequencies = Array(256).fill(0);
@@ -116,6 +125,13 @@ export default class Skin extends Asset<SkinPart> {
       buffer[byte + 2] = value;
     }
 
+    this.ctx.clearRect(
+      partMetadata.x,
+      partMetadata.y,
+      partMetadata.w,
+      partMetadata.h,
+    );
+
     this.ctx.putImageData(
       imageData,
       partMetadata.x,
@@ -123,9 +139,21 @@ export default class Skin extends Asset<SkinPart> {
     )
   }
 
+  private drawPart(canvas: Canvas, metadata: IAssetPartMetadata): this {
+    this.renderCtx.drawImage(
+      canvas,
+      0, 0,
+      canvas.width, canvas.height,
+      metadata.x, metadata.y,
+      metadata.w, metadata.h
+    );
+
+    return this;
+  }
+
   render(eyeAssetPart: EyeSkinPart = SkinPart.DEFAULT_EYE): this {
     const multiplier = this.multiplier;
-    const cx = 6 * this.multiplier;
+    const cx = 6 * multiplier;
 
     const footShadow = this.getCanvasFromPart(SkinPart.FOOT_SHADOW);
     const foot = this.getCanvasFromPart(SkinPart.FOOT);
@@ -133,73 +161,82 @@ export default class Skin extends Asset<SkinPart> {
     const body = this.getCanvasFromPart(SkinPart.BODY);
     const eye = this.getCanvasFromPart(eyeAssetPart);
 
-    this.renderCtx.drawImage(
+    this.drawPart(
       footShadow,
-      0, 0,
-      footShadow.width,
-      footShadow.height,
-      -cx + 2 * multiplier, cx + 45 * multiplier,
-      footShadow.width * 1.43, footShadow.height * 1.45
-    );
-
-    this.renderCtx.drawImage(
+      {
+        x: -cx + 2 * multiplier,
+        y: cx + 45 * multiplier,
+        w: footShadow.width * 1.43,
+        h: footShadow.height * 1.45
+      }
+    )
+    .drawPart(
       bodyShadow,
-      0, 0,
-      bodyShadow.width, bodyShadow.height,
-      -cx + 12 * multiplier, cx + 0 * multiplier,
-      bodyShadow.width, bodyShadow.height
-    );
-
-    this.renderCtx.drawImage(
+      {
+        x: -cx + 12 * multiplier,
+        y: cx + 0 * multiplier,
+        w: bodyShadow.width,
+        h: bodyShadow.height
+      }
+    )
+    .drawPart(
       footShadow,
-      0, 0,
-      footShadow.width, footShadow.height,
-      -cx + 24 * multiplier, cx + 45 * multiplier,
-      footShadow.width * 1.43, footShadow.height * 1.45
-    );
-
-    this.renderCtx.drawImage(
+      {
+        x: -cx + 24 * multiplier,
+        y: cx + 45 * multiplier,
+        w: footShadow.width * 1.43,
+        h: footShadow.height * 1.45
+      }
+    )
+    .drawPart(
       foot,
-      0, 0,
-      foot.width, foot.height,
-      -cx + 2 * multiplier, cx + 45 * multiplier,
-      foot.width * 1.43, foot.height * 1.45
-    );
-
-    this.renderCtx.drawImage(
+      {
+        x: -cx + 2 * multiplier,
+        y: cx + 45 * multiplier,
+        w: foot.width * 1.43,
+        h: foot.height * 1.45
+      }
+    )
+    .drawPart(
       body,
-      0, 0,
-      body.width, body.height,
-      -cx + 12 * multiplier, cx + 0 * multiplier,
-      body.width, body.height
-    );
-
-    this.renderCtx.drawImage(
+      {
+        x: -cx + 12 * multiplier,
+        y: cx + 0 * multiplier,
+        w: body.width,
+        h: body.height 
+      }
+    )
+    .drawPart(
       foot,
-      0, 0,
-      foot.width, foot.height,
-      -cx + 24 * multiplier, cx + 45 * multiplier,
-      foot.width * 1.43, foot.height * 1.45
-    );
-
-    this.renderCtx.drawImage(
+      {
+        x: -cx + 24 * multiplier,
+        y: cx + 45 * multiplier,
+        w: foot.width * 1.43,
+        h: foot.height * 1.45
+      }
+    )
+    .drawPart(
       eye,
-      0, 0,
-      eye.width, eye.height,
-      -cx + 49.5 * multiplier, cx + 23 * multiplier,
-      eye.width * 1.15, eye.height * 1.22
-    );
+      {
+        x: -cx + 49.54 * multiplier,
+        y: cx + 23 * multiplier,
+        w: eye.width * 1.15,
+        h: eye.height * 1.22
+      }
+    )
 
     this.renderCtx.save();
     this.renderCtx.scale(-1, 1);
 
-    this.renderCtx.drawImage(
+    this.drawPart(
       eye,
-      0, 0,
-      eye.width, eye.height,
-      cx + -98 * multiplier, cx + 23 * multiplier,
-      eye.width * 1.15, eye.height * 1.22
-    );
+      {
+        x: cx + -98 * multiplier,
+        y: cx + 23 * multiplier,
+        w: eye.width * 1.15,
+        h: eye.height * 1.22
+      }
+    )
 
     this.renderCtx.restore();
 
@@ -213,7 +250,7 @@ export default class Skin extends Asset<SkinPart> {
   saveRenderAs(path: string): this {
     saveCanvas(
       'render_' + path,
-      this.renderCanvas
+      this._renderCanvas
     );
 
     return this;

@@ -1,69 +1,47 @@
-import {TwAssetBase} from './asset';
-import {saveInDir} from './utils/canvas';
 import { closestNumber } from './utils/util';
 
-import {Canvas, createCanvas} from 'canvas';
-import {AssetError} from './error';
+import { IAsset } from './asset/base';
+import { Logger } from './logger';
+import { createCanvas } from 'canvas';
 
-class TwAssetFix extends TwAssetBase {
-  private fixedWidth!: number;
-  private fixedHeight!: number;
+export function fixAssetSize(asset: IAsset): boolean {
+  let canvas = asset.canvas;
+  const metadata = asset.metadata;
+  const ratio = metadata.baseSize.w / metadata.baseSize.h;
 
-  fixedCanvas!: Canvas;
+  let fixedWidth = closestNumber(
+    canvas.width,
+    metadata.baseSize.w
+  );
 
-  constructor(type: string, src: string) {
-    super(type, src);
+  const fixedHeight = closestNumber(
+    canvas.height,
+    metadata.baseSize.h
+  );
+
+  // Prevention
+  fixedWidth = ratio * fixedHeight;
+
+  if (
+    fixedWidth === canvas.width
+    && fixedHeight === canvas.height
+  ) {
+    Logger.info(metadata.name + ' already has a good size.')
+    return false
   }
 
-  async preprocess() {
-    await super.preprocess(false);
-  }
+  let fixedCanvas = createCanvas(fixedWidth, fixedHeight);
+  const ctx = fixedCanvas.getContext('2d');
 
-  private getFixedSize(): boolean {
-    let ret = true;
-    const divisorWidth = this.data.divisor.w;
-    const divisorHeight = this.data.divisor.h;
-    const ratio = divisorWidth / divisorHeight;
+  ctx.drawImage(
+    canvas,
+    0, 0,
+    canvas.width, canvas.height,
+    0, 0,
+    fixedWidth, fixedHeight
+  );
 
-    this.fixedWidth = closestNumber(this.img.width, divisorWidth);
-    this.fixedHeight = closestNumber(this.img.height, divisorHeight);
+  asset.canvas = fixedCanvas;
 
-    this.fixedWidth = ratio * this.fixedHeight;
-
-    ret &&= this.fixedWidth === this.img.width;
-    ret &&= this.fixedHeight === this.img.height;
-
-    return ret;
-  }
-
-  fix(): this {
-    if (this.getFixedSize() === true)
-      throw new AssetError(`Already have a good format ${this.path}`);
-
-    this.fixedCanvas = createCanvas(this.fixedWidth, this.fixedHeight);
-    const ctx = this.fixedCanvas.getContext('2d');
-
-    ctx.clearRect(0, 0, this.fixedWidth, this.fixedHeight);
-    ctx.drawImage(
-      this.canvas,
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height,
-      0,
-      0,
-      this.fixedWidth,
-      this.fixedHeight
-    );
-
-    return this;
-  }
-
-  save(dirname: string, name: string | undefined) {
-    const filename = name || this.path.split('/').pop();
-
-    saveInDir(dirname, filename as string, this.fixedCanvas);
-  }
+  return true;
 }
-
-export {TwAssetFix};

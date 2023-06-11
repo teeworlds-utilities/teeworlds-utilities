@@ -1,36 +1,16 @@
-import {TwAssetExtractor} from './asset';
+import Skin from './asset/skin';
 import {SceneError} from './error';
+import { Logger } from './logger';
 import { saveCanvas, getCanvasFromFile } from './utils/canvas';
 import { files } from './utils/files'
 import { argsChecker } from './utils/util';
+import Cache from './cache';
 
 import {Canvas, createCanvas, CanvasRenderingContext2D} from 'canvas';
 import * as fs from 'fs';
 
 type RectangleData = [number, number, number, number];
 type Position = [number, number];
-
-class CanvasCache {
-  cache: {[key: string]: Canvas};
-
-  constructor() {
-    this.cache = {};
-  }
-
-  addCanvas(key: string, canvas: Canvas) {
-    if (this.getCanvas(key)) return;
-
-    this.cache[key] = canvas;
-  }
-
-  getCanvas(key: string): Canvas | null {
-    if (Object.keys(this.cache).includes(key) === false) return null;
-
-    const canvas = this.cache[key];
-
-    return canvas;
-  }
-}
 
 class Entity {
   imgData: ImageData;
@@ -154,17 +134,17 @@ class Actions {
   }
 }
 
-class TwSceneMaker {
+export default class Scene {
   canvas!: Canvas;
   ctx!: CanvasRenderingContext2D;
 
-  cache: CanvasCache;
-  scheme: Scheme;
-  actions: Actions;
-  parts: Part[];
+  private cache: Cache<Canvas>;
+  private scheme: Scheme;
+  private actions: Actions;
+  private parts: Part[];
 
   constructor(path: string) {
-    this.cache = new CanvasCache();
+    this.cache = new Cache()
     this.scheme = new Scheme(path);
     this.actions = new Actions();
     this.parts = [];
@@ -201,9 +181,20 @@ class TwSceneMaker {
       'folder'
     );
 
-    this.actions.add('addTee', this, 'addTee', 'skin', 'destination');
+    this.actions.add(
+      'addTee',
+      this,
+      'addTee',
+      'skin',
+      'destination'
+    );
 
-    this.actions.add('setBackground', this, 'setBackground', 'image');
+    this.actions.add(
+      'setBackground',
+      this,
+      'setBackground',
+      'image'
+    );
 
     this.actions.add(
       'addSquare',
@@ -265,22 +256,32 @@ class TwSceneMaker {
   async addLine(
     mapres: string,
     source: RectangleData,
-    point_source: Position,
-    point_destination: Position
+    pointSource: Position,
+    pointDestination: Position
   ) {
-    let [sx, sy] = point_source;
-    const [dx, dy] = point_destination;
+    let [sx, sy] = pointSource;
+    const [dx, dy] = pointDestination;
     const [w, h] = source.slice(2, 4);
-    let destination: RectangleData;
 
-    if (sx === dx && sy === dy) throw new SceneError('Wrong usage');
+    if (sx === dx && sy === dy) {
+      throw new SceneError('Wrong usage');
+    }
 
-    if (sx > dx && sy > dy)
-      this.addLine(mapres, source, point_destination, point_source);
+    if (sx > dx && sy > dy) {
+      this.addLine(
+        mapres,
+        source,
+        pointDestination,
+        pointSource
+      );
+    }
 
     while (sx <= dx && sy <= dy) {
-      destination = [sx, sy, w, h];
-      await this.addBlock(mapres, source, destination);
+      await this.addBlock(
+        mapres,
+        source,
+        [sx, sy, w, h]
+      );
 
       if (sx === dx && sy === dy) break;
       if (sx < dx) sx += w;
@@ -327,26 +328,29 @@ class TwSceneMaker {
     await this.setBackground(background);
   }
 
-  async addTee(skin: string, destination: RectangleData) {
-    const tee = new TwAssetExtractor('skin', skin);
+  async addTee(path: string, destination: RectangleData) {
+    const tee = new Skin();
 
     try {
-      await tee.preprocess();
+      await tee.loadFromPath(path);
       tee.render();
     } catch (err) {
-      console.log(err);
+      Logger.error(err);
       return;
     }
 
-    const ctx = tee.rCanvas.getContext('2d');
-    const imgData = ctx.getImageData(
+    const imgData = tee.renderCanvas
+    .getContext('2d')
+    .getImageData(
       0,
       0,
-      tee.rCanvas.width,
-      tee.rCanvas.height
+      tee.renderCanvas.width,
+      tee.renderCanvas.height
     );
-    const part = new Part(imgData, destination);
-    this.parts.push(part);
+  
+    this.parts.push(
+      new Part(imgData, destination)
+    );
   }
 
   async setBackground(image: string) {
@@ -365,14 +369,14 @@ class TwSceneMaker {
   }
 
   async getCanvasFromCache(path: string): Promise<Canvas> {
-    let canvas;
-    const canvasCache = this.cache.getCanvas(path);
+    let canvas: Canvas;
+    const canvasCache = this.cache.get(path);
 
     if (canvasCache !== null) {
       canvas = canvasCache;
     } else {
       canvas = await getCanvasFromFile(path);
-      this.cache.addCanvas(path, canvas);
+      this.cache.set(path, canvas);
     }
 
     return canvas;
@@ -394,5 +398,3 @@ class TwSceneMaker {
     return this;
   }
 }
-
-export {TwSceneMaker};
