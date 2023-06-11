@@ -14,6 +14,19 @@ export interface IAssetPartMetadata {
   h: number;
 }
 
+/**
+ * The function scales the dimensions of an asset part metadata object by a given
+ * multiplier.
+ * @param {IAssetPartMetadata} metadata - An object of type IAssetPartMetadata that
+ * contains information about the position and size of an asset part. It has the
+ * following properties:
+ * @param {number} multiplier - The multiplier is a number that is used to scale
+ * the values of the x, y, w, and h properties of the metadata object. It
+ * determines how much the values should be increased or decreased. For example, if
+ * the multiplier is 2, the values of x, y, w, and
+ * @returns an object of type `IAssetPartMetadata` with the `x`, `y`, `w`, and `h`
+ * properties scaled by the `multiplier` parameter.
+ */
 export function scaleMetadata(
   metadata: IAssetPartMetadata,
   multiplier: number
@@ -250,6 +263,16 @@ const AssetParts: Record<AssetKind, Record<string, IAssetPartMetadata>> = {
   [AssetKind.UNKNOWN]: undefined,
 }
 
+/**
+ * This function retrieves metadata for a specific asset part based on its kind.
+ * @param {AssetKind} kind - The kind parameter is of type AssetKind, which is an
+ * enum that represents the type of asset being used. It could be an image, video,
+ * audio, or any other type of asset.
+ * @param {AssetPart} assetPart - `assetPart` is a string parameter representing a
+ * specific part of an asset. For example, if the asset is a car, the `assetPart`
+ * could be "engine", "tires", "doors", etc.
+ * @returns an object of type `IAssetPartMetadata`.
+ */
 export function getAssetPartMetadata(
   kind: AssetKind,
   assetPart: AssetPart,
@@ -265,6 +288,16 @@ export function getAssetPartMetadata(
   return AssetParts[kind][assetPart];
 }
 
+/**
+ * This function returns metadata for asset parts based on the provided asset kind.
+ * @param {AssetKind} kind - The parameter `kind` is of type `AssetKind`, which is
+ * likely an enum or a string literal type that represents the type of asset for
+ * which we want to retrieve metadata for its parts.
+ * @returns a record (an object with key-value pairs) of asset part metadata for a
+ * given asset kind. The keys of the record are strings representing the names of
+ * the asset parts, and the values are objects containing metadata about each asset
+ * part.
+ */
 export function getAssetPartsMetadata(
   kind: AssetKind
 ): Record<string, IAssetPartMetadata> {

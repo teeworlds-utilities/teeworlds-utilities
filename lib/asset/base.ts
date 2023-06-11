@@ -39,6 +39,12 @@ const DEFAULT_METADATA = {
   kind: AssetKind.UNKNOWN,
 };
 
+
+/**
+ * Return a hash from a `IAssetMetadata` type.
+ * @param metadata 
+ * @returns Returns a MD5 hash of `metadata`
+ */
 function getCacheKey(metadata: IAssetMetadata): string {
   return hashCacheKey(JSON.stringify(metadata))
 }
@@ -169,6 +175,14 @@ export class MinimalAsset implements IMinimalAsset {
     return this;
   }
 
+  /**
+   * This function loads data from a URL using a path.
+   * @param {string} url - A string representing the URL from which the data needs
+   * to be loaded.
+   * @returns The `loadFromUrl` method is returning a Promise that resolves to the
+   * current object (`this`) after calling the `loadFromPath` method with the
+   * provided `url` argument.
+   */
   async loadFromUrl(url: string): Promise<this> {
     return await this.loadFromPath(url);
   }
@@ -281,12 +295,30 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     this.verification = true;
   }
 
+  /**
+   * The function sets the verification value and returns the object instance.
+   * @param {boolean} value - a boolean value that represents whether the
+   * verification is set or not.
+   * @returns The method `setVerification` is returning `this`, which refers to the
+   * current object instance. This allows for method chaining, where multiple
+   * methods can be called on the same object instance in a single line of code.
+   */
   setVerification(value: boolean): this {
     this.verification = value;
     
     return this;
   }
 
+  /**
+   * This function returns the metadata of a given asset part.
+   * @param {T} assetPart - The parameter `assetPart` is of type `T`, which is a
+   * generic type. It represents a part of an asset, but the specific type of the
+   * part is not defined in this method. The type `T` is likely defined elsewhere
+   * in the code.
+   * @returns an object of type `IAssetPartMetadata`. The object is obtained by
+   * calling the `getAssetPartMetadata` function with two arguments:
+   * `this.metadata.kind` and `assetPart`.
+   */
   protected _getPartMetadata(assetPart: T): IAssetPartMetadata {
     return getAssetPartMetadata(
       this.metadata.kind,
@@ -294,6 +326,18 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     );
   }
 
+  /**
+   * This function returns scaled metadata for a given asset part.
+   * @param {T} assetPart - The `assetPart` parameter is of type `T`, which is not
+   * specified in the code snippet. It is likely a generic type that represents a
+   * part of an asset.
+   * @returns The function `getPartMetadata` is returning an object of type
+   * `IAssetPartMetadata`. This object is obtained by calling the
+   * `_getPartMetadata` method of the current object with the `assetPart`
+   * parameter, and then scaling the resulting metadata using the `multiplier`
+   * property of the current object. The `scaleMetadata` function is responsible
+   * for performing the scaling operation.
+   */
   getPartMetadata(assetPart: T): IAssetPartMetadata {
     return scaleMetadata(
       this._getPartMetadata(assetPart),
@@ -337,11 +381,18 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     return super.loadFromCanvas(canvas);
   }
 
+  
   /**
-   * TODO
-   * @param _color 
-   * @param assetPart 
-   * @returns 
+   * This function takes a color and an asset part, retrieves the image data for
+   * that part, applies the color to the image data, and then puts the modified
+   * image data back into the canvas.
+   * @param {IColor} color - The color parameter is an instance of the IColor
+   * interface, which represents a color value.
+   * @param {T} assetPart - The assetPart parameter is a generic type (T) that
+   * represents a part of an asset. It is used to retrieve metadata about the part,
+   * such as its position and dimensions, in order to manipulate its color.
+   * @returns the current instance of the object (`this`) to allow for method
+   * chaining.
    */
   colorPart(color: IColor, assetPart: T): this {
     const partMetadata = this.getPartMetadata(assetPart);
@@ -425,8 +476,18 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     );
   }
 
+
   /**
-   * TODO
+   * This function copies a specific part of an asset onto another asset.
+   * @param {IAsset} asset - The asset parameter is an object of type IAsset, which
+   * represents an image or a video asset. It contains information about the asset,
+   * such as its type, dimensions, and metadata.
+   * @param {T} assetPart - The `assetPart` parameter is of type `T` and represents
+   * a specific part of an asset that needs to be copied to the current asset.
+   * @returns The method `copyPart` is returning `this`, which refers to the
+   * instance of the class that called the method. This allows for method chaining,
+   * where multiple methods can be called on the same instance in a single line of
+   * code.
    */
   copyPart(asset: IAsset, assetPart: T): this{
     if (this.metadata.kind !== asset.metadata.kind) {
@@ -472,12 +533,33 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     return this;
   }
 
+  /**
+   * This function sets the save directory for a part and returns the object
+   * instance.
+   * @param {string} directory - The `directory` parameter is a string that
+   * represents the path to the directory where the saved parts will be stored.
+   * @returns The method `setPartSaveDirectory` is returning `this`, which refers
+   * to the current object instance. This allows for method chaining, where
+   * multiple methods can be called on the same object instance in a single line of
+   * code.
+   */
   setPartSaveDirectory(directory: string): this {
     this.partSaveDirectory = directory
     
     return this;
   }
 
+  /**
+   * This function generates a cache key for a given asset part based on the
+   * metadata and ID.
+   * @param {T} assetPart - The parameter `assetPart` is of type `T`, which is not
+   * defined in the given code snippet. It is likely a generic type parameter that
+   * represents a part or segment of an asset.
+   * @returns The `getPartCacheKey` function is returning a string value which is
+   * the cache key for a specific asset part. The cache key is generated by
+   * concatenating the `id`, `name` and `assetPart` properties of the `metadata`
+   * object and passing it to the `getCacheKey` function.
+   */
   protected getPartCacheKey(assetPart: T): string {
     let metadata = this.metadata;
 
@@ -489,6 +571,13 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     return getCacheKey(metadata);
   }
 
+  /**
+   * This function saves a part of an asset as a PNG file.
+   * @param {T} assetPart - The assetPart parameter is of type T, which is not
+   * specified in the code snippet. It is likely a generic type that represents a
+   * part of an asset.
+   * @returns the current instance of the class (`this`).
+   */
   savePart(assetPart: T): this {
     let canvas: Canvas;
 
@@ -523,6 +612,15 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     return this;
   }
 
+  /**
+   * The function saves multiple asset parts and returns the object it belongs to.
+   * @param {T[]} assetParts - `assetParts` is a rest parameter of type `T[]`,
+   * which means it is an array of elements of type `T`. The `...` syntax before
+   * the parameter name indicates that it is a rest parameter, which allows the
+   * function to accept any number of arguments of type `T` and
+   * @returns The `saveParts` method is returning the current instance of the class
+   * (`this`) after saving each asset part passed as arguments to the method.
+   */
   saveParts(...assetParts: T[]): this {
     for (const assetPart of assetParts) {
       this.savePart(assetPart);

@@ -30,7 +30,7 @@ There are some unitary test written for `jest`. You can run them with the follow
 npm run test
 ```
 
-If you want to debug, you should set the environment variable `DEBUG` to `true`, it will enable **`Logger.debug`** to output.
+If you want to debug, you should set the environment variable `DEBUG` to `true`, it will allow **`Logger.debug`** to output.
 
 # ⭐ Use cases
 
@@ -39,6 +39,6 @@ If you want to see examples of how to use the library, you can check the **`**.t
 ## 🎉 Tasks
 
 - [x] Unitary tests
-- [ ] Documentation
+- [x] Documentation 80 %
 - [x] CI/CD pipeline
 - [x] Log environment variable

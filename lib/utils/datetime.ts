@@ -24,7 +24,7 @@ class FancyDate extends Date {
   }
 }
 
-class FormattedDateTime {
+export class FormattedDateTime {
   static get date(): string {
     return new FancyDate().date();
   }
@@ -37,5 +37,3 @@ class FormattedDateTime {
     return new FancyDate().datetime();
   }
 }
-
-export { FormattedDateTime };

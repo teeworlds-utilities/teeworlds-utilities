@@ -1,4 +1,4 @@
-import { ColorRGB, ColorHSL, ColorTwCode } from './color'
+import { ColorRGB, ColorHSL, ColorCode } from './color'
 import { Logger } from './logger';
 
 describe('Color converting', () => {
@@ -17,7 +17,7 @@ describe('Color converting', () => {
   });
 
   test('From Teeworlds code to HSL', () => {
-    const code = new ColorTwCode(7929728)
+    const code = new ColorCode(7929728)
     const hsl = code.hsl()
 
     Logger.debug(hsl.toArray().toString());

@@ -120,7 +120,9 @@ class Actions {
   }
 
   get(name: string): Action | null {
-    if (Object.keys(this.actions).includes(name) === false) return null;
+    if (Object.hasOwn(this.actions, name) === false) {
+      return null;
+    }
 
     return this.actions[name];
   }

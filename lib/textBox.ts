@@ -22,7 +22,6 @@ export type Margin = {
   right: number;
 };
 
-
 export interface ITextBox {
   title?: ITextDescriptor,
   content: ITextDescriptor,
@@ -33,7 +32,6 @@ export interface ITextBox {
   w: number,
   h: number
 }
-
 
 abstract class AbstractTextZone implements ITextBox {
   title?: ITextDescriptor;

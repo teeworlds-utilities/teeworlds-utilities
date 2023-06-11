@@ -1,11 +1,10 @@
 import { unlinkSync, rmSync } from 'fs'
 import Skin from './skin';
 import Gameskin from './gameskin';
-import { GameskinPart, SkinPart } from './part';
-import { ColorRGB } from '../color';
+import { GameskinPart } from './part';
+import { ColorRGB, ColorCode } from '../color';
 
 const SKIN = 'data/skins/ahl_red_nanami.png';
-// const DEFAULT_NANAMI = 'data/skins/ahl_red_nanami.png';
 const TERRORIST = 'data/skins/Terrorist.png';
 const GAMESKIN = 'data/gameskins/ahl_red.png';
 const GAMESKIN_SRC = 'data/gameskins/cellegen_grid.png';
@@ -142,14 +141,9 @@ describe('Abstract class Asset', () => {
     await skin.loadFromPath(TERRORIST);
 
     skin
-      .colorParts(
-        new ColorRGB(0, 0, 0),
-        SkinPart.BODY,
-        SkinPart.DEFAULT_EYE
-      )
-      .colorPart(
-        new ColorRGB(255, 255, 255),
-        SkinPart.FOOT,
+      .colorTee(
+        new ColorCode(6619008),
+        new ColorRGB(136, 113, 255),
       )
       .render()
       .saveRenderAs(path);
