@@ -6,7 +6,7 @@ import { files } from './utils/files'
 import { argsChecker } from './utils/util';
 import Cache from './cache';
 
-import {Canvas, createCanvas, CanvasRenderingContext2D} from 'canvas';
+import {Canvas, createCanvas, CanvasRenderingContext2D, ImageData} from 'canvas';
 import * as fs from 'fs';
 
 type RectangleData = [number, number, number, number];
@@ -31,7 +31,7 @@ class Entity {
 }
 
 class Part extends Entity {
-  destination: number[];
+  destination: RectangleData;
 
   constructor(imgData: ImageData, destination: RectangleData) {
     super(imgData);

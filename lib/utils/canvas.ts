@@ -1,4 +1,4 @@
-import { Canvas, createCanvas, loadImage } from 'canvas';
+import { Canvas, createCanvas, loadImage, ImageData, CanvasRenderingContext2D } from 'canvas';
 import { FileError } from '../error';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import Cache from '../cache';
