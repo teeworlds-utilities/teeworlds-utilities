@@ -7,7 +7,7 @@ import {
 import ITextDescriptor from './interfaces/textDescriptor';
 import ITextBox from './interfaces/textBox';
 import Margin from './types/margin';
-import { roundedImage } from './utils';
+import { roundedImage } from './utils/canvas';
 
 abstract class AbstractTextZone implements ITextBox {
   title?: ITextDescriptor;

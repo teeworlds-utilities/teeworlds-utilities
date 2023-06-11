@@ -1,164 +1,197 @@
-import {InvalidColor} from './error';
-import {isDigit, genChunks} from './utils';
+import { ColorError } from './error';
 
-interface IColor {
-  readonly from: number;
-  readonly to: number;
-  readonly average: number;
+import * as convert from 'color-convert';
 
-  isInRange: (value: number) => boolean;
-  blackAndWhite: (color: this) => void;
-  basicOperation: (color: this) => void;
-};
+interface IColorConvert {
+  rgba: () => IColor;
+  hsl: () => IColor;
+  twCode: () => IColor;
+}
 
-class ColorRGBA implements IColor {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
+export interface IColor extends IColorConvert {
+  toArray: () => number[];
+}
 
-  private readonly _from = 0;
-  private readonly _to = 255;
+type HSL = [number, number, number];
 
+function setColorValueBase(
+  value: number,
+  from: number,
+  to: number
+): number {
+  if (value < from || value > to) {
+    throw new ColorError(
+      'The color must be between ' + from.toString()
+      + ' and ' + to.toString()
+    );
+  }
+
+  return value;
+}
+
+function setColorValue(value: number, to: number): number {
+  return setColorValueBase(value, 0, to);
+}
+
+export class ColorRGBA implements IColor {
+  private _r: number;
+  private _g: number;
+  private _b: number;
+  private _a: number;
+  
   constructor(
     r: number,
     g: number,
     b: number,
-    a = 255
+    a: number
   ) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-    this.a = a;
+    this._r = r
+    this._g = g
+    this._b = b
+    this._a = a
   }
 
-  get from() {
-    return this._from;
+  set r(value: number) { this._r = setColorValue(value, 255); };
+  set g(value: number) { this._g = setColorValue(value, 255); };
+  set b(value: number) { this._b = setColorValue(value, 255); };
+  set a(value: number) { this._a = setColorValue(value, 255); };
+
+  get r(): number { return this._r; };
+  get g(): number { return this._g; };
+  get b(): number { return this._b; };
+  get a(): number { return this._a; };
+
+  toArray(): number[] {
+    return [this._r, this._g, this._b, this._a]
   }
 
-  get to() {
-    return this._to;
+  rgba(): IColor {
+    return this;
+  }
+
+  hsl(): IColor {
+    const hsl = convert.rgb.hsl(
+      this._r,
+      this._g,
+      this._b
+    )
+  
+    return new ColorHSL(...hsl);
+  }
+
+  twCode(): IColor {
+    throw new ColorError('Not implemented');
   }
 
   get average(): number {
     return (this.r + this.g + this.b) / 3;
   }
 
-  isInRange(value: number): boolean {
-    return value >= this._from && value <= this._to;
-  }
-
-  blackAndWhite(_: ColorRGBA) {
+  blackAndWhite(): this {
     const average = this.average;
   
-    this.r = average;
-    this.g = average;
-    this.b = average;
+    this._r = average;
+    this._g = average;
+    this._b = average;
+  
+    return this
   }
 
-  basicOperation(color: ColorRGBA) {
-    this.r = (this.r * color.r) / this._to;
-    this.g = (this.g * color.g) / this._to;
-    this.b = (this.b * color.b) / this._to;
-    this.a = (this.a * color.a) / this._to;
+  applyColor(color: ColorRGBA) {
+    this.r = (this._r * color.r) / 255;
+    this.g = (this._g * color.g) / 255;
+    this.b = (this._b * color.b) / 255;
+    this.a = (this._a * color.a) / 255;
+    
+    return this
   }
 }
 
-function rgbFormat(color: string): number[] {
-  const sColor: any = color.split(',');
-
-  if (sColor.length < 3 || sColor.length > 4)
-    throw new InvalidColor('Mininum and maximum elements: 3, 4');
-
-  for (let i = 0; i < sColor.length; i++) {
-    let value: any = sColor[i].match(/\d+/);
-
-    if (!value)
-      throw new InvalidColor(
-        'Invalid RGB color format ' +
-          color +
-          '\nValid format: "255, 0, 12" or "255, 0, 12, 255"'
-      );
-
-    value = parseInt(value);
-
-    if (value < 0 || value > 255)
-      throw new InvalidColor(`RGB color ${value} is not between 0 and 255`);
-
-    sColor[i] = value;
+export class ColorRGB extends ColorRGBA implements IColor{
+  constructor(r: number, g: number, b: number) {
+    super(r, g, b, 255)
   }
-
-  return sColor;
 }
 
-function hslFormat(color: string): number[] {
-  const limits = [360, 100, 100, 255];
-  const sColor: any = color.split(',');
-  let limit: number;
+export class ColorHSL implements IColor {
+  private _h: number;
+  private _s: number;
+  private _l: number;
 
-  if (sColor.length < 3 || sColor.length > 4)
-    throw new InvalidColor('Mininum and maximum elements: 3, 4');
-
-  for (let i = 0; i < sColor.length; i++) {
-    let value: any = sColor[i].match(/\d+/);
-
-    if (!value)
-      throw new InvalidColor(
-        'Invalid HSL color format ' +
-          color +
-          '\nValid format: "360, 100, 100" or "123, 12, 12, 255"'
-      );
-
-    value = parseInt(value);
-    limit = limits[i];
-    if (value < 0 || value > limit)
-      throw new InvalidColor(
-        `RGB color ${value} is not between 0 and ${limit}`
-      );
-    sColor[i] = value;
+  constructor(h: number, s: number, l: number) {
+    this.h = h;
+    this.s = s;
+    this.l = l;
   }
-  return sColor;
-}
 
-// Convert a color code to HSL format
-function codeFormat(color: string): number[] {
-  if (isDigit(color) === false)
-    throw new InvalidColor(
-      'Invalid code format ' +
-        color +
-        '\nValid format: A value encoded on 6 bytes'
+  set h(value: number) { this._h = setColorValue(value, 360); };
+  set s(value: number) { this._s = setColorValue(value, 100); };
+  set l(value: number) { this._l = setColorValue(value, 100); };
+
+  get h(): number { return this._h; };
+  get s(): number { return this._s; };
+  get l(): number { return this._l; };
+
+  toArray(): HSL {
+    return [this.h, this.s, this.l];
+  }
+
+  rgba(): IColor {
+    return new ColorRGBA(
+      ...convert.hsl.rgb(this.toArray()),
+      255
     );
+  }
 
-  const colorLong: number = parseInt(color);
+  hsl(): IColor {
+    return this;
+  }
 
-  if (colorLong < 0 || colorLong > 0xffffff)
-    throw new InvalidColor(
-      'Invalid value ' +
-        color +
-        '\nValid format: an integer (min: 0, max: 0xffffff)'
-    );
+  twCode(): IColor {
+    let code = (this._h * 0xff) / 360;
 
-  color = colorLong.toString(16);
-  const l = color.length;
+    code <<= 8;
+    code |= (this._s * 100) / 0xff;
+    code <<= 8;
+    code |= (this._l * 100) / 0xff;
 
-  if (l < 6) color = '0'.repeat(6 - l) + color;
-
-  const chunks = genChunks(color, 2).map((x: string) => parseInt(x, 16));
-  chunks[0] = (chunks[0] * 360) / 255;
-  chunks[1] = (chunks[1] * 100) / 255;
-  chunks[2] = ((chunks[2] / 2 + 128) * 100) / 255;
-
-  return chunks;
+    return new ColorTwCode(code);
+  }
 }
 
-const COLOR_FORMAT = {
-  rgb: rgbFormat,
-  hsl: hslFormat,
-  code: codeFormat,
-};
+export class ColorTwCode implements IColor {
+  readonly code: number;
+  
+  constructor(value: number) {
+    this.code = setColorValue(value, 0xffffff);
+  }
 
-type ColorOperations = 
-'basicOperation'
-| 'blackAndWhite';
+  toArray(): HSL {
+    return [
+      (this.code >> 16) & 0xff,
+      (this.code >> 8) & 0xff,
+      this.code & 0xff,
+    ];
+  }
 
-export {ColorOperations, COLOR_FORMAT, IColor, ColorRGBA};
+  rgba(): IColor {
+    return this
+      .hsl()
+      .rgba();
+  }
+
+  hsl(): IColor {
+    let arr = this.toArray()
+
+    // Adjusting HSL values for Teeworlds
+    arr[0] = (arr.at(0) * 360) / 0xff;
+    arr[1] = (arr.at(1) * 100) / 0xff;
+    arr[2] = ((arr.at(2) / 2 + 128) * 100) / 0xff;
+
+    return new ColorHSL(...arr);
+  }
+
+  twCode(): IColor {
+    return this;
+  }
+}

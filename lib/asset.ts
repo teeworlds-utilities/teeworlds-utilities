@@ -1,6 +1,6 @@
 import * as data from './data';
-import {InvalidFile, InvalidAsset, InvalidElement} from './error';
-import {saveInDir} from './utils';
+import {FileError, AssetError, ElementError} from './error';
+import {saveInDir} from './utils/canvas';
 import {ColorOperations, COLOR_FORMAT, ColorRGBA} from './color';
 
 import {
@@ -140,7 +140,7 @@ class TwAssetBase {
   async preprocess(validRatio = true) {
     // Check the asset type
     if (Object.keys(data).includes(this.type) === false) {
-      throw new InvalidAsset('Invalid asset type ' + this.type);
+      throw new AssetError('Invalid asset type ' + this.type);
     }
     const type = this.type as keyof typeof data;
     this.data = data[type];
@@ -149,12 +149,12 @@ class TwAssetBase {
     try {
       this.img = await loadImage(this.path);
     } catch (err) {
-      throw new InvalidFile('Unable to get the image ' + this.path);
+      throw new FileError('Unable to get the image ' + this.path);
     }
 
     // Check the image size
     if (this.isRatioLegal() === false && validRatio) {
-      throw new InvalidFile('Wrong image ratio ' + this.path);
+      throw new FileError('Wrong image ratio ' + this.path);
     }
 
     // If everything is OK, it creates the canvas and the context
@@ -182,7 +182,7 @@ class TwAssetBase {
 
   private cut(name: string): TwElement {
     if (Object.keys(this.data.elements).includes(name) === false) {
-      throw new InvalidElement('Unauthorized element type ' + name);
+      throw new ElementError('Unauthorized element type ' + name);
     }
 
     if (this.isCut(name)) {
@@ -270,7 +270,7 @@ class TwAssetBase {
 
     for (const name of names) {
       if (Object.keys(this.elements).includes(name) === false)
-        throw new InvalidElement('Element has never been extracted ' + name);
+        throw new ElementError('Element has never been extracted ' + name);
 
       this.elements[name].setColor(c, 'blackAndWhite');
 
@@ -292,7 +292,7 @@ class TwAssetBase {
 
   render(eye?: string): this {
     if (this.type !== 'SKIN') {
-      throw new InvalidAsset("You can't render the asset " + this.type);
+      throw new AssetError("You can't render the asset " + this.type);
     }
 
     eye = eye || 'default_eye';
@@ -378,7 +378,7 @@ class TwAssetBase {
   saveRender(dirname: string, name?: string): this {
     const filename = name || this.path.split('/').pop();
     if (!this.rCanvas) {
-      throw new InvalidAsset('The render canvas is undefined');
+      throw new AssetError('The render canvas is undefined');
     }
 
     saveInDir(dirname, 'render_' + filename, this.rCanvas);
@@ -397,7 +397,7 @@ class TwAssetBase {
       this.type !== 'SKIN' &&
       (!eKeys.includes('body') || !eKeys.includes('body_shadow'))
     ) {
-      throw new InvalidAsset(
+      throw new AssetError(
         'Only available for skin and you must extract body and body_shadow'
       );
     }
@@ -429,7 +429,7 @@ class TwAssetBase {
       bodyS.ctx.fillStyle = 'black';
       bodyS.ctx.fillRect(0, 0, bodyS.canvas.width, bodyS.canvas.height);
     } catch (err) {
-      throw new InvalidFile('Unable to get the image ' + path);
+      throw new FileError('Unable to get the image ' + path);
     }
 
     return this;

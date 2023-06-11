@@ -15,10 +15,10 @@ import { CanvasTextZone } from './textBox';
 
 import {
   getCanvasFromFile,
-  listFile,
   roundedImage,
   saveInDir
-} from './utils';
+} from './utils/canvas';
+import { files } from './utils/files'
 import ITextDescriptor from './interfaces/textDescriptor';
 
 enum CardTitle {
@@ -147,7 +147,7 @@ abstract class AbstractCanvasCard implements ICard {
 
   async setRandomBackground(bg_folder: string): Promise<this> {
     const path = bg_folder;
-    const backgrounds = listFile(path);
+    const backgrounds = files.list(path);
     const index = Math.floor(Math.random() * (backgrounds.length - 1));
     const backgroundPath = path + backgrounds[index];
 

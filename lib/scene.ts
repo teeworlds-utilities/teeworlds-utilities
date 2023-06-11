@@ -1,6 +1,8 @@
 import {TwAssetExtractor} from './asset';
-import {InvalidScene} from './error';
-import {saveInDir, listFile, getCanvasFromFile, argsChecker} from './utils';
+import {SceneError} from './error';
+import { saveCanvas, getCanvasFromFile } from './utils/canvas';
+import { files } from './utils/files'
+import { argsChecker } from './utils/util';
 
 import {Canvas, createCanvas, CanvasRenderingContext2D} from 'canvas';
 import * as fs from 'fs';
@@ -72,7 +74,7 @@ class Scheme {
     const args = Object.keys(this.data);
 
     if (argsChecker(args, ...Scheme.DEFAULT_KEYS) === false) {
-      throw new InvalidScene('Missing arguments for the scheme');
+      throw new SceneError('Missing arguments for the scheme');
     }
   }
 
@@ -82,7 +84,7 @@ class Scheme {
     } else if (scheme) {
       this.data = scheme;
     } else {
-      throw new InvalidScene('Missing scheme');
+      throw new SceneError('Missing scheme');
     }
 
     this.checkScheme();
@@ -112,7 +114,7 @@ class Action {
     const argsGoodOrder = [];
 
     if (argsChecker(this.needArgs, ...argsNames) === false)
-      throw new InvalidScene('Missing args');
+      throw new SceneError('Missing args');
 
     for (const arg of this.needArgs) {
       argsGoodOrder.push(args[arg]);
@@ -227,8 +229,8 @@ class TwSceneMaker {
     this.ctx = this.canvas.getContext('2d');
   }
 
-  saveScene(dirname: string, filename: string): this {
-    saveInDir(dirname, filename, this.canvas);
+  saveScene(path: string): this {
+    saveCanvas(path, this.canvas);
 
     return this;
   }
@@ -271,7 +273,7 @@ class TwSceneMaker {
     const [w, h] = source.slice(2, 4);
     let destination: RectangleData;
 
-    if (sx === dx && sy === dy) throw new InvalidScene('Wrong usage');
+    if (sx === dx && sy === dy) throw new SceneError('Wrong usage');
 
     if (sx > dx && sy > dy)
       this.addLine(mapres, source, point_destination, point_source);
@@ -318,7 +320,7 @@ class TwSceneMaker {
 
   async setRandomBackground(bg_folder: string) {
     const path = bg_folder;
-    const backgrounds = listFile(path);
+    const backgrounds = files.list(path);
     const index = Math.floor(Math.random() * (backgrounds.length - 1));
     const background = path + backgrounds[index];
 

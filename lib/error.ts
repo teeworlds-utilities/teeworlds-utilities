@@ -1,36 +1,14 @@
-class InvalidFile extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = 'InvalidFile';
+abstract class BaseError extends Error {
+  constructor(message: string) {
+    super(message);
+
+    this.name = this.constructor.name;
   }
 }
 
-class InvalidAsset extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = 'InvalidAsset';
-  }
-}
-
-class InvalidElement extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = 'InvalidElement';
-  }
-}
-
-class InvalidColor extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = 'InvalidColor';
-  }
-}
-
-class InvalidScene extends Error {
-  constructor(msg: string) {
-    super(msg);
-    this.name = 'InvalidScene';
-  }
-}
-
-export {InvalidFile, InvalidAsset, InvalidElement, InvalidColor, InvalidScene};
+export class FileError extends BaseError { };
+export class AssetError extends BaseError { };
+export class AssetPartError extends BaseError { };
+export class ElementError extends BaseError { };
+export class SceneError extends BaseError { };
+export class ColorError extends BaseError { };

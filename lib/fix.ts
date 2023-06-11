@@ -1,8 +1,9 @@
 import {TwAssetBase} from './asset';
-import {saveInDir, closestNumber} from './utils';
+import {saveInDir} from './utils/canvas';
+import { closestNumber } from './utils/util';
 
 import {Canvas, createCanvas} from 'canvas';
-import {InvalidAsset} from './error';
+import {AssetError} from './error';
 
 class TwAssetFix extends TwAssetBase {
   private fixedWidth!: number;
@@ -37,7 +38,7 @@ class TwAssetFix extends TwAssetBase {
 
   fix(): this {
     if (this.getFixedSize() === true)
-      throw new InvalidAsset(`Already have a good format ${this.path}`);
+      throw new AssetError(`Already have a good format ${this.path}`);
 
     this.fixedCanvas = createCanvas(this.fixedWidth, this.fixedHeight);
     const ctx = this.fixedCanvas.getContext('2d');
