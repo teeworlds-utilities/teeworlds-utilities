@@ -33,7 +33,7 @@ interface IAssetMetadata {
   name?: string
 }
 
-const DEFAULT_METADATA = {
+export const DEFAULT_METADATA = {
   baseSize: { w: 1, h: 1},
   divisor: { w: 1, h: 1},
   kind: AssetKind.UNKNOWN,
@@ -253,21 +253,21 @@ export class MinimalAsset implements IMinimalAsset {
  */
 let cacheMinimalAsset = new Cache<IMinimalAsset>;
 
-export interface IAsset extends IMinimalAsset {
+export interface IAsset<T extends AssetPart = AssetPart> extends IMinimalAsset {
   multiplier: number;
 
   setVerification: (value: boolean) => this;
-  getPartMetadata(assetPart: AssetPart): IAssetPartMetadata
-  colorPart: (color: IColor, assetPart: AssetPart) => this;
-  colorParts: (color: IColor, ...assetParts: AssetPart[]) => this 
-  copyPart: (asset: IAsset, assetPart: AssetPart) => this;
-  copyParts: (asset: IAsset, ...assetParts: AssetPart[]) => this;
+  getPartMetadata(assetPart: T): IAssetPartMetadata
+  colorPart: (color: IColor, assetPart: T) => this;
+  colorParts: (color: IColor, ...assetParts: T[]) => this 
+  copyPart: (asset: IAsset<T>, assetPart: T) => this;
+  copyParts: (asset: IAsset<T>, ...assetParts: T[]) => this;
   setPartSaveDirectory: (directory: string) => this;
-  savePart: (assetPart: AssetPart) => this;
-  saveParts: (...assetParts: AssetPart[]) => this;
+  savePart: (assetPart: T) => this;
+  saveParts: (...assetParts: T[]) => this;
 }
 
-export abstract class Asset<T extends AssetPart> extends MinimalAsset implements IAsset {
+export abstract class Asset<T extends AssetPart> extends MinimalAsset implements IAsset<T> {
   declare canvas: Canvas;
   declare readonly metadata: IAssetMetadata;
 
@@ -489,11 +489,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * where multiple methods can be called on the same instance in a single line of
    * code.
    */
-  copyPart(asset: IAsset, assetPart: T): this{
-    if (this.metadata.kind !== asset.metadata.kind) {
-      throw new AssetError("Both asset must have the same kind.")
-    }
-
+  copyPart(asset: IAsset<T>, assetPart: T): this{
     let fromMetadata = asset.getPartMetadata(assetPart);
     let toMetadata = this.getPartMetadata(assetPart);
 
@@ -525,7 +521,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * chaining, where multiple methods can be called on the same instance in a
    * single line of code.
    */
-  copyParts(asset: IAsset, ...assetParts: T[]): this {
+  copyParts(asset: IAsset<T>, ...assetParts: T[]): this {
     for (const assetPart of assetParts) {
       this.copyPart(asset, assetPart);
     }
