@@ -151,3 +151,4 @@ fix/
 # End of https://www.toptal.com/developers/gitignore/api/node
 
 .vscode
+main.ts

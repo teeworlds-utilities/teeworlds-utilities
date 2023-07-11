@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AssetKind, AssetHelpSize, AssetPart, IAssetPartMetadata, getAssetPartMetadata, getAssetPartsMetadata, scaleMetadata } from "./part";
 import { AssetError, FileError } from "../error";
 import { getNameFromPath } from "../utils/util";
-import { canvasFromImageData, cloneCanvas, saveCanvas } from "../utils/canvas";
+import { autoCropCanvas, canvasFromImageData, cloneCanvas, saveCanvas } from "../utils/canvas";
 import { ColorRGBA, IColor } from "../color";
 import Cache, { hashCacheKey } from "../cache";
 
@@ -19,14 +19,20 @@ import Cache, { hashCacheKey } from "../cache";
  * Represents any kind of dimension.
  * It is actually used to describe a lot of things.
  */
-type Dimensions = {
+export type Dimensions = {
   w: number;
   h: number;
 }
+
+export type Position = {
+  x: number;
+  y: number;
+}
+
 /**
  * The interface `IAssetMetadata` defines the metadata information about an asset.
  */
-interface IAssetMetadata {
+export interface IAssetMetadata {
   baseSize: Dimensions;
   divisor: Dimensions;
   kind: AssetKind;
@@ -77,6 +83,7 @@ export interface IMinimalAsset extends ISave {
   loadFromUrl: (url: string) => Promise<this>;
   loadFromCanvas: (canvas: Canvas) => this;
   empty: (assetHelpSize: AssetHelpSize) => this;
+  scale: (assetHelpSize: AssetHelpSize) => this;
   restore: () => this;
 }
 
@@ -94,9 +101,7 @@ export class MinimalAsset implements IMinimalAsset {
   /**
    * This function returns the multiplier value based on the canvas width and base
    * size metadata.
-   * @returns The `multiplier` property is returning a number which is the ratio of
-   * the canvas width to the base size width of the asset's metadata. If the base
-   * size width is 0, an `AssetError` is thrown.
+   * @returns A scale factor
    */
   get multiplier(): number {
     if (this.metadata.baseSize.w === 0) {
@@ -109,13 +114,8 @@ export class MinimalAsset implements IMinimalAsset {
   /**
    * This function creates an empty canvas with a specified size and returns the
    * object.
-   * @param {AssetHelpSize} assetHelpSize - `assetHelpSize` is an optional
-   * parameter with a default value of `AssetHelpSize.DEFAULT`. It is used to
-   * determine the size of the canvas that will be created. The canvas size is
-   * calculated by multiplying the base size of the metadata by the `assetHelpSize`
-   * value. The resulting canvas
-   * @returns The function `empty` is returning the current instance of the object
-   * (`this`) after performing some operations on its properties.
+   * @param {AssetHelpSize} assetHelpSize - `assetHelpSize`
+   * @returns this
    */
   empty(assetHelpSize: AssetHelpSize = AssetHelpSize.DEFAULT): this {
     return this.loadFromCanvas(
@@ -124,6 +124,36 @@ export class MinimalAsset implements IMinimalAsset {
         this.metadata.baseSize.h * assetHelpSize
       )
     );
+  }
+
+  /**
+   * Scale the canvas using depending of `assetHelpSize`
+   * @param assetHelpSize 
+   * @returns this
+   */
+  scale(assetHelpSize: AssetHelpSize): this {
+    const w = this.metadata.baseSize.w * assetHelpSize;
+    const h = this.metadata.baseSize.h * assetHelpSize;
+
+    if (
+      w === this.canvas.width
+      && h === this.canvas.height
+    ) {
+      return this;
+    }
+
+    const canvas = createCanvas(w, h);
+    const ctx = canvas.getContext('2d');
+
+    ctx.drawImage(
+      this.canvas,
+      0, 0,
+      this.canvas.width, this.canvas.height,
+      0, 0,
+      w, h
+    );
+    
+    return this.loadFromCanvas(canvas);
   }
 
   /**
@@ -144,9 +174,7 @@ export class MinimalAsset implements IMinimalAsset {
    * This function loads an image from a given path and sets it as the canvas
    * background.
    * @param {string} path - A string representing the file path of an image file.
-   * @returns The `loadFromPath` method is returning a Promise that resolves with
-   * `this`, which refers to the instance of the class that the method is called
-   * on.
+   * @returns Promise<this>
    */
   async loadFromPath(path: string): Promise<this> {
     let img: Image;
@@ -179,9 +207,7 @@ export class MinimalAsset implements IMinimalAsset {
    * This function loads data from a URL using a path.
    * @param {string} url - A string representing the URL from which the data needs
    * to be loaded.
-   * @returns The `loadFromUrl` method is returning a Promise that resolves to the
-   * current object (`this`) after calling the `loadFromPath` method with the
-   * provided `url` argument.
+   * @returns Promise<this>
    */
   async loadFromUrl(url: string): Promise<this> {
     return await this.loadFromPath(url);
@@ -192,9 +218,7 @@ export class MinimalAsset implements IMinimalAsset {
    * itself.
    * @param {string} name - The `name` parameter is a string that represents the
    * name to be set for a metadata object.
-   * @returns The method `setName` is returning `this`, which refers to the current
-   * object instance. This allows for method chaining, where multiple methods can
-   * be called on the same object instance in a single line of code.
+   * @returns this
    */
   setName(name: string): this {
     this.metadata.name = name;
@@ -217,25 +241,27 @@ export class MinimalAsset implements IMinimalAsset {
 
   /**
    * This function saves an image file with the name of the metadata in PNG format.
-   * @returns The `save()` method is returning the result of calling the `saveAs()`
-   * method with a file path that includes the name of the metadata object and a
-   * file extension of `.png`. The `saveAs()` method is likely responsible for
-   * actually saving the file to disk. Therefore, the `save()` method is likely
-   * returning a reference to the object instance to allow for method chaining.
+   * @returns this
    */
-  save(): this {
-    return this.saveAs('./' + this.metadata.name + '.png');
+  save(cropped: boolean = false): this {
+    return this.saveAs(
+      './' + this.metadata.name + '.png',
+      cropped
+    );
   }
 
   /**
    * This function saves the canvas as an image file at the specified path.
    * @param {string} path - A string representing the file path where the canvas
    * should be saved. This can include the file name and extension.
-   * @returns the current instance of the object (this) after saving the canvas to
-   * the specified path.
+   * @returns this
    */
-  saveAs(path: string): this {
-    saveCanvas(path, this.canvas);
+  saveAs(path: string, cropped: boolean = false): this {
+    const canvas = cropped === true
+      ? autoCropCanvas(this.canvas)
+      : this.canvas;
+
+    saveCanvas(path, canvas);
 
     return this;
   }
@@ -258,6 +284,7 @@ export interface IAsset<T extends AssetPart = AssetPart> extends IMinimalAsset {
 
   setVerification: (value: boolean) => this;
   getPartMetadata(assetPart: T): IAssetPartMetadata
+  getPartCanvas(assetPart: T): Canvas;
   colorPart: (color: IColor, assetPart: T) => this;
   colorParts: (color: IColor, ...assetParts: T[]) => this 
   copyPart: (asset: IAsset<T>, assetPart: T) => this;
@@ -278,15 +305,6 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   private verification: boolean;
   private id: string;
   
-  /**
-   * This is a constructor function that takes in an object of type IAssetMetadata
-   * and calls the constructor of its parent class with the same argument.
-   * @param {IAssetMetadata} metadata - The parameter `metadata` is of type
-   * `IAssetMetadata` and is being passed to the constructor of a class that
-   * extends another class. It is likely that the `metadata` parameter contains
-   * information about an asset, such as its name, type, size, and other relevant
-   * details. The `super
-   */
   constructor(metadata: IAssetMetadata) {
     super(metadata);
 
@@ -299,9 +317,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * The function sets the verification value and returns the object instance.
    * @param {boolean} value - a boolean value that represents whether the
    * verification is set or not.
-   * @returns The method `setVerification` is returning `this`, which refers to the
-   * current object instance. This allows for method chaining, where multiple
-   * methods can be called on the same object instance in a single line of code.
+   * @returns this
    */
   setVerification(value: boolean): this {
     this.verification = value;
@@ -311,13 +327,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
   /**
    * This function returns the metadata of a given asset part.
-   * @param {T} assetPart - The parameter `assetPart` is of type `T`, which is a
-   * generic type. It represents a part of an asset, but the specific type of the
-   * part is not defined in this method. The type `T` is likely defined elsewhere
-   * in the code.
-   * @returns an object of type `IAssetPartMetadata`. The object is obtained by
-   * calling the `getAssetPartMetadata` function with two arguments:
-   * `this.metadata.kind` and `assetPart`.
+   * @param {T} assetPart - Asset part
+   * @returns Asset part metadata
    */
   protected _getPartMetadata(assetPart: T): IAssetPartMetadata {
     return getAssetPartMetadata(
@@ -328,15 +339,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
   /**
    * This function returns scaled metadata for a given asset part.
-   * @param {T} assetPart - The `assetPart` parameter is of type `T`, which is not
-   * specified in the code snippet. It is likely a generic type that represents a
-   * part of an asset.
-   * @returns The function `getPartMetadata` is returning an object of type
-   * `IAssetPartMetadata`. This object is obtained by calling the
-   * `_getPartMetadata` method of the current object with the `assetPart`
-   * parameter, and then scaling the resulting metadata using the `multiplier`
-   * property of the current object. The `scaleMetadata` function is responsible
-   * for performing the scaling operation.
+   * @param {T} assetPart - Asset part
+   * @returns Asset part metadata
    */
   getPartMetadata(assetPart: T): IAssetPartMetadata {
     return scaleMetadata(
@@ -346,12 +350,38 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   }
 
   /**
+   * 
+   * @param assetPart Asset part
+   * @returns Part as a Canvas
+   */
+  getPartCanvas(assetPart: T): Canvas {
+    const metadataPart = this.getPartMetadata(assetPart);
+
+    const canvas = createCanvas(
+      metadataPart.w,
+      metadataPart.h
+    );
+    let ctx = canvas.getContext('2d');
+    
+    const imageData = this.ctx.getImageData(
+      metadataPart.x,
+      metadataPart.y,
+      metadataPart.w,
+      metadataPart.h
+    );
+
+    ctx.putImageData(
+      imageData,
+      0, 0
+    );
+
+    return canvas;
+  }
+
+  /**
    * This function checks if a canvas has a valid aspect ratio based on its width
    * and height.
-   * @param {Canvas} [canvas] - The `canvas` parameter is an optional parameter of
-   * type `Canvas`. If a `canvas` object is passed as an argument, it will be used
-   * to check the aspect ratio. If no argument is passed, the `canvas` property of
-   * the current object (`this.canvas`) will be used instead.
+   * @param {Canvas} [canvas]
    * @returns A boolean value indicating whether the canvas has a valid aspect
    * ratio or not.
    */
@@ -370,8 +400,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * This function loads an image from a canvas and throws an error if the image
    * has the wrong aspect ratio.
    * @param {Canvas} canvas
-   * @returns The `loadFromCanvas` method is returning a Promise that resolves to
-   * `this`, which refers to the current instance of the class.
+   * @returns this
    */
   loadFromCanvas(canvas: Canvas): this {
     if (this.hasValidAspectRatio(canvas) === false) {
@@ -381,20 +410,18 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     return super.loadFromCanvas(canvas);
   }
 
-  
   /**
-   * This function takes a color and an asset part, retrieves the image data for
-   * that part, applies the color to the image data, and then puts the modified
-   * image data back into the canvas.
-   * @param {IColor} color - The color parameter is an instance of the IColor
-   * interface, which represents a color value.
-   * @param {T} assetPart - The assetPart parameter is a generic type (T) that
-   * represents a part of an asset. It is used to retrieve metadata about the part,
-   * such as its position and dimensions, in order to manipulate its color.
-   * @returns the current instance of the object (`this`) to allow for method
-   * chaining.
+   * 
+   * @param color Color
+   * @param assetPart Asset part
+   * @param callback A function applied on every canvas byte
+   * @returns 
    */
-  colorPart(color: IColor, assetPart: T): this {
+  protected _colorPart(
+    color: IColor,
+    assetPart: T,
+    callback: (rgba: ColorRGBA, color: ColorRGBA) => void
+  ): this {
     const partMetadata = this.getPartMetadata(assetPart);
     const colorRGBA = color.rgba() as ColorRGBA;
 
@@ -414,9 +441,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
       byteColor.b = buffer[byte + 2];
       byteColor.a = buffer[byte + 3];
 
-      byteColor
-        .blackAndWhite()
-        .applyColor(colorRGBA);
+      callback(byteColor, colorRGBA)
 
       buffer[byte] = byteColor.r;
       buffer[byte + 1] = byteColor.g;
@@ -434,19 +459,32 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   }
 
   /**
+   * This function takes a color and an asset part, retrieves the image data for
+   * that part, applies the color to the image data, and then puts the modified
+   * image data back into the canvas.
+   * @param {IColor} color - Color
+   * @param {T} assetPart - Asset part
+   * @returns this
+   */
+  colorPart(color: IColor, assetPart: T): this {
+    this._colorPart(
+      color,
+      assetPart,
+      (rgba, colorRGBA) => {
+        rgba
+          .blackAndWhite()
+          .applyColor(colorRGBA)
+      }
+    );
+    
+    return this;
+  }
+
+  /**
    * This function adds color parts to an asset.
-   * @param {IColor} color - The `color` parameter is of type `IColor`, which is
-   * likely an interface or a class representing a color value. It is used as an
-   * argument for the `colorPart` method, which is called for each `assetPart` in
-   * the `assetParts` array.
-   * @param {T[]} assetParts - `assetParts` is a rest parameter that allows the
-   * function to accept an arbitrary number of arguments as an array. In this case,
-   * it is used to pass in an array of asset parts that need to be colored with the
-   * given color.
-   * @returns The `colorParts` method is returning `this`, which refers to the
-   * instance of the class that the method is being called on. This allows for
-   * method chaining, where multiple methods can be called on the same instance in
-   * a single line of code.
+   * @param {IColor} color - Color
+   * @param {T[]} assetParts - Asset parts
+   * @returns this
    */
   colorParts(color: IColor, ...assetParts: T[]): this {
     for (const assetPart of assetParts) {
@@ -459,13 +497,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   /**
    * This function sets the color of an asset based on the provided color and
    * metadata.
-   * @param {IColor} color - The `color` parameter is of type `IColor`, which is
-   * likely an interface or type that defines a color value. This parameter is used
-   * to set the color of the asset.
-   * @returns The `setColor` method is returning `this`, which refers to the
-   * instance of the class that the method is being called on. This allows for
-   * method chaining, where multiple methods can be called on the same instance in
-   * a single line of code.
+   * @param {IColor} color - Color
+   * @returns this
    */
   setColor(color: IColor): this {
     const parts = getAssetPartsMetadata(this.metadata.kind);
@@ -480,14 +513,9 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   /**
    * This function copies a specific part of an asset onto another asset.
    * @param {IAsset} asset - The asset parameter is an object of type IAsset, which
-   * represents an image or a video asset. It contains information about the asset,
-   * such as its type, dimensions, and metadata.
-   * @param {T} assetPart - The `assetPart` parameter is of type `T` and represents
-   * a specific part of an asset that needs to be copied to the current asset.
-   * @returns The method `copyPart` is returning `this`, which refers to the
-   * instance of the class that called the method. This allows for method chaining,
-   * where multiple methods can be called on the same instance in a single line of
-   * code.
+   * represents an image.
+   * @param {T} assetPart - Asset part
+   * @returns this
    */
   copyPart(asset: IAsset<T>, assetPart: T): this{
     let fromMetadata = asset.getPartMetadata(assetPart);
@@ -510,16 +538,10 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
   /**
    * The function copies parts of an asset to another asset.
-   * @param {IAsset} asset - The `asset` parameter is an object of type `IAsset`.
-   * It is likely an asset that contains multiple parts that need to be copied.
-   * @param {T[]} assetParts - `assetParts` is a rest parameter of type `T[]`,
-   * which means it can accept any number of arguments of type `T` and store them
-   * in an array. In this context, it is used to pass in multiple asset parts that
-   * need to be copied from the `asset` object.
-   * @returns The `copyParts` method is returning `this`, which refers to the
-   * instance of the class that the method is called on. This allows for method
-   * chaining, where multiple methods can be called on the same instance in a
-   * single line of code.
+   * @param {IAsset} asset - The asset parameter is an object of type IAsset, which
+   * represents an image.
+   * @param {T[]} assetParts - Asset parts
+   * @returns this
    */
   copyParts(asset: IAsset<T>, ...assetParts: T[]): this {
     for (const assetPart of assetParts) {
@@ -534,10 +556,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * instance.
    * @param {string} directory - The `directory` parameter is a string that
    * represents the path to the directory where the saved parts will be stored.
-   * @returns The method `setPartSaveDirectory` is returning `this`, which refers
-   * to the current object instance. This allows for method chaining, where
-   * multiple methods can be called on the same object instance in a single line of
-   * code.
+   * @returns this
    */
   setPartSaveDirectory(directory: string): this {
     this.partSaveDirectory = directory
@@ -548,13 +567,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   /**
    * This function generates a cache key for a given asset part based on the
    * metadata and ID.
-   * @param {T} assetPart - The parameter `assetPart` is of type `T`, which is not
-   * defined in the given code snippet. It is likely a generic type parameter that
-   * represents a part or segment of an asset.
-   * @returns The `getPartCacheKey` function is returning a string value which is
-   * the cache key for a specific asset part. The cache key is generated by
-   * concatenating the `id`, `name` and `assetPart` properties of the `metadata`
-   * object and passing it to the `getCacheKey` function.
+   * @param {T} assetPart - Asset part
+   * @returns A cache key
    */
   protected getPartCacheKey(assetPart: T): string {
     let metadata = this.metadata;
@@ -569,10 +583,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
   /**
    * This function saves a part of an asset as a PNG file.
-   * @param {T} assetPart - The assetPart parameter is of type T, which is not
-   * specified in the code snippet. It is likely a generic type that represents a
-   * part of an asset.
-   * @returns the current instance of the class (`this`).
+   * @param {T} assetPart - Asset part
+   * @returns this
    */
   savePart(assetPart: T): this {
     let canvas: Canvas;
@@ -610,12 +622,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
   /**
    * The function saves multiple asset parts and returns the object it belongs to.
-   * @param {T[]} assetParts - `assetParts` is a rest parameter of type `T[]`,
-   * which means it is an array of elements of type `T`. The `...` syntax before
-   * the parameter name indicates that it is a rest parameter, which allows the
-   * function to accept any number of arguments of type `T` and
-   * @returns The `saveParts` method is returning the current instance of the class
-   * (`this`) after saving each asset part passed as arguments to the method.
+   * @param {T[]} assetParts - Asset parts
+   * @returns this
    */
   saveParts(...assetParts: T[]): this {
     for (const assetPart of assetParts) {

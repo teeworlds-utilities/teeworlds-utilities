@@ -7,9 +7,7 @@ import { createCanvas } from 'canvas';
 /**
  * This function resizes an asset's canvas to match a specified base size while
  * maintaining aspect ratio.
- * @param {IAsset} asset - The asset parameter is an object of type IAsset, which
- * contains information about an image asset, including its canvas and metadata.
- * @returns a boolean value, either `true` or `false`.
+ * @param {IAsset} asset - A boolean, indicating if the operation has been successfully.
  */
 export function fixAssetSize(asset: IAsset): boolean {
   let canvas = asset.canvas;

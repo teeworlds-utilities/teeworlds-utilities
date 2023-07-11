@@ -40,5 +40,7 @@ If you want to see examples of how to use the library, you can check the **`**.t
 
 - [x] Unitary tests
 - [x] Documentation 80 %
+- [ ] Documentation 100 %
 - [x] CI/CD pipeline
 - [x] Log environment variable
+- [ ] Extract every asset part

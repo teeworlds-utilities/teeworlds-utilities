@@ -12,21 +12,15 @@ export interface IColor extends IColorConvert {
   toArray: () => number[];
 }
 
-
 type HSL = [number, number, number];
 
 /**
  * The function sets a color value within a specified range and throws an error if
  * the value is outside that range.
- * @param {number} value - a number representing the color value to be checked and
- * returned
- * @param {number} from - The minimum value that the color can have.
- * @param {number} to - The "to" parameter is a number representing the upper limit
- * of the color range. The function checks if the "value" parameter is within the
- * range of "from" and "to", and throws an error if it is not.
- * @returns the `value` parameter if it is within the range specified by the `from`
- * and `to` parameters. If the `value` parameter is outside of this range, the
- * function throws a `ColorError` with a message indicating the valid range.
+ * @param {number} value - Color value
+ * @param {number} from - Minimum value
+ * @param {number} to - Maximum value
+ * @returns Color value
  */
 function setColorValueBase(
   value: number,
@@ -45,14 +39,9 @@ function setColorValueBase(
 
 /**
  * The function sets the color value of a given number within a specified range.
- * @param {number} value - The current value of the color component that needs to
- * be set.
- * @param {number} to - The "to" parameter is a number that represents the maximum
- * value that the "value" parameter can be set to. The function is designed to set
- * the "value" parameter to a value between 0 and "to".
- * @returns The function `setColorValue` is returning a number, which is the result
- * of calling the function `setColorValueBase` with the arguments `value`, `0`, and
- * `to`.
+ * @param {number} value - Color value
+ * @param {number} to - Maximum value
+ * @returns Color value
  */
 function setColorValue(value: number, to: number): number {
   return setColorValueBase(value, 0, to);
@@ -115,7 +104,7 @@ export class ColorRGBA implements IColor {
   /**
    * The function sets the red, green, and blue values of an image to their average
    * value, resulting in a black and white effect.
-   * @returns The `this` object is being returned.
+   * @returns this
    */
   blackAndWhite(): this {
     const average = this.average;
@@ -130,11 +119,8 @@ export class ColorRGBA implements IColor {
   /**
    * The function applies a color to an object by adjusting its RGBA values based
    * on the input color.
-   * @param {ColorRGBA} color - ColorRGBA is a data type that represents a color in
-   * the RGBA color space. It consists of four components: red (r), green (g), blue
-   * (b), and alpha (a) values, each ranging from 0 to 255. The "color" parameter
-   * in the "applyColor
-   * @returns the updated object with the new color values.
+   * @param {ColorRGBA} color - RGBA color
+   * @returns
    */
   applyColor(color: ColorRGBA) {
     this.r = (this._r * color.r) / 255;
@@ -187,7 +173,7 @@ export class ColorHSL implements IColor {
   }
 
   /**
-   * Upgrade
+   * TODO: Upgrade
    * @returns 
    */
   twCode(): IColor {

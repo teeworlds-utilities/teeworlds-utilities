@@ -1,11 +1,12 @@
 import { unlinkSync, rmSync } from 'fs'
-import Skin from './skin';
+import Skin, { SkinWeapon } from './skin';
 import Gameskin from './gameskin';
-import { GameskinPart } from './part';
+import { GameskinPart, SkinPart } from './part';
 import { ColorRGB, ColorCode } from '../color';
 
+import { createSkinOverview } from '../board';
+
 const SKIN = 'data/skins/ahl_red_nanami.png';
-const TERRORIST = 'data/skins/Terrorist.png';
 const GAMESKIN = 'data/gameskins/ahl_red.png';
 const GAMESKIN_SRC = 'data/gameskins/cellegen_grid.png';
 const GAMESKIN_4K = 'data/gameskins/4k.png';
@@ -31,7 +32,7 @@ describe('Abstract class Asset', () => {
     const gameskin = new Gameskin();
     const dir = './gameskin_parts'
 
-    await gameskin.loadFromPath(GAMESKIN);
+    await gameskin.loadFromUrl(GAMESKIN);
 
     gameskin
       .setPartSaveDirectory(dir)
@@ -121,8 +122,8 @@ describe('Abstract class Asset', () => {
       )
   });
 
-  test('Render skin then save', async () => {
-    const path = 'skin.png'
+  test('Render skin then save with an eye angle', async () => {
+    const path = 'skin.png';
     const skin = new Skin();
 
     await skin.loadFromPath(SKIN);
@@ -138,7 +139,7 @@ describe('Abstract class Asset', () => {
     const path = 'skin.png'
     const skin = new Skin();
 
-    await skin.loadFromPath(TERRORIST);
+    await skin.loadFromPath('data/skins/santa_cammo.png');
 
     skin
       .colorTee(
@@ -147,7 +148,67 @@ describe('Abstract class Asset', () => {
       )
       .render()
       .saveRenderAs(path);
+    
+    unlinkSync('render_' + path);
+  });
 
-      unlinkSync('render_' + path);
+  test('Skin board', async () => {
+    const path = 'board.png';
+
+    const skin = new Skin();
+    await skin.loadFromPath('data/skins/santa_cammo.png');
+
+    const gameskin = new Gameskin();
+    await gameskin.loadFromPath('data/gameskins/0_6.png');
+
+    const grey = new ColorRGB(255, 255, 255);
+
+    skin
+    skin.colorTee(
+      grey,
+      grey
+    )
+    .colorParts(
+      grey,
+      SkinPart.SCARY_EYE,
+      SkinPart.ANGRY_EYE,
+      SkinPart.BLINK_EYE,
+      SkinPart.CROSS_EYE,
+      SkinPart.DEFAULT_EYE,
+      SkinPart.HAPPY_EYE
+    )
+    .setOrientation(120);
+
+    createSkinOverview(skin, gameskin)
+      .saveAs(path, true);
+
+    unlinkSync(path);
+  });
+
+  test('Create a tee with a weapon', async () => {
+    const path = 'tee_with_weapon.png'
+    
+    const skin = new Skin();
+    await skin.loadFromPath('data/skins/nanami.png');
+
+    skin
+      .setEyeAssetPart(SkinPart.ANGRY_EYE)
+      .colorTee(
+        new ColorRGB(255, 255, 255),
+        new ColorRGB(255, 255, 255),
+      )
+      .setOrientation(0);
+
+    const gameskin = new Gameskin();
+    await gameskin.loadFromPath('data/gameskins/0_6.png');
+
+    new SkinWeapon()
+      .setSkin(skin)
+      .setGameskin(gameskin)
+      .setWeapon(GameskinPart.GUN)
+      .process()
+      .saveAs(path, true);
+
+    unlinkSync(path);
   });
 });

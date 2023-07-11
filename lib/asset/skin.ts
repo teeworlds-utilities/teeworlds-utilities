@@ -1,14 +1,40 @@
-import { Canvas, createCanvas, CanvasRenderingContext2D } from "canvas";
-import { Asset } from "./base";
-import { AssetKind, EyeSkinPart, IAssetPartMetadata, SkinPart } from "./part";
-import { canvasFromImageData, cloneCanvas, saveCanvas } from "../utils/canvas";
-import { ColorHSL, IColor } from "../color";
+import {
+  Canvas,
+  createCanvas,
+  CanvasRenderingContext2D
+} from "canvas";
 
-const SKIN_METADATA = {
-  baseSize: {w: 256, h: 128},
-  divisor: {w: 8, h: 4},
-  kind: AssetKind.SKIN,
-}
+import {
+  Asset,
+  MinimalAsset,
+  Position
+} from "./base";
+
+import {
+  AssetHelpSize,
+  AssetKind,
+  EyeSkinPart,
+  GameskinPart,
+  IAssetPartMetadata,
+  ITeeWeaponMetadata,
+  SkinPart,
+  TEE_WEAPON_METADATA,
+  WeaponGameSkinPart
+} from "./part";
+
+import {
+  cloneCanvas,
+  saveCanvas,
+  canvasFlip,
+  scaleCanvas,
+  rotateCanvas,
+  autoCropCanvas
+} from "../utils/canvas";
+
+import { ColorHSL, IColor } from "../color";
+import Gameskin from "./gameskin";
+import { AssetError } from "../error";
+import { positionFromAngle } from "../utils/util";
 
 const BODY_LIMIT = 52.5;
 
@@ -16,21 +42,26 @@ export default class Skin extends Asset<SkinPart> {
   renderCanvas: Canvas;
   private renderCtx: CanvasRenderingContext2D;
   private eyeAssetPart: EyeSkinPart;
+  private _orientation: number;
 
   constructor() {
-    super(SKIN_METADATA);
+    super(
+      {
+        baseSize: {w: 256, h: 128},
+        divisor: {w: 8, h: 4},
+        kind: AssetKind.SKIN,
+      }
+    );
 
+    this._orientation = 0;
     this.eyeAssetPart = SkinPart.DEFAULT_EYE;
   }
 
   /**
-   * This function sets the eye asset part and returns the object.
+   * This function sets the eye asset part.
    * @param {EyeSkinPart} value - EyeSkinPart - a type of object representing a
    * part of an eye skin asset.
-   * @returns The method `setEyeAssetPart` is returning `this`, which refers to the
-   * current object instance. This is commonly used in method chaining, where
-   * multiple methods can be called on the same object instance in a single line of
-   * code.
+   * @returns this
    */
   setEyeAssetPart(value: EyeSkinPart): this {
     this.eyeAssetPart = value;
@@ -39,24 +70,48 @@ export default class Skin extends Asset<SkinPart> {
   }
 
   /**
+   * Gets orientation
+   */
+  get orientation(): number {
+    return this._orientation;
+  }
+
+  /**
+   * Defines the direction in which the tee looks
+   * @param value - Angle
+   * @returns this
+   */
+  setOrientation(value: number): this {
+    if (value < 0 || value > 360) {
+      throw new AssetError("Invalid angle.");
+    }
+
+    this._orientation = value;
+    
+    return this;
+  }
+
+  /**
+   * Get the real eye position on the tee
+   * @param x 
+   * @param y 
+   * @returns A position
+   */
+  private getEyePosition(x: number, y: number): Position {
+    return positionFromAngle(
+      {x: x, y: y},
+      this._orientation,
+      this.multiplier * 11
+    );
+  }
+
+  /**
    * The function returns a cloned canvas object.
-   * @returns The `cloneRenderCanvas` property is being returned, which is of type
-   * `Canvas`. The value being returned is a cloned copy of the `renderCanvas`
-   * property.
    */
   get cloneRenderCanvas(): Canvas {
     return cloneCanvas(this.renderCanvas);
   }
 
-  /**
-   * The `loadFromCanvas` method is loading the skin asset from a canvas object. It
-   * calls the `loadFromCanvas` method of the parent class `Asset` to load the
-   * metadata of the asset parts from the canvas. It then creates a new canvas
-   * object `renderCanvas` with a size that is calculated based on the size of the
-   * body part metadata and the `multiplier` property of the class. It also creates
-   * a new 2D rendering context `renderCtx` for the `renderCanvas`. Finally, it
-   * returns the current object instance.
-   */
   loadFromCanvas(canvas: Canvas): this {
     super.loadFromCanvas(canvas);
 
@@ -71,45 +126,18 @@ export default class Skin extends Asset<SkinPart> {
     return this;
   }
 
-  /**
-   * This function retrieves a canvas from a specific part of an image.
-   * @param {SkinPart} assetPart - The parameter `assetPart` is of type `SkinPart`,
-   * which is likely an object representing a specific part of a character's skin
-   * in a video game or other digital application. It is used to retrieve metadata
-   * about the part's position and dimensions on a larger canvas, which is then
-   * used to extract
-   * @returns a Canvas object.
-   */
-  private getCanvasFromPart(assetPart: SkinPart): Canvas {
-    const partMetadata = this.getPartMetadata(assetPart);
-    const imageData = this.ctx.getImageData(
-      partMetadata.x,
-      partMetadata.y,
-      partMetadata.w,
-      partMetadata.h,
-    );
-
-    return canvasFromImageData(imageData);
-  }
-
-  /**
-   * This function sets the color of a specific part of a skin and ensures that the
-   * body part is reordered if necessary.
-   * @param {IColor} color - The color parameter is of type IColor, which
-   * represents a color value. It is used to set the color of a specific asset
-   * part.
-   * @param {SkinPart} assetPart - `assetPart` is a parameter of type `SkinPart`
-   * which represents the specific part of a character's skin that is being
-   * colored. It could be the body, head, arms, legs, etc.
-   * @returns the result of calling the `super.colorPart()` method with the `hsl`
-   * and `assetPart` arguments.
-   */
   colorPart(color: IColor, assetPart: SkinPart): this {
     let hsl = color.hsl() as ColorHSL;
 
     if (hsl.l < BODY_LIMIT) {
       hsl.l = BODY_LIMIT;
     }
+
+    this._colorPart(
+      color,
+      assetPart,
+      (rgba, _) => rgba.blackAndWhite()
+    );
 
     if (assetPart === SkinPart.BODY) {
       this.reorderBody();
@@ -119,37 +147,29 @@ export default class Skin extends Asset<SkinPart> {
   }
 
   /**
-   * The function sets the color of the body part of a skin using the provided
-   * color object.
-   * @param {IColor} color - The color parameter is of type IColor, which is likely
-   * an interface or a class representing a color value. It is used to set the
-   * color of a specific part of a skin, in this case the body part.
-   * @returns The `colorBody` method is returning `this`, which refers to the
-   * current instance of the class.
+   * Applies `color` on the tee body, hand and its eyes.
+   * @param {IColor} color - Color
+   * @returns this
    */
   colorBody(color: IColor): this {
     return this.colorParts(
       color,
       SkinPart.BODY,
+      SkinPart.HAND,
       this.eyeAssetPart
     );
   }
 
   /**
    * The function sets the color of the body and feet of an object.
-   * @param {IColor} bodyColor - The parameter `bodyColor` is of type `IColor` and
-   * represents the color that will be applied to the body part of an object.
-   * @param {IColor} footColor - The `footColor` parameter is of type `IColor` and
-   * represents the color that will be applied to the foot part of a character's
-   * skin.
-   * @returns The `colorTee` method is returning `this`, which refers to the
-   * current instance of the object. This allows for method chaining, where
-   * multiple methods can be called on the same object in a single line of code.
+   * @param {IColor} bodyColor - Body color
+   * @param {IColor} footColor - Foot color
+   * @returns this
    */
   colorTee(bodyColor: IColor, footColor: IColor): this {
     return this
       .colorBody(bodyColor)
-      .colorPart(footColor, SkinPart.FOOT);
+      .colorParts(footColor, SkinPart.FOOT);
   }
 
   /**
@@ -226,15 +246,9 @@ export default class Skin extends Asset<SkinPart> {
   /**
    * This function draws a part of an asset onto a canvas using the provided
    * metadata.
-   * @param {Canvas} canvas - The canvas parameter is an HTMLCanvasElement object
-   * that represents the source image that will be drawn onto the canvas.
-   * @param {IAssetPartMetadata} metadata - IAssetPartMetadata is an interface that
-   * contains information about a specific part of an asset, such as its position
-   * (x and y coordinates), width (w) and height (h). The drawPart function takes a
-   * canvas element and the metadata for a specific part of an asset and draws that
-   * part onto
-   * @returns the current instance of the class (`this`) after drawing a part of an
-   * asset onto the canvas.
+   * @param {Canvas} canvas - Canvas
+   * @param {IAssetPartMetadata} metadata - Asset part metadata
+   * @returns this
    */
   private drawPart(canvas: Canvas, metadata: IAssetPartMetadata): this {
     this.renderCtx.drawImage(
@@ -249,22 +263,30 @@ export default class Skin extends Asset<SkinPart> {
   }
 
   /**
-   * This function renders a tee's body parts and eyes onto a canvas.
-   * @param {EyeSkinPart} [eyeAssetPart] - The `eyeAssetPart` parameter is an
-   * optional parameter of type `EyeSkinPart` that represents the specific eye
-   * asset to be rendered on the character. If no value is provided, it defaults to
-   * the `eyeAssetPart` property of the object.
-   * @returns the current instance of the class (`this`).
+   * This function renders a tee.
+   * @param {EyeSkinPart} [eyeAssetPart] - Skin part, must be a eye kind
+   * @returns this
    */
   render(eyeAssetPart?: EyeSkinPart): this {
+    this.renderCtx.clearRect(
+      0, 0,
+      this.renderCanvas.width,
+      this.renderCanvas.height
+    );
+
     const multiplier = this.multiplier;
     const cx = 6 * multiplier;
 
-    const footShadow = this.getCanvasFromPart(SkinPart.FOOT_SHADOW);
-    const foot = this.getCanvasFromPart(SkinPart.FOOT);
-    const bodyShadow = this.getCanvasFromPart(SkinPart.BODY_SHADOW);
-    const body = this.getCanvasFromPart(SkinPart.BODY);
-    const eye = this.getCanvasFromPart(eyeAssetPart || this.eyeAssetPart);
+    const footShadow = this.getPartCanvas(SkinPart.FOOT_SHADOW);
+    const foot = this.getPartCanvas(SkinPart.FOOT);
+    const bodyShadow = this.getPartCanvas(SkinPart.BODY_SHADOW);
+    const body = this.getPartCanvas(SkinPart.BODY);
+    const eye = this.getPartCanvas(eyeAssetPart || this.eyeAssetPart);
+
+    const eyePosition = this.getEyePosition(
+      -cx + 42 * multiplier, // Body center origin on X axis
+      cx + 23 * multiplier // Body center origin on Y axis
+    );
 
     this.drawPart(
       footShadow,
@@ -312,6 +334,24 @@ export default class Skin extends Asset<SkinPart> {
       }
     )
     .drawPart(
+      eye,
+      {
+        x: eyePosition.x - (5.5 * multiplier),
+        y: eyePosition.y,
+        w: eye.width * 1.15,
+        h: eye.height * 1.22
+      }
+    )
+    .drawPart(
+      canvasFlip(eye, true),
+      {
+        x: eyePosition.x + (5.5 * multiplier),
+        y: eyePosition.y,
+        w: eye.width * 1.15,
+        h: eye.height * 1.22
+      }
+    )
+    .drawPart(
       foot,
       {
         x: -cx + 24 * multiplier,
@@ -319,31 +359,7 @@ export default class Skin extends Asset<SkinPart> {
         w: foot.width * 1.43,
         h: foot.height * 1.45
       }
-    )
-    .drawPart(
-      eye,
-      {
-        x: -cx + 49.54 * multiplier,
-        y: cx + 23 * multiplier,
-        w: eye.width * 1.15,
-        h: eye.height * 1.22
-      }
-    )
-
-    this.renderCtx.save();
-    this.renderCtx.scale(-1, 1);
-
-    this.drawPart(
-      eye,
-      {
-        x: cx + -98 * multiplier,
-        y: cx + 23 * multiplier,
-        w: eye.width * 1.15,
-        h: eye.height * 1.22
-      }
-    )
-
-    this.renderCtx.restore();
+    );
 
     return this;
   }
@@ -351,12 +367,13 @@ export default class Skin extends Asset<SkinPart> {
   /**
    * The function saves the current render as a PNG file with the name of the
    * metadata.
-   * @returns The `saveRender()` method is returning the result of calling the
-   * `saveRenderAs()` method with the argument of the metadata name property
-   * concatenated with the string '.png'.
+   * @returns this
    */
-  saveRender(): this {
-    return this.saveRenderAs(this.metadata.name + '.png');
+  saveRender(cropped: boolean = false): this {
+    return this.saveRenderAs(
+      this.metadata.name + '.png',
+      cropped
+    );
   }
 
   /**
@@ -364,15 +381,216 @@ export default class Skin extends Asset<SkinPart> {
    * the object it was called on.
    * @param {string} path - A string representing the file path where the rendered
    * canvas should be saved.
-   * @returns The function `saveRenderAs` is returning `this`, which refers to the
-   * current object instance.
+   * @returns this
    */
-  saveRenderAs(path: string): this {
+  saveRenderAs(path: string, cropped: boolean = false): this {
+    const canvas = cropped  === true
+      ? autoCropCanvas(this.renderCanvas)
+      : this.renderCanvas;
+
     saveCanvas(
       'render_' + path,
-      this.renderCanvas
+      canvas
     );
 
+    return this;
+  }
+}
+
+export class SkinWeapon extends MinimalAsset {
+  private skin: Skin;
+  private gameskin: Gameskin;
+  
+  private weapon: WeaponGameSkinPart;
+  private weaponMetadata: ITeeWeaponMetadata;
+  
+  constructor() {
+    super(
+      {
+        baseSize: {w: 200, h: 200},
+        divisor: {w: 1, h: 1},
+        kind: AssetKind.UNKNOWN
+      }
+    );
+
+    this.empty();
+  }
+
+  /**
+   * Set a tee skin
+   * @param value - A Skin object
+   * @returns this
+   */
+  setSkin(value: Skin): this {
+    this.skin = value.scale(AssetHelpSize.DEFAULT);
+
+    return this;
+  }
+
+  /**
+   * Set a gameskin
+   * @param value - Gameskin
+   * @returns this
+   */
+  setGameskin(value: Gameskin): this {
+    this.gameskin = value.scale(AssetHelpSize.DEFAULT);
+
+    return this;
+  }
+
+  /**
+   * Set a weapon
+   * @param value - Skin part, must be a weapon
+   * @returns this
+   */
+  setWeapon(value: WeaponGameSkinPart): this {
+    this.weapon = value;
+    this.weaponMetadata = TEE_WEAPON_METADATA[value];
+
+    return this;
+  }
+
+  /**
+   * Put the tee hand on a weapon
+   * @param weaponsCanvas - Weapon canvas
+   * @returns this
+   */
+  private putHand(weaponsCanvas: Canvas): this {
+    let handCanvas = this.skin.getPartCanvas(SkinPart.HAND);
+
+    handCanvas = rotateCanvas(
+      scaleCanvas(
+        handCanvas,
+        0.9
+      ),
+      this.weaponMetadata.hand.angle
+    );
+
+    // const handShadowCanvas = this.skin.getPartCanvas(SkinPart.HAND_SHADOW);
+
+    const weaponsCtx = weaponsCanvas.getContext('2d');
+
+    weaponsCtx.drawImage(
+      handCanvas,
+      this.weaponMetadata.hand.x,
+      this.weaponMetadata.hand.y,
+    );
+
+    return this;
+  }
+
+  /**
+   * Adjust the weapon position based on the tee body center.
+   * @param origin - Origin position
+   * @param orientation - Angle
+   * @returns The new weapon position
+   */
+  private adjustWeaponPosition(
+    origin: Position,
+    orientation: number
+  ): Position {
+    let ret = positionFromAngle(
+      origin,
+      orientation,
+      this.weaponMetadata.move.x * this.skin.multiplier
+    );
+
+    const side = orientation > 90 && orientation < 270 ? -1 : 1;
+    
+    ret = positionFromAngle(
+      ret,
+      orientation + (90 * side),
+      this.weaponMetadata.move.y * this.skin.multiplier
+    );
+
+    return ret;
+  }
+
+  /**
+   * Put the weapon on the rendered tee canvas
+   * @param orientation - Angle
+   * @returns this
+   */
+  private putWeapon(orientation: number): this {
+    // Get the weapon
+    let weaponCanvas = scaleCanvas(
+      this.gameskin.getPartCanvas(this.weapon),
+      this.weaponMetadata.scaleFactor
+    );
+
+    this.putHand(weaponCanvas)
+
+    // Hammer special case
+    const rotate = (orientation > 90
+      && orientation < 270)
+      ? this.weapon !== GameskinPart.HAMMER
+      : this.weapon === GameskinPart.HAMMER;
+
+    weaponCanvas = canvasFlip(
+      weaponCanvas,
+      false,
+      rotate
+    );
+
+    // Rotate the weapon with the right angle
+    weaponCanvas = rotateCanvas(
+      weaponCanvas,
+      orientation
+    );
+
+    let weaponPosition = this.adjustWeaponPosition(
+      {
+        x: (this.canvas.width - weaponCanvas.width) / 2 ,
+        y: (this.canvas.height - weaponCanvas.height) / 2
+      },
+      orientation
+    );
+
+    // Draw the weapon
+    this.ctx.drawImage(
+      weaponCanvas,
+      weaponPosition.x,
+      weaponPosition.y,
+    );
+
+    return this;
+  }
+
+  /**
+   * Creates a canvas with the rendered tee and its weapon.
+   * @param orientation - Angle
+   * @returns this
+   */
+  process(orientation?: number): this {
+    // Clears the canvas by prenvetion,
+    // it avois multiple weapon overlapping
+    this.ctx.clearRect(
+      0, 0,
+      this.canvas.width,
+      this.canvas.height
+    );
+
+    orientation = orientation || this.skin.orientation;
+  
+    if (this.weapon == GameskinPart.HAMMER) {
+      orientation = (
+        orientation > 90
+        && orientation < 270
+      )
+      ? 300
+      : 240;
+    }
+
+    this.putWeapon(orientation);
+
+    this.skin.render();
+
+    this.ctx.drawImage(
+      this.skin.renderCanvas,
+      (this.canvas.width - this.skin.renderCanvas.width) / 2,
+      (this.canvas.height - this.skin.renderCanvas.height) / 2
+    );
+    
     return this;
   }
 }

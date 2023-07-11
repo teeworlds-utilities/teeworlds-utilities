@@ -15,10 +15,8 @@ export default class Cache<T> {
   /**
    * The function checks if a given key exists in an object and returns a boolean
    * value.
-   * @param {string} key - string - a string value representing the key to be
-   * checked for existence in the object.
-   * @returns A boolean value indicating whether the key exists in the store or
-   * not.
+   * @param {string} key - Cache ID
+   * @returns A boolean
    */
   exists(key: string): boolean {
     return Object.hasOwn(this.store, key);
@@ -27,12 +25,8 @@ export default class Cache<T> {
   /**
    * This function retrieves a value from a store based on a given key, and returns
    * null if the key does not exist.
-   * @param {string} key - a string representing the key of the value to be
-   * retrieved from the store.
-   * @returns The `get` method is returning the value associated with the given
-   * `key` from the `store` object if it exists, otherwise it returns `null`. The
-   * returned value has a type of `T | null`, which means it can be either the type
-   * `T` or `null`.
+   * @param {string} key - Cache ID
+   * @returns If it exists, it returns its value, otherwise null.
    */
   get(key: string): T | null {
     if (this.exists(key) === false) {
@@ -45,14 +39,9 @@ export default class Cache<T> {
   /**
    * This function sets a key-value pair in a store and returns true if successful,
    * false if the key already exists.
-   * @param {string} key - A string representing the key to be set in the data
-   * store.
-   * @param {T} value - The value parameter is of type T, which means it can be any
-   * data type. It represents the value that will be associated with the key in the
-   * data store.
-   * @returns The `set` method is returning a boolean value. It returns `true` if
-   * the key-value pair was successfully added to the store, and `false` if the key
-   * already exists in the store and the value was not updated.
+   * @param {string} key - Cache ID
+   * @param {T} value - Cache value
+   * @returns A boolean, indicating if the operation has been successfully.
    */
   set(key: string, value: T): boolean {
     if (this.exists(key) === true) {
@@ -66,8 +55,7 @@ export default class Cache<T> {
 
   /**
    * The function resets the store object and returns the instance of the class.
-   * @returns The `reset()` method is returning the current object (`this`) after
-   * resetting its `store` property to an empty object.
+   * @returns this
    */
   reset(): this {
     this.store = {};
@@ -78,11 +66,8 @@ export default class Cache<T> {
 
 /**
  * This function takes a string key and returns its MD5 hash value as a string.
- * @param {string} key - The `key` parameter is a string value that will be used to
- * generate a hash value using the `Md5` hashing algorithm. The resulting hash
- * value will be used as a cache key to store and retrieve data from a cache.
- * @returns The function `hashCacheKey` returns a string that is the result of
- * hashing the input `key` using the `Md5` algorithm.
+ * @param {string} key - Cache ID
+ * @returns A MD5 hash
  */
 export function hashCacheKey(key: string): string {
   return Md5.hashStr(key);

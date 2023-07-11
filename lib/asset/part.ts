@@ -1,6 +1,8 @@
 import { AssetPartError } from "../error";
+import { Position } from "./base";
 
 export enum AssetHelpSize {
+  MINI = 0.5,
   DEFAULT = 1,
   MINI_HD = 2,
   HD = 4,
@@ -119,6 +121,14 @@ export enum GameskinPart {
   FLAG_RED = "flag_red",
 }
 
+export type WeaponGameSkinPart = 
+  | GameskinPart.HAMMER
+  | GameskinPart.GUN
+  | GameskinPart.SHOTGUN
+  | GameskinPart.GRENADE
+  | GameskinPart.NINJA
+  | GameskinPart.LASER
+
 export enum EmoticonPart {
   PART_1_1 = "part_1_1",
   PART_1_2 = "part_1_2",
@@ -162,7 +172,52 @@ export enum AssetKind{
   UNKNOWN = "unknown"
 }
 
-const AssetParts: Record<AssetKind, Record<string, IAssetPartMetadata>> = {
+export interface ITeeHandMetadata extends Position {
+  angle: number;
+}
+
+export interface ITeeWeaponMetadata {
+  hand: ITeeHandMetadata;
+  move: Position;
+  scaleFactor: number;
+}
+
+// first and second represents the tee hand.
+// Their position is relative to the weapons the tee holds.
+export const TEE_WEAPON_METADATA: Record<WeaponGameSkinPart, ITeeWeaponMetadata> = {
+  [GameskinPart.HAMMER]: {
+    scaleFactor: 0.88,
+    move: { x: 20, y: -15 },
+    hand: { x: -100, y: -100, angle: 0 },
+  },
+  [GameskinPart.GUN]: {
+    scaleFactor: 0.75,
+    move: { x: 53, y: 10},
+    hand: { x: 10, y: 17, angle: 220 },
+  },
+  [GameskinPart.SHOTGUN]: {
+    scaleFactor: 0.58,
+    move: { x: 38, y: 0 },
+    hand: { x: 54, y: 10, angle: 270 },
+  },
+  [GameskinPart.GRENADE]: {
+    scaleFactor: 0.6,
+    move: { x: 40, y: 0 },
+    hand: { x: 54, y: 17, angle: 270 },
+  },
+  [GameskinPart.LASER]: {
+    scaleFactor: 0.6,
+    move: { x: 37, y: 5 },
+    hand: { x: -100, y: -100, angle: 0 },
+  },
+  [GameskinPart.NINJA]: {
+    scaleFactor: 0,
+    move: { x: 0, y: 0 },
+    hand: { x: 0, y: 0, angle: 0 },
+  },
+}
+
+const ASSET_PARTS: Record<AssetKind, Record<string, IAssetPartMetadata>> = {
   [AssetKind.SKIN]: {
     [SkinPart.BODY]: { x: 0, y: 0, w: 96, h: 96 },
     [SkinPart.BODY_SHADOW]: { x: 96, y: 0, w: 96, h: 96 },
@@ -265,12 +320,8 @@ const AssetParts: Record<AssetKind, Record<string, IAssetPartMetadata>> = {
 
 /**
  * This function retrieves metadata for a specific asset part based on its kind.
- * @param {AssetKind} kind - The kind parameter is of type AssetKind, which is an
- * enum that represents the type of asset being used. It could be an image, video,
- * audio, or any other type of asset.
- * @param {AssetPart} assetPart - `assetPart` is a string parameter representing a
- * specific part of an asset. For example, if the asset is a car, the `assetPart`
- * could be "engine", "tires", "doors", etc.
+ * @param {AssetKind} kind - Asset kind
+ * @param {AssetPart} assetPart - Asset part
  * @returns an object of type `IAssetPartMetadata`.
  */
 export function getAssetPartMetadata(
@@ -281,25 +332,20 @@ export function getAssetPartMetadata(
     throw new AssetPartError("Unauthorized asset kind.");
   }
 
-  if (Object.hasOwn(AssetParts[kind], assetPart) === false) {
+  if (Object.hasOwn(ASSET_PARTS[kind], assetPart) === false) {
     throw new AssetPartError(assetPart + ' is not a part of ' + kind + '.');
   }
   
-  return AssetParts[kind][assetPart];
+  return ASSET_PARTS[kind][assetPart];
 }
 
 /**
  * This function returns metadata for asset parts based on the provided asset kind.
- * @param {AssetKind} kind - The parameter `kind` is of type `AssetKind`, which is
- * likely an enum or a string literal type that represents the type of asset for
- * which we want to retrieve metadata for its parts.
- * @returns a record (an object with key-value pairs) of asset part metadata for a
- * given asset kind. The keys of the record are strings representing the names of
- * the asset parts, and the values are objects containing metadata about each asset
- * part.
+ * @param {AssetKind} kind - Asset kind
+ * @returns Every parts metadata
  */
 export function getAssetPartsMetadata(
   kind: AssetKind
 ): Record<string, IAssetPartMetadata> {
-  return AssetParts[kind];
+  return ASSET_PARTS[kind];
 }

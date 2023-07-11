@@ -29,3 +29,7 @@ export class SceneError extends BaseError { };
  * Color exceptions.
  */
 export class ColorError extends BaseError { };
+/**
+ * Board exceptions.
+ */
+ export class BoardError extends BaseError { };
