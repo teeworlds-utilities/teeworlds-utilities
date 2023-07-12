@@ -456,22 +456,30 @@ export class SkinWeapon extends MinimalAsset {
    * @returns this
    */
   private putHand(weaponsCanvas: Canvas): this {
-    let handCanvas = this.skin.getPartCanvas(SkinPart.HAND);
+    const weaponsCtx = weaponsCanvas.getContext('2d');
+    const angle = this.weaponMetadata.hand.angle;
 
-    handCanvas = rotateCanvas(
-      scaleCanvas(
-        handCanvas,
-        0.9
-      ),
-      this.weaponMetadata.hand.angle
+    let handShadowCanvas = this.skin.getPartCanvas(
+      SkinPart.HAND_SHADOW
     );
 
-    // const handShadowCanvas = this.skin.getPartCanvas(SkinPart.HAND_SHADOW);
-
-    const weaponsCtx = weaponsCanvas.getContext('2d');
-
+    handShadowCanvas
+      .getContext('2d')
+      .drawImage(
+        this.skin.getPartCanvas(SkinPart.HAND),
+        0, 0
+      );
+      
+    handShadowCanvas = rotateCanvas(
+      scaleCanvas(
+        handShadowCanvas,
+        0.9
+      ),
+      angle
+    );
+  
     weaponsCtx.drawImage(
-      handCanvas,
+      handShadowCanvas,
       this.weaponMetadata.hand.x,
       this.weaponMetadata.hand.y,
     );

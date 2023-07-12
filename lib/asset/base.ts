@@ -79,8 +79,7 @@ export interface IMinimalAsset extends ISave {
   
   setName: (name: string) => this;
   setColor: (color: IColor) => this;
-  loadFromPath: (path: string) => Promise<this>;
-  loadFromUrl: (url: string) => Promise<this>;
+  load: (path: string) => Promise<this>;
   loadFromCanvas: (canvas: Canvas) => this;
   empty: (assetHelpSize: AssetHelpSize) => this;
   scale: (assetHelpSize: AssetHelpSize) => this;
@@ -176,7 +175,7 @@ export class MinimalAsset implements IMinimalAsset {
    * @param {string} path - A string representing the file path of an image file.
    * @returns Promise<this>
    */
-  async loadFromPath(path: string): Promise<this> {
+  async load(path: string): Promise<this> {
     let img: Image;
   
     try {
@@ -201,16 +200,6 @@ export class MinimalAsset implements IMinimalAsset {
     );
     
     return this;
-  }
-
-  /**
-   * This function loads data from a URL using a path.
-   * @param {string} url - A string representing the URL from which the data needs
-   * to be loaded.
-   * @returns Promise<this>
-   */
-  async loadFromUrl(url: string): Promise<this> {
-    return await this.loadFromPath(url);
   }
 
   /**
@@ -292,6 +281,7 @@ export interface IAsset<T extends AssetPart = AssetPart> extends IMinimalAsset {
   setPartSaveDirectory: (directory: string) => this;
   savePart: (assetPart: T) => this;
   saveParts: (...assetParts: T[]) => this;
+  saveAllParts(): this;
 }
 
 export abstract class Asset<T extends AssetPart> extends MinimalAsset implements IAsset<T> {
@@ -631,5 +621,21 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     }
     
     return this;
+  }
+
+  saveAllParts(): this {
+    const partNames = Object.keys(
+      getAssetPartsMetadata(
+        this.metadata.kind
+      )
+    );
+
+    const parts = partNames.map(
+      (p) => p as T
+    );
+    
+    return this.saveParts(
+      ...parts
+    );
   }
 }

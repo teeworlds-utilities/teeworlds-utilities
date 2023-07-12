@@ -15,14 +15,14 @@ describe('Abstract class Asset', () => {
   test('Load from path', async () => {
     const skin = new Skin();
 
-    await skin.loadFromPath(SKIN);
+    await skin.load(SKIN);
   });
 
   test('Load and save the canvas as PNG', async () => {
     const path = 'skin_test.png';
     const skin = new Skin();
 
-    await skin.loadFromPath(SKIN);
+    await skin.load(SKIN);
     skin.saveAs(path);
 
     unlinkSync(path);
@@ -32,7 +32,7 @@ describe('Abstract class Asset', () => {
     const gameskin = new Gameskin();
     const dir = './gameskin_parts'
 
-    await gameskin.loadFromUrl(GAMESKIN);
+    await gameskin.load(GAMESKIN);
 
     gameskin
       .setPartSaveDirectory(dir)
@@ -52,7 +52,7 @@ describe('Abstract class Asset', () => {
     const gameskin = new Gameskin();
     const color = new ColorRGB(0, 127, 0);
 
-    await gameskin.loadFromPath(GAMESKIN);
+    await gameskin.load(GAMESKIN);
 
     gameskin
       .colorParts(
@@ -68,13 +68,13 @@ describe('Abstract class Asset', () => {
 
   test('Copy parts of gameskin (from a bigger one)', async () => {
     const gameskin = new Gameskin();
-    await gameskin.loadFromPath(GAMESKIN);
+    await gameskin.load(GAMESKIN);
 
     const gameskin_src = new Gameskin();
-    await gameskin_src.loadFromPath(GAMESKIN_SRC);
+    await gameskin_src.load(GAMESKIN_SRC);
 
     const gameskin_4K = new Gameskin();
-    await gameskin_4K.loadFromPath(GAMESKIN_4K);
+    await gameskin_4K.load(GAMESKIN_4K);
 
     gameskin
       .copyParts(
@@ -96,13 +96,13 @@ describe('Abstract class Asset', () => {
 
   test('Copy parts of gameskin (from a smaller one)', async () => {
     const gameskin = new Gameskin();
-    await gameskin.loadFromPath(GAMESKIN);
+    await gameskin.load(GAMESKIN);
 
     const gameskin_src = new Gameskin();
-    await gameskin_src.loadFromPath(GAMESKIN_SRC);
+    await gameskin_src.load(GAMESKIN_SRC);
 
     const gameskin_4K = new Gameskin();
-    await gameskin_4K.loadFromPath(GAMESKIN_4K);
+    await gameskin_4K.load(GAMESKIN_4K);
 
     gameskin_4K
       .copyParts(
@@ -126,7 +126,7 @@ describe('Abstract class Asset', () => {
     const path = 'skin.png';
     const skin = new Skin();
 
-    await skin.loadFromPath(SKIN);
+    await skin.load(SKIN);
 
     skin
       .render()
@@ -139,7 +139,7 @@ describe('Abstract class Asset', () => {
     const path = 'skin.png'
     const skin = new Skin();
 
-    await skin.loadFromPath('data/skins/santa_cammo.png');
+    await skin.load('data/skins/santa_cammo.png');
 
     skin
       .colorTee(
@@ -156,10 +156,10 @@ describe('Abstract class Asset', () => {
     const path = 'board.png';
 
     const skin = new Skin();
-    await skin.loadFromPath('data/skins/santa_cammo.png');
+    await skin.load('data/skins/santa_cammo.png');
 
     const gameskin = new Gameskin();
-    await gameskin.loadFromPath('data/gameskins/0_6.png');
+    await gameskin.load('data/gameskins/0_6.png');
 
     const grey = new ColorRGB(255, 255, 255);
 
@@ -189,18 +189,17 @@ describe('Abstract class Asset', () => {
     const path = 'tee_with_weapon.png'
     
     const skin = new Skin();
-    await skin.loadFromPath('data/skins/nanami.png');
+    await skin.load('data/skins/debug.png');
 
     skin
-      .setEyeAssetPart(SkinPart.ANGRY_EYE)
       .colorTee(
-        new ColorRGB(255, 255, 255),
+        new ColorRGB(255, 0, 0),
         new ColorRGB(255, 255, 255),
       )
-      .setOrientation(0);
+      .setOrientation(140);
 
     const gameskin = new Gameskin();
-    await gameskin.loadFromPath('data/gameskins/0_6.png');
+    await gameskin.load('data/gameskins/0_6.png');
 
     new SkinWeapon()
       .setSkin(skin)
@@ -210,5 +209,18 @@ describe('Abstract class Asset', () => {
       .saveAs(path, true);
 
     unlinkSync(path);
+  });
+
+  test('Save every gameskin parts', async () => {
+    const dir = 'test_dir'
+    
+    const gameskin = new Gameskin();
+    await gameskin.load('data/gameskins/ahl_red.png');
+
+    gameskin
+      .setPartSaveDirectory(dir)
+      .saveAllParts()
+
+    rmSync(dir, { recursive: true, force: true });
   });
 });
