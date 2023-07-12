@@ -334,7 +334,7 @@ export default class Scene {
     const tee = new Skin();
 
     try {
-      await tee.loadFromPath(path);
+      await tee.load(path);
       tee.render();
     } catch (err) {
       Logger.error(err);
