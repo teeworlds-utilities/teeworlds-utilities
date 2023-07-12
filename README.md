@@ -43,4 +43,4 @@ If you want to see examples of how to use the library, you can check the **`**.t
 - [ ] Documentation 100 %
 - [x] CI/CD pipeline
 - [x] Log environment variable
-- [ ] Extract every asset part
+- [x] Extract every asset part
