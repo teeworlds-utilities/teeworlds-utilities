@@ -371,7 +371,7 @@ export default class Skin extends Asset<SkinPart> {
    */
   saveRender(cropped: boolean = false): this {
     return this.saveRenderAs(
-      this.metadata.name + '.png',
+      'render_' + this.metadata.name + '.png',
       cropped
     );
   }
@@ -389,7 +389,7 @@ export default class Skin extends Asset<SkinPart> {
       : this.renderCanvas;
 
     saveCanvas(
-      'render_' + path,
+      path,
       canvas
     );
 

@@ -132,7 +132,7 @@ describe('Abstract class Asset', () => {
       .render()
       .saveRenderAs(path);
 
-    unlinkSync('render_' + path);
+    unlinkSync(path);
   });
 
   test('Color skin then render', async () => {
@@ -149,7 +149,7 @@ describe('Abstract class Asset', () => {
       .render()
       .saveRenderAs(path);
     
-    unlinkSync('render_' + path);
+    unlinkSync(path);
   });
 
   test('Skin board', async () => {
