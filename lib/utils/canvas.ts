@@ -100,22 +100,34 @@ export async function getCanvasFromFile(path: string): Promise<Canvas> {
  * be saved.
  * @param {Canvas} canvas - Canvas
  */
-export function saveCanvas(path: string, canvas: Canvas,) {
+export function saveCanvas(path: string, canvas: Canvas): boolean {
+  if (path.length === 0) {
+    return false;
+  }
+  
   // Create directory if it doesnt exist
-  let dirs = path.split('/')
+  let dirs = path
+    .split('/')
+    .filter(dir => dir.length > 0);
   
   // Remove the filename
   dirs.pop()
 
   // Creates directories if they don't exist
+  let currentDir = path.at(0) === '/' ? '/' : '';
+
   for (const dir of dirs) {
-    if (existsSync(dir) === false) {
-      mkdirSync(dir);
+    currentDir += dir + '/';
+
+    if (existsSync(currentDir) === false) {
+      mkdirSync(currentDir);
     }
   }
 
   // Save the element, only PNGs
   writeFileSync(path, canvas.toBuffer('image/png'));
+
+  return true;
 }
 
 /**
@@ -360,7 +372,7 @@ export function findOpaque(
     case DIRECTION_VERTICAL:
       return findOpaqueVertical(data, from);
     default:
-      throw new AssetError('Unauthorize direction.')
+      throw new AssetError('Unauthorize direction.');
   }
 }
 
