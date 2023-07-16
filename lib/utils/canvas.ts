@@ -18,6 +18,7 @@ import {
   RIGHT,
   TOP,
 } from "./util";
+import { join as pathJoin } from "node:path"
 
 /**
  * The function draws a rounded rectangle on a canvas with a specified radius,
@@ -121,10 +122,16 @@ export function saveCanvas(path: string, canvas: Canvas) {
   // Remove the filename
   dirs.pop();
 
+  dirs = dirs.filter(x => x !== '');
+
+  let currentPath = path.startsWith("/") ? "/" : "";
+
   // Creates directories if they don't exist
+
   for (const dir of dirs) {
-    if (existsSync(dir) === false && dir !== "") {
-      mkdirSync(dir);
+    currentPath = pathJoin(currentPath, dir)
+    if (existsSync(currentPath) === false) {
+      mkdirSync(currentPath);
     }
   }
 

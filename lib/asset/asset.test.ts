@@ -129,20 +129,23 @@ describe("Abstract class Asset", () => {
 
     await skin.load(SKIN);
 
-    skin.render().saveRenderAs(path);
+    skin
+      .render()
+      .saveRenderAs(path);
 
     unlinkSync(path);
   });
 
   test("Render skin then save with absolute path", async () => {
     const absolutePath = pathJoin(__dirname, "skin.png");
+    console.log(absolutePath)
     const skin = new Skin();
 
     await skin.load(SKIN);
 
     skin.render().saveRenderAs(absolutePath);
 
-    unlinkSync(absolutePath);
+    //unlinkSync(absolutePath);
   });
 
   test("Color skin then render", async () => {
