@@ -155,8 +155,15 @@ export default class Skin extends Asset<SkinPart> {
     return this.colorParts(
       color,
       SkinPart.BODY,
+      SkinPart.BODY_SHADOW,
       SkinPart.HAND,
-      this.eyeAssetPart
+      SkinPart.HAND_SHADOW,
+      SkinPart.DEFAULT_EYE,
+      SkinPart.ANGRY_EYE,
+      SkinPart.BLINK_EYE,
+      SkinPart.CROSS_EYE,
+      SkinPart.HAPPY_EYE,
+      SkinPart.SCARY_EYE
     );
   }
 

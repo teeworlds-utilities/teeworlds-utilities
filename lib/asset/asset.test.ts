@@ -123,7 +123,7 @@ describe('Abstract class Asset', () => {
   });
 
   test('Render skin then save with an eye angle', async () => {
-    const path = '/home/nagi/a/b/c/skin.png';
+    const path = 'test.png';
     const skin = new Skin();
 
     await skin.load(SKIN);
