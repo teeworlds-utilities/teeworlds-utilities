@@ -203,7 +203,7 @@ export const TEE_WEAPON_METADATA: Record<WeaponGameSkinPart, ITeeWeaponMetadata>
   [GameskinPart.GRENADE]: {
     scaleFactor: 0.6,
     move: { x: 40, y: 0 },
-    hand: { x: 54, y: 17, angle: 270 },
+    hand: { x: 54, y: 13, angle: 270 },
   },
   [GameskinPart.LASER]: {
     scaleFactor: 0.6,

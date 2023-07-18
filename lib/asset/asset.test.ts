@@ -164,20 +164,20 @@ describe('Abstract class Asset', () => {
     const grey = new ColorRGB(255, 255, 255);
 
     skin
-    skin.colorTee(
-      grey,
-      grey
-    )
-    .colorParts(
-      grey,
-      SkinPart.SCARY_EYE,
-      SkinPart.ANGRY_EYE,
-      SkinPart.BLINK_EYE,
-      SkinPart.CROSS_EYE,
-      SkinPart.DEFAULT_EYE,
-      SkinPart.HAPPY_EYE
-    )
-    .setOrientation(120);
+      .colorTee(
+        grey,
+        grey
+      )
+      .colorParts(
+        grey,
+        SkinPart.SCARY_EYE,
+        SkinPart.ANGRY_EYE,
+        SkinPart.BLINK_EYE,
+        SkinPart.CROSS_EYE,
+        SkinPart.DEFAULT_EYE,
+        SkinPart.HAPPY_EYE
+      )
+      .setOrientation(120);
 
     createSkinOverview(skin, gameskin)
       .saveAs(path, true);
