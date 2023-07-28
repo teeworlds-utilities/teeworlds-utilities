@@ -547,10 +547,18 @@ export class SkinWeapon extends MinimalAsset {
       rotate
     );
 
+    const size = this.weapon === GameskinPart.HAMMER
+      ? Math.hypot(
+        weaponCanvas.width,
+        weaponCanvas.height
+      )
+      : null;
+
     // Rotate the weapon with the right angle
     weaponCanvas = rotateCanvas(
       weaponCanvas,
-      orientation
+      orientation,
+      size
     );
 
     let weaponPosition = this.adjustWeaponPosition(

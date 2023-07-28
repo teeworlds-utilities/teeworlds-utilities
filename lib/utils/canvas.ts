@@ -247,14 +247,18 @@ export function resizeCanvas(oldCanvas: Canvas, size: Dimensions): Canvas {
  * @param angle - Angle
  * @returns A new canvas
  */
-export function rotateCanvas(oldCanvas: Canvas, angle: number): Canvas {
+export function rotateCanvas(
+  oldCanvas: Canvas,
+  angle: number,
+  size?: number
+): Canvas {
   angle %= 360;
 
   if (angle < 0) {
     angle *= -1;
   }
 
-  const size = Math.max(
+  size = size || Math.max(
     oldCanvas.width,
     oldCanvas.height
   );
