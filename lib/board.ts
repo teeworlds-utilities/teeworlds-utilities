@@ -137,7 +137,7 @@ function processBoardCanvas(board: Board<Canvas>): MinimalAsset {
 const EMOTES: EyeSkinPart[] = [
   SkinPart.DEFAULT_EYE,
   SkinPart.ANGRY_EYE,
-  SkinPart.BLINK_EYE,
+  SkinPart.PAIN_EYE,
   SkinPart.HAPPY_EYE,
   SkinPart.SCARY_EYE
 ];

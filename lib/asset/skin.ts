@@ -13,6 +13,7 @@ import {
 import {
   AssetHelpSize,
   AssetKind,
+  BLINK_SCALE,
   EmoticonPart,
   EyeSkinPart,
   GameskinPart,
@@ -30,7 +31,8 @@ import {
   canvasFlip,
   scaleCanvas,
   rotateCanvas,
-  autoCropCanvas
+  autoCropCanvas,
+  rawScaleCanvas
 } from "../utils/canvas";
 
 import { ColorHSL, IColor } from "../color";
@@ -163,7 +165,7 @@ export default class Skin extends Asset<SkinPart> {
       SkinPart.HAND_SHADOW,
       SkinPart.DEFAULT_EYE,
       SkinPart.ANGRY_EYE,
-      SkinPart.BLINK_EYE,
+      SkinPart.PAIN_EYE,
       SkinPart.CROSS_EYE,
       SkinPart.HAPPY_EYE,
       SkinPart.SCARY_EYE
@@ -287,16 +289,24 @@ export default class Skin extends Asset<SkinPart> {
     const multiplier = this.multiplier;
     const cx = 6 * multiplier;
 
+    const eyePart = eyeAssetPart || this.eyeAssetPart;
+
     const footShadow = this.getPartCanvas(SkinPart.FOOT_SHADOW);
     const foot = this.getPartCanvas(SkinPart.FOOT);
     const bodyShadow = this.getPartCanvas(SkinPart.BODY_SHADOW);
     const body = this.getPartCanvas(SkinPart.BODY);
-    const eye = this.getPartCanvas(eyeAssetPart || this.eyeAssetPart);
+    let eye = this.getPartCanvas(eyePart);
 
     const eyePosition = this.getEyePosition(
       -cx + 42 * multiplier, // Body center origin on X axis
       cx + 23 * multiplier // Body center origin on Y axis
     );
+
+      if (eyePart === SkinPart.BLINK_EYE) {
+        eyePosition.y += (eye.height + (eye.height * BLINK_SCALE)) / 2;
+        
+        eye = rawScaleCanvas(eye, 1, BLINK_SCALE);
+      }
 
     this.drawPart(
       footShadow,

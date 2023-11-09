@@ -173,6 +173,7 @@ describe('Abstract class Asset', () => {
         grey,
         SkinPart.SCARY_EYE,
         SkinPart.ANGRY_EYE,
+        SkinPart.PAIN_EYE,
         SkinPart.BLINK_EYE,
         SkinPart.CROSS_EYE,
         SkinPart.DEFAULT_EYE,
@@ -232,8 +233,8 @@ describe('Abstract class Asset', () => {
 
     new SkinFull()
       .setSkin(skin)
-      .setWeapon(gameskin, GameskinPart.SHOTGUN)
-      .setEmoticon(emoticon, EmoticonPart.PART_3_2)
+      .setWeapon(gameskin, GameskinPart.GRENADE)
+      .setEmoticon(emoticon, EmoticonPart.PART_1_4)
       .process()
       .saveAs(path, true);
 

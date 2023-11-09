@@ -56,21 +56,24 @@ export enum SkinPart {
   FOOT_SHADOW = "foot_shadow",
   DEFAULT_EYE = "default_eye",
   ANGRY_EYE = "angry_eye",
-  BLINK_EYE = "blink_eye",
+  PAIN_EYE = "pain_eye",
   HAPPY_EYE = "happy_eye",
   CROSS_EYE = "cross_eye",
   SCARY_EYE = "scary_eye",
+  BLINK_EYE = "blink_eye",
 }
 
-// TODO: Find the "real" blink emoticon in the source code
-// because it doesnt figure on the skin image
 export type EyeSkinPart = 
   | SkinPart.DEFAULT_EYE
   | SkinPart.ANGRY_EYE
-  | SkinPart.BLINK_EYE
+  | SkinPart.PAIN_EYE
   | SkinPart.HAPPY_EYE
   | SkinPart.CROSS_EYE
   | SkinPart.SCARY_EYE
+  // Special case
+  | SkinPart.BLINK_EYE
+
+export const BLINK_SCALE = 0.35;
 
 export enum GameskinPart {
   HOOK = "hook",
@@ -185,14 +188,14 @@ export interface ITeeWeaponMetadata {
 }
 
 const EYES_FROM_EMOTICON: Record<EmoticonPart, EyeSkinPart> = {
-  [EmoticonPart.PART_1_1]: SkinPart.CROSS_EYE,
+  [EmoticonPart.PART_1_1]: SkinPart.PAIN_EYE,
   [EmoticonPart.PART_1_2]: SkinPart.SCARY_EYE,
   [EmoticonPart.PART_1_3]: SkinPart.HAPPY_EYE,
   [EmoticonPart.PART_1_4]: SkinPart.BLINK_EYE,
   [EmoticonPart.PART_2_1]: SkinPart.BLINK_EYE,
   [EmoticonPart.PART_2_2]: SkinPart.HAPPY_EYE,
-  [EmoticonPart.PART_2_3]: SkinPart.BLINK_EYE,
-  [EmoticonPart.PART_2_4]: SkinPart.BLINK_EYE,
+  [EmoticonPart.PART_2_3]: SkinPart.PAIN_EYE,
+  [EmoticonPart.PART_2_4]: SkinPart.SCARY_EYE,
   [EmoticonPart.PART_3_1]: SkinPart.ANGRY_EYE,
   [EmoticonPart.PART_3_2]: SkinPart.ANGRY_EYE,
   [EmoticonPart.PART_3_3]: SkinPart.ANGRY_EYE,
@@ -252,7 +255,7 @@ const ASSET_PARTS: Record<AssetKind, Record<string, IAssetPartMetadata>> = {
     [SkinPart.FOOT_SHADOW]: { x: 192, y: 64, w: 64, h: 32 },
     [SkinPart.DEFAULT_EYE]: { x: 64, y: 96, w: 32, h: 32 },
     [SkinPart.ANGRY_EYE]: { x: 96, y: 96, w: 32, h: 32 },
-    [SkinPart.BLINK_EYE]: { x: 128, y: 96, w: 32, h: 32 },
+    [SkinPart.PAIN_EYE]: { x: 128, y: 96, w: 32, h: 32 },
     [SkinPart.HAPPY_EYE]: { x: 160, y: 96, w: 32, h: 32 },
     [SkinPart.CROSS_EYE]: { x: 192, y: 96, w: 32, h: 32 },
     [SkinPart.SCARY_EYE]: { x: 224, y: 96, w: 32, h: 32 },
@@ -357,6 +360,10 @@ export function getAssetPartMetadata(
     throw new AssetPartError("Unauthorized asset kind.");
   }
 
+  if (assetPart === SkinPart.BLINK_EYE) {
+    assetPart = SkinPart.DEFAULT_EYE;
+  }
+
   if (Object.hasOwn(ASSET_PARTS[kind], assetPart) === false) {
     throw new AssetPartError(assetPart + ' is not a part of ' + kind + '.');
   }
@@ -372,5 +379,5 @@ export function getAssetPartMetadata(
 export function getAssetPartsMetadata(
   kind: AssetKind
 ): Record<string, IAssetPartMetadata> {
-  return ASSET_PARTS[kind];
+  return ASSET_PARTS[kind]
 }

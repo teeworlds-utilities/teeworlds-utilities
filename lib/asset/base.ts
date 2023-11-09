@@ -413,6 +413,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     callback: (rgba: ColorRGBA, color: ColorRGBA) => void
   ): this {
     const partMetadata = this.getPartMetadata(assetPart);
+
     const colorRGBA = color.rgba() as ColorRGBA;
 
     let imageData = this.ctx.getImageData(

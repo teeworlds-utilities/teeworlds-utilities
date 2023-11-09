@@ -221,6 +221,22 @@ export function scaleCanvas(oldCanvas: Canvas, factor: number): Canvas {
     {w: w, h: h}
   );
 }
+/**
+ * Raws scale canvas
+ * @param oldCanvas 
+ * @param factorW
+ * @param factorH
+ * @returns canvas 
+ */
+export function rawScaleCanvas(oldCanvas: Canvas, factorW: number, factorH: number): Canvas {
+  const w = oldCanvas.width * factorW;
+  const h = oldCanvas.height * factorH;
+
+  return resizeCanvas(
+    oldCanvas,
+    {w: w, h: h}
+  );
+}
 
 /**
  * 
