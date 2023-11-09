@@ -459,15 +459,29 @@ export class SkinFull extends MinimalAsset {
   }
 
   /**
+   * Set a weapon
+   * @param value - WeaponGameSkinPart
+   * @returns this
+   */
+  setWeapon(value: WeaponGameSkinPart): this {
+    this.weapon = value;
+    this.weaponMetadata = TEE_WEAPON_METADATA[value];
+
+    return this;
+  }
+
+  /**
    * Set a gameskin
    * @param value - Gameskin
    * @param part - WeaponGameSkinPart
    * @returns this
    */
-  setWeapon(value: Gameskin, part: WeaponGameSkinPart): this {
+  setGameskin(value: Gameskin, part?: WeaponGameSkinPart): this {
     this.gameskin = value.scale(AssetHelpSize.DEFAULT);
-    this.weapon = part;
-    this.weaponMetadata = TEE_WEAPON_METADATA[part];
+    
+    if (part !== null) {
+      this.setWeapon(part)
+    }
 
     return this;
   }
@@ -475,16 +489,28 @@ export class SkinFull extends MinimalAsset {
   /**
    * Set an emoticon
    * @param value - Emoticon, must be an emoticon
-   * @param part - EmoticonPart
+   * @param part - EmoticonPart optional
    * @returns this
    */
-   setEmoticon(value: Emoticon, part: EmoticonPart): this {
+   setEmoticon(value: Emoticon, part?: EmoticonPart): this {
     this.emoticon = value;
-    this.emoticonPart = part;
 
+    if (part !== null) {
+      this.setEmoticonPart(part)
+    }
+    return this;
+  }
+
+  /**
+   * Set an emoticon part
+   * @param value - Emoticon part
+   * @returns this
+   */
+   setEmoticonPart(value: EmoticonPart): this {
+    this.emoticonPart = value;
     // Adapt the skin eyes with its emoticon
     this.skin.setEyeAssetPart(
-      getEyesFromEmoticon(part)
+      getEyesFromEmoticon(value)
     );
 
     return this;

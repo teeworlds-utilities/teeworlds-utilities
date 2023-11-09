@@ -172,13 +172,15 @@ export function createSkinOverview(
     }
   );
 
-  const skinWeapon = new SkinFull().setSkin(skin);
+  const skinWeapon = new SkinFull()
+    .setSkin(skin)
+    .setGameskin(gameskin);
 
   for (let i = 0; i < amount; i++) {
     skin.setEyeAssetPart(EMOTES.at(i));
 
     skinWeapon
-      .setWeapon(gameskin, WEAPONS.at(i))
+      .setWeapon(WEAPONS.at(i))
       .process();
 
     board.addCell(

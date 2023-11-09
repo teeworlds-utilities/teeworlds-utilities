@@ -205,7 +205,7 @@ describe('Abstract class Asset', () => {
 
     new SkinFull()
       .setSkin(skin)
-      .setWeapon(gameskin, GameskinPart.GUN)
+      .setGameskin(gameskin, GameskinPart.GUN)
       .process()
       .saveAs(path, false);
 
@@ -233,7 +233,7 @@ describe('Abstract class Asset', () => {
 
     new SkinFull()
       .setSkin(skin)
-      .setWeapon(gameskin, GameskinPart.GRENADE)
+      .setGameskin(gameskin, GameskinPart.GRENADE)
       .setEmoticon(emoticon, EmoticonPart.PART_1_4)
       .process()
       .saveAs(path, true);
