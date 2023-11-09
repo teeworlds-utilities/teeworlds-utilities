@@ -1,4 +1,4 @@
-import Skin, { SkinWeapon } from "./asset/skin";
+import Skin, { SkinFull } from "./asset/skin";
 import Gameskin from "./asset/gameskin";
 import Particule from "./asset/particule";
 import Emoticon from "./asset/emoticon";
@@ -6,7 +6,7 @@ import Mapres from "./asset/mapres";
 
 import Scene from './scene';
 
-export { Skin, SkinWeapon, Gameskin, Particule, Emoticon, Mapres };
+export { Skin, SkinFull, Gameskin, Particule, Emoticon, Mapres };
 export { Scene };
 export { fixAssetSize } from './fix';
 export { PersonalCard } from "./card";

@@ -1,10 +1,11 @@
 import { unlinkSync, rmSync } from 'fs'
-import Skin, { SkinWeapon } from './skin';
+import Skin, { SkinFull } from './skin';
 import Gameskin from './gameskin';
-import { GameskinPart, SkinPart } from './part';
+import { EmoticonPart ,GameskinPart, SkinPart } from './part';
 import { ColorRGB, ColorCode } from '../color';
 
 import { createSkinOverview } from '../board';
+import Emoticon from './emoticon';
 
 const SKIN = 'data/skins/ahl_red_nanami.png';
 const GAMESKIN = 'data/gameskins/ahl_red.png';
@@ -201,10 +202,38 @@ describe('Abstract class Asset', () => {
     const gameskin = new Gameskin();
     await gameskin.load('data/gameskins/0_6.png');
 
-    new SkinWeapon()
+    new SkinFull()
       .setSkin(skin)
-      .setGameskin(gameskin)
-      .setWeapon(GameskinPart.GUN)
+      .setWeapon(gameskin, GameskinPart.GUN)
+      .process()
+      .saveAs(path, false);
+
+    unlinkSync(path);
+  });
+
+  test('Create a tee with a weapon', async () => {
+    const path = 'tee_with_weapon_and_emoticon.png'
+    
+    const skin = new Skin();
+    await skin.load('data/skins/nanami.png');
+
+    const emoticon = new Emoticon();
+    await emoticon.load('data/emoticons/default.png');
+
+    skin
+      .colorTee(
+        new ColorRGB(255, 0, 0),
+        new ColorRGB(255, 255, 255),
+      )
+      .setOrientation(140);
+
+    const gameskin = new Gameskin();
+    await gameskin.load('data/gameskins/0_6.png');
+
+    new SkinFull()
+      .setSkin(skin)
+      .setWeapon(gameskin, GameskinPart.SHOTGUN)
+      .setEmoticon(emoticon, EmoticonPart.PART_3_2)
       .process()
       .saveAs(path, true);
 

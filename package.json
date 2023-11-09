@@ -1,7 +1,7 @@
 {
   "name": "teeworlds-utilities",
-  "description": "Teeworlds asset utilities used by skins.tw",
-  "version": "1.1.9",
+  "description": "Teeworlds asset utilities used by teedata.net (skins.tw)",
+  "version": "1.2.0",
   "license": "MIT",
   "dependencies": {
     "canvas": "^2.9.1",

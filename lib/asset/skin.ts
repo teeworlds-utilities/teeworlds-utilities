@@ -13,13 +13,15 @@ import {
 import {
   AssetHelpSize,
   AssetKind,
+  EmoticonPart,
   EyeSkinPart,
   GameskinPart,
   IAssetPartMetadata,
   ITeeWeaponMetadata,
   SkinPart,
   TEE_WEAPON_METADATA,
-  WeaponGameSkinPart
+  WeaponGameSkinPart,
+  getEyesFromEmoticon
 } from "./part";
 
 import {
@@ -35,6 +37,7 @@ import { ColorHSL, IColor } from "../color";
 import Gameskin from "./gameskin";
 import { AssetError } from "../error";
 import { positionFromAngle } from "../utils/util";
+import Emoticon from "./emoticon";
 
 const BODY_LIMIT = 52.5;
 
@@ -404,21 +407,32 @@ export default class Skin extends Asset<SkinPart> {
   }
 }
 
-export class SkinWeapon extends MinimalAsset {
+export class SkinFull extends MinimalAsset {
   private skin: Skin;
   private gameskin: Gameskin;
+  private emoticon?: Emoticon;
   
   private weapon: WeaponGameSkinPart;
   private weaponMetadata: ITeeWeaponMetadata;
+  private emoticonPart: EmoticonPart;
   
   constructor() {
     super(
       {
-        baseSize: {w: 200, h: 200},
+        baseSize: {w: 250, h: 250},
         divisor: {w: 1, h: 1},
         kind: AssetKind.UNKNOWN
       }
     );
+
+    // Prevention default values
+    //
+    // Default weapon part
+    this.weapon = GameskinPart.HAMMER;
+    // Default emoticon part
+    this.emoticonPart = EmoticonPart.PART_1_1;
+
+    this.emoticon = null;
 
     this.empty();
   }
@@ -437,22 +451,39 @@ export class SkinWeapon extends MinimalAsset {
   /**
    * Set a gameskin
    * @param value - Gameskin
+   * @param part - WeaponGameSkinPart
    * @returns this
    */
-  setGameskin(value: Gameskin): this {
+  setWeapon(value: Gameskin, part: WeaponGameSkinPart): this {
     this.gameskin = value.scale(AssetHelpSize.DEFAULT);
+    this.weapon = part;
+    this.weaponMetadata = TEE_WEAPON_METADATA[part];
 
     return this;
   }
 
   /**
-   * Set a weapon
-   * @param value - Skin part, must be a weapon
+   * Set an emoticon
+   * @param value - Emoticon, must be an emoticon
+   * @param part - EmoticonPart
    * @returns this
    */
-  setWeapon(value: WeaponGameSkinPart): this {
-    this.weapon = value;
-    this.weaponMetadata = TEE_WEAPON_METADATA[value];
+   setEmoticon(value: Emoticon, part: EmoticonPart): this {
+    this.emoticon = value;
+    this.emoticonPart = part;
+
+    // Adapt the skin eyes with its emoticon
+    this.skin.setEyeAssetPart(
+      getEyesFromEmoticon(part)
+    );
+
+    return this;
+  }
+
+  resetEmoticon(): this {
+    this.emoticon = null;
+    
+    this.skin.setEyeAssetPart(SkinPart.DEFAULT_EYE);
 
     return this;
   }
@@ -579,6 +610,26 @@ export class SkinWeapon extends MinimalAsset {
     return this;
   }
 
+  private putEmoticon(): this {
+    if (this.emoticon === null) {
+      return this;
+    }
+
+    // Get the emoticon
+    let emoticonCanvas = scaleCanvas(
+      this.emoticon.getPartCanvas(this.emoticonPart),
+      0.7
+    );
+
+    this.ctx.drawImage(
+      emoticonCanvas,
+      (this.canvas.width - emoticonCanvas.width) / 2,
+      0,
+    );
+
+    return this;
+  }
+
   /**
    * Creates a canvas with the rendered tee and its weapon.
    * @param orientation - Angle
@@ -613,6 +664,8 @@ export class SkinWeapon extends MinimalAsset {
       (this.canvas.width - this.skin.renderCanvas.width) / 2,
       (this.canvas.height - this.skin.renderCanvas.height) / 2
     );
+
+    this.putEmoticon();
     
     return this;
   }

@@ -62,6 +62,8 @@ export enum SkinPart {
   SCARY_EYE = "scary_eye",
 }
 
+// TODO: Find the "real" blink emoticon in the source code
+// because it doesnt figure on the skin image
 export type EyeSkinPart = 
   | SkinPart.DEFAULT_EYE
   | SkinPart.ANGRY_EYE
@@ -180,6 +182,29 @@ export interface ITeeWeaponMetadata {
   hand: ITeeHandMetadata;
   move: Position;
   scaleFactor: number;
+}
+
+const EYES_FROM_EMOTICON: Record<EmoticonPart, EyeSkinPart> = {
+  [EmoticonPart.PART_1_1]: SkinPart.CROSS_EYE,
+  [EmoticonPart.PART_1_2]: SkinPart.SCARY_EYE,
+  [EmoticonPart.PART_1_3]: SkinPart.HAPPY_EYE,
+  [EmoticonPart.PART_1_4]: SkinPart.BLINK_EYE,
+  [EmoticonPart.PART_2_1]: SkinPart.BLINK_EYE,
+  [EmoticonPart.PART_2_2]: SkinPart.HAPPY_EYE,
+  [EmoticonPart.PART_2_3]: SkinPart.BLINK_EYE,
+  [EmoticonPart.PART_2_4]: SkinPart.BLINK_EYE,
+  [EmoticonPart.PART_3_1]: SkinPart.ANGRY_EYE,
+  [EmoticonPart.PART_3_2]: SkinPart.ANGRY_EYE,
+  [EmoticonPart.PART_3_3]: SkinPart.ANGRY_EYE,
+  [EmoticonPart.PART_3_4]: SkinPart.ANGRY_EYE,
+  [EmoticonPart.PART_4_1]: SkinPart.BLINK_EYE,
+  [EmoticonPart.PART_4_2]: SkinPart.SCARY_EYE,
+  [EmoticonPart.PART_4_3]: SkinPart.HAPPY_EYE,
+  [EmoticonPart.PART_4_4]: SkinPart.SCARY_EYE,
+}
+
+export function getEyesFromEmoticon(emoticonPart: EmoticonPart): EyeSkinPart {
+  return EYES_FROM_EMOTICON[emoticonPart];
 }
 
 // first and second represents the tee hand.

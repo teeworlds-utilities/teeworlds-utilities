@@ -2,7 +2,7 @@ import { Canvas, createCanvas } from 'canvas';
 import { BoardError } from './error';
 import { DEFAULT_METADATA, Dimensions, MinimalAsset, Position } from './asset/base';
 import { cloneCanvas, resizeCanvas } from './utils/canvas';
-import Skin, { SkinWeapon } from './asset/skin';
+import Skin, { SkinFull } from './asset/skin';
 import { AssetHelpSize, EyeSkinPart, GameskinPart, SkinPart, WeaponGameSkinPart } from './asset/part';
 import Gameskin from './asset/gameskin';
 
@@ -172,15 +172,13 @@ export function createSkinOverview(
     }
   );
 
-  const skinWeapon = new SkinWeapon()
-    .setSkin(skin)
-    .setGameskin(gameskin);
+  const skinWeapon = new SkinFull().setSkin(skin);
 
   for (let i = 0; i < amount; i++) {
     skin.setEyeAssetPart(EMOTES.at(i));
 
     skinWeapon
-      .setWeapon(WEAPONS.at(i))
+      .setWeapon(gameskin, WEAPONS.at(i))
       .process();
 
     board.addCell(
