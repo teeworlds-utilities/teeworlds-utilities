@@ -438,7 +438,7 @@ export class SkinFull extends MinimalAsset {
     // Prevention default values
     //
     // Default weapon part
-    this.weapon = GameskinPart.HAMMER;
+    this.setWeapon(GameskinPart.HAMMER); 
     // Default emoticon part
     this.emoticonPart = EmoticonPart.PART_1_1;
 
@@ -479,7 +479,7 @@ export class SkinFull extends MinimalAsset {
   setGameskin(value: Gameskin, part?: WeaponGameSkinPart): this {
     this.gameskin = value.scale(AssetHelpSize.DEFAULT);
     
-    if (part !== null) {
+    if (part) {
       this.setWeapon(part)
     }
 
@@ -495,7 +495,7 @@ export class SkinFull extends MinimalAsset {
    setEmoticon(value: Emoticon, part?: EmoticonPart): this {
     this.emoticon = value;
 
-    if (part !== null) {
+    if (part) {
       this.setEmoticonPart(part)
     }
     return this;
