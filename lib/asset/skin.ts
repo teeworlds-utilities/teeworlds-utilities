@@ -493,7 +493,7 @@ export class SkinFull extends MinimalAsset {
    * @returns this
    */
    setEmoticon(value: Emoticon, part?: EmoticonPart): this {
-    this.emoticon = value;
+    this.emoticon = value.scale(AssetHelpSize.DEFAULT);
 
     if (part) {
       this.setEmoticonPart(part)

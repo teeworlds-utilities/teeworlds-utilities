@@ -1,3 +1,5 @@
+// Has been migrated from JavaScript without refactor
+
 import Skin from './asset/skin';
 import {SceneError} from './error';
 import { Logger } from './logger';
