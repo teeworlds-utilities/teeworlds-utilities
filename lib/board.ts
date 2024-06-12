@@ -86,28 +86,30 @@ class Board<T> {
   }
 }
 
-function processBoardCanvas(board: Board<Canvas>): MinimalAsset {
-  // Resize the content in the cell
+function resizeBoardCanvas(board: Board<Canvas>) {
   board.call(
     (cell) => {
       let [w, h] = [cell.content.width, cell.content.height];
+      let [maxW, maxH] = [board.config.cellWidth, board.config.cellHeight];
 
-      if (w > board.config.cellWidth) {
-        w = board.config.cellWidth;
-      }
-
-      if (h > board.config.cellHeight) {
-        h = board.config.cellHeight;
-      }
-
-      if (w !== cell.content.width || h !== cell.content.height) {
+      if (w > maxW || h > maxH) {
         cell.content = resizeCanvas(
           cell.content,
-          {w: w, h: h}
+          {w: maxW, h: maxH}
         );
       }
     }
   );
+}
+
+function processBoardCanvas(
+  board: Board<Canvas>,
+  resize: boolean = true
+): MinimalAsset {
+  // Resize the content in the cell
+  if (resize === true) {
+    resizeBoardCanvas(board);
+  }
 
   const boardSize = board.getSize();
   const canvas = createCanvas(boardSize.w, boardSize.h);
@@ -165,8 +167,8 @@ export function createSkinOverview(
     {
       maxRowCell: amount,
       maxLineCell: 1,
-      cellWidth: 150,
-      cellHeight: 150,
+      cellWidth: 210,
+      cellHeight: 175,
       Xgap: 1,
       Ygap: 20
     }
@@ -191,5 +193,5 @@ export function createSkinOverview(
     );
   }
 
-  return processBoardCanvas(board);
+  return processBoardCanvas(board, false);
 }
