@@ -22,6 +22,13 @@ describe('Color converting', () => {
 
     Logger.debug(hsl.toArray().toString());
 
-    expect(hsl.toArray()).toStrictEqual([ 169.41176470588235, 100, 75.29411764705883 ]);
+    expect(hsl.toArray()).toStrictEqual([169.41176470588235, 100, 75.09803921568627]);
+  });
+
+  test('From HSL to Teeworlds code', () => {
+    const hsl = new ColorHSL(169.41176470588235, 100, 75.09803921568627);
+    const code = hsl.twCode();
+
+    expect(code).toStrictEqual(new ColorCode(7929728));
   });
 });

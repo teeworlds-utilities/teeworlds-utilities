@@ -172,19 +172,12 @@ export class ColorHSL implements IColor {
     return this;
   }
 
-  /**
-   * TODO: Upgrade
-   * @returns 
-   */
   twCode(): IColor {
-    let code = (this._h * 0xff) / 360;
+    const h = Math.round(this._h / 360 * 0xff);
+    const s = Math.round(this._s / 100 * 0xff);
+    const d = Math.round(Math.max(0, (this._l - 50) / 50) * 0xff);
 
-    code <<= 8;
-    code |= (this._s * 0xff) / 100;
-    code <<= 8;
-    code |= ((this._l * 0xff) / 100 - 128) * 2;
-
-    return new ColorCode(code);
+    return new ColorCode((h << 16) | (s << 8) | d);
   }
 }
 
@@ -212,10 +205,9 @@ export class ColorCode implements IColor {
   hsl(): IColor {
     let arr = this.toArray()
 
-    // Adjusting HSL values for Teeworlds
-    arr[0] = (arr.at(0) * 360) / 0xff;
-    arr[1] = (arr.at(1) * 100) / 0xff;
-    arr[2] = ((arr.at(2) / 2 + 128) * 100) / 0xff;
+    arr[0] = (arr.at(0) / 0xff) * 360;
+    arr[1] = (arr.at(1) / 0xff) * 100;
+    arr[2] = (0.5 + (arr.at(2) / 0xff) * (1 - 0.5)) * 100;
 
     return new ColorHSL(...arr);
   }
