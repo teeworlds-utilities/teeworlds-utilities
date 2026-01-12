@@ -173,6 +173,19 @@ export default class Skin extends Asset<SkinPart> {
   }
 
   /**
+   * Applies `color` on the tee foot.
+   * @param {IColor} color - Color
+   * @returns this
+   */
+  colorFoot(color: IColor): this {
+    return this.colorParts(
+        color,
+        SkinPart.FOOT,
+        SkinPart.FOOT_SHADOW
+    );
+  }
+
+  /**
    * The function sets the color of the body and feet of an object.
    * @param {IColor} bodyColor - Body color
    * @param {IColor} footColor - Foot color
@@ -181,7 +194,7 @@ export default class Skin extends Asset<SkinPart> {
   colorTee(bodyColor: IColor, footColor: IColor): this {
     return this
       .colorBody(bodyColor)
-      .colorParts(footColor, SkinPart.FOOT);
+      .colorFoot(footColor)
   }
 
   /**
@@ -303,7 +316,7 @@ export default class Skin extends Asset<SkinPart> {
     );
 
       if (eyePart === SkinPart.BLINK_EYE) {
-        eyePosition.y += (eye.height + (eye.height * BLINK_SCALE)) / 2;
+        eyePosition.y += (eye.height + (eye.height * BLINK_SCALE)) / 3;
         
         eye = rawScaleCanvas(eye, 1, BLINK_SCALE);
       }
@@ -321,7 +334,7 @@ export default class Skin extends Asset<SkinPart> {
       bodyShadow,
       {
         x: -cx + 12 * multiplier,
-        y: cx + 0 * multiplier,
+        y: cx,
         w: bodyShadow.width,
         h: bodyShadow.height
       }
@@ -348,7 +361,7 @@ export default class Skin extends Asset<SkinPart> {
       body,
       {
         x: -cx + 12 * multiplier,
-        y: cx + 0 * multiplier,
+        y: cx,
         w: body.width,
         h: body.height 
       }
@@ -401,6 +414,7 @@ export default class Skin extends Asset<SkinPart> {
    * the object it was called on.
    * @param {string} path - A string representing the file path where the rendered
    * canvas should be saved.
+   * @param cropped
    * @returns this
    */
   saveRenderAs(path: string, cropped: boolean = false): this {

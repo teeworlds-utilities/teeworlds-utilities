@@ -53,7 +53,7 @@
         {
             "name": "addBlock",
             "args": {
-                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "mapres": "./data/mapres/generic_unhookable_winter.png",
                 "source": [192, 0, 128, 128],
                 "destination": [512, 256, 128, 128]
             }
@@ -61,7 +61,7 @@
         {
             "name": "addLine",
             "args": {
-                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "mapres": "./data/mapres/generic_unhookable_winter.png",
                 "source": [64, 0, 64, 64],
                 "point_source": [0, 0],
                 "point_destination": [0, 200]
@@ -70,7 +70,7 @@
         {
             "name": "addLine",
             "args": {
-                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "mapres": "./data/mapres/generic_unhookable_winter.png",
                 "source": [64, 0, 64, 64],
                 "point_source": [64, 0],
                 "point_destination": [576, 0]
@@ -79,7 +79,7 @@
         {
             "name": "addLine",
             "args": {
-                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "mapres": "./data/mapres/generic_unhookable_winter.png",
                 "source": [64, 0, 64, 64],
                 "point_source": [576, 0],
                 "point_destination": [576, 200]
@@ -88,7 +88,7 @@
         {
             "name": "addLine",
             "args": {
-                "mapres": "https://api.skins.tw/database/mapres/HfrdVR9AxAfidbRpfTYYLyx8ovoNxniXt91kjbfr.png",
+                "mapres": "./data/mapres/generic_unhookable_winter.png",
                 "source": [64, 0, 64, 64],
                 "point_source": [128, 320],
                 "point_destination": [448, 320]
