@@ -173,6 +173,19 @@ export default class Skin extends Asset<SkinPart> {
   }
 
   /**
+   * Applies `color` on the tee foot.
+   * @param {IColor} color - Color
+   * @returns this
+   */
+  colorFoot(color: IColor): this {
+    return this.colorParts(
+        color,
+        SkinPart.FOOT,
+        SkinPart.FOOT_SHADOW
+    );
+  }
+
+  /**
    * The function sets the color of the body and feet of an object.
    * @param {IColor} bodyColor - Body color
    * @param {IColor} footColor - Foot color
@@ -181,7 +194,7 @@ export default class Skin extends Asset<SkinPart> {
   colorTee(bodyColor: IColor, footColor: IColor): this {
     return this
       .colorBody(bodyColor)
-      .colorParts(footColor, SkinPart.FOOT);
+      .colorFoot(footColor)
   }
 
   /**
