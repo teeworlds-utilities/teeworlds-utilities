@@ -303,7 +303,7 @@ export default class Skin extends Asset<SkinPart> {
     );
 
       if (eyePart === SkinPart.BLINK_EYE) {
-        eyePosition.y += (eye.height + (eye.height * BLINK_SCALE)) / 2;
+        eyePosition.y += (eye.height + (eye.height * BLINK_SCALE)) / 3;
         
         eye = rawScaleCanvas(eye, 1, BLINK_SCALE);
       }
