@@ -321,7 +321,7 @@ export default class Skin extends Asset<SkinPart> {
       bodyShadow,
       {
         x: -cx + 12 * multiplier,
-        y: cx + 0 * multiplier,
+        y: cx,
         w: bodyShadow.width,
         h: bodyShadow.height
       }
@@ -348,7 +348,7 @@ export default class Skin extends Asset<SkinPart> {
       body,
       {
         x: -cx + 12 * multiplier,
-        y: cx + 0 * multiplier,
+        y: cx,
         w: body.width,
         h: body.height 
       }
@@ -401,6 +401,7 @@ export default class Skin extends Asset<SkinPart> {
    * the object it was called on.
    * @param {string} path - A string representing the file path where the rendered
    * canvas should be saved.
+   * @param cropped
    * @returns this
    */
   saveRenderAs(path: string, cropped: boolean = false): this {
