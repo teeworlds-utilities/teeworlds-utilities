@@ -10,7 +10,7 @@ This GitHub repository is a project which contains a TypeScript package which ex
 
 To build the project you need [NodeJS](https://nodejs.org) version 18.x or 20.x and [libuuid](https://linux.die.net/man/3/libuuid). Then you can run the following command line to build the project.
 
-``` shell
+```shell
 npm run ci && npm run build
 ```
 
