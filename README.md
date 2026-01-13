@@ -1,46 +1,37 @@
-# ❤️ teeworlds-utilities
+# Teeworlds assets utilities
 
-![tests](https://github.com/teeworlds-utilities/teeworlds-utilities/actions/workflows/tests.yml/badge.svg) [![npm version](https://badge.fury.io/js/teeworlds-utilities.svg)](https://badge.fury.io/js/teeworlds-utilities) ![license](https://img.shields.io/badge/License-MIT-brightgreen.svg)
+[![check_then_build](https://github.com/teeworlds-utilities/teeworlds-utilities/actions/workflows/check_then_build.yml/badge.svg)](https://github.com/teeworlds-utilities/teeworlds-utilities/actions/workflows/check_then_build.yml)
 
-Formerly known as `tw-utils` or `@b0th/tw-utils`.
+[![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
 
-## 📖 Build and run
+This GitHub repository is a project which contains a TypeScript package which exposes an API for manipulating Teeworlds game assets. It provides multiple functionalities, including assembly, rendering, coloring, emotes and skins emoticons.
 
-You only need the following requirements:
+## Getting started
 
-- [NodeJS](https://nodejs.org/en/download)
-  - 18.x
-  - 20.x
+To build the project you need [NodeJS](https://nodejs.org) version 18.x or 20.x and [libuuid](https://linux.die.net/man/3/libuuid). Then you can run the following command line to build the project.
 
-To install the npm package, you should run the following command.
-
-```bash
-npm i teeworlds-utilities
+``` shell
+npm run ci && npm run build
 ```
 
-## 🤝 Contribute
+## Tests
 
-If you want to help the project, you can follow the guidelines in [CONTRIBUTING.md](./CONTRIBUTING.md).
-
-## 🧪 Tests
-
-There are some unitary test written for `jest`. You can run them with the following command:
+You can run the unitary tests with the following command:
 
 ```bash
 npm run test
 ```
 
-If you want to debug, you should set the environment variable `DEBUG` to `true`, it will allow **`Logger.debug`** to output.
+Optionally you can set the environment variable `DEBUG` to the value `true` if you want more details.
 
-# ⭐ Use cases
+## Examples
 
 If you want to see examples of how to use the library, you can check the **`**.test.ts`\*\* files, such as [asset](./lib/asset/asset.test.ts).
 
-## 🎉 Tasks
+## Versioning strategy
 
-- [x] Unitary tests
-- [x] Documentation 80 %
-- [ ] Documentation 100 %
-- [x] CI/CD pipeline
-- [x] Log environment variable
-- [x] Extract every asset part
+[Semantic versioning](https://semver.org) has been adopted by the project using the Git tag `v1.2.16`.
+
+## Contribute
+
+If you want to help the project, you can follow the guidelines in [CONTRIBUTING.md](./CONTRIBUTING.md).
