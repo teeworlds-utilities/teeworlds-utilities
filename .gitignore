@@ -152,3 +152,5 @@ fix/
 
 .vscode
 main.ts
+
+.direnv

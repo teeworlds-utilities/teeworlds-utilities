@@ -1,0 +1,41 @@
+name: Publish the package to the npmjs registry
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    environment: npmjs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm run test
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  release:
+    needs: [publish]
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Create Release
+        id: create_release
+        uses: comnoco/create-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: ${{ github.ref }}
+          draft: false
+          prerelease: false
