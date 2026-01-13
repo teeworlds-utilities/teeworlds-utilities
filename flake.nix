@@ -21,22 +21,16 @@
       in
       {
         devShells = {
-          default =
-            let
-              uuid = pkgs.libuuid;
-            in
-            pkgs.mkShell {
-              packages =
-                with pkgs;
-                [
-                  nodejs_20
-                ]
-                ++ [ uuid ];
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              nodejs_20
+              libuuid
+            ];
 
-              shellHook = ''
-                export LD_LIBRARY_PATH=${uuid.lib}/lib:$LD_LIBRARY_PATH
-              '';
-            };
+            shellHook = ''
+              export LD_LIBRARY_PATH=${pkgs.libuuid.lib}/lib:$LD_LIBRARY_PATH
+            '';
+          };
         };
 
         formatter = treefmtEval.config.build.wrapper;

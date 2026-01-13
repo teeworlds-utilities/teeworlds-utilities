@@ -26,7 +26,7 @@ Optionally you can set the environment variable `DEBUG` to the value `true` if y
 
 ## Examples
 
-If you want to see examples of how to use the library, you can check the **`**.test.ts`\*\* files, such as [asset](./lib/asset/asset.test.ts).
+If you want to see examples of how to use the library, you can check the `**.test.ts` files, such as [asset](./lib/asset/asset.test.ts).
 
 ## Versioning strategy
 
