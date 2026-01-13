@@ -34,7 +34,7 @@ If you want to debug, you should set the environment variable `DEBUG` to `true`,
 
 # ⭐ Use cases
 
-If you want to see examples of how to use the library, you can check the **`**.test.ts`** files, such as [asset](./lib/asset/asset.test.ts).
+If you want to see examples of how to use the library, you can check the **`**.test.ts`\*\* files, such as [asset](./lib/asset/asset.test.ts).
 
 ## 🎉 Tasks
 

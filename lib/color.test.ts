@@ -1,31 +1,33 @@
-import { ColorRGB, ColorHSL, ColorCode } from './color'
-import { Logger } from './logger';
+import { ColorRGB, ColorHSL, ColorCode } from "./color";
+import { Logger } from "./logger";
 
-describe('Color converting', () => {
-  test('From RGB to HSL', () => {
+describe("Color converting", () => {
+  test("From RGB to HSL", () => {
     const rgb = new ColorRGB(15, 123, 99);
     const hsl = rgb.hsl();
 
     expect(hsl.toArray()).toStrictEqual([167, 78, 27]);
   });
 
-  test('From HSL to RGBA', () => {
-    const hsl = new ColorHSL(167, 78, 27)
-    const rgba = hsl.rgba()
+  test("From HSL to RGBA", () => {
+    const hsl = new ColorHSL(167, 78, 27);
+    const rgba = hsl.rgba();
 
     expect(rgba.toArray()).toStrictEqual([15, 123, 99, 255]);
   });
 
-  test('From Teeworlds code to HSL', () => {
-    const code = new ColorCode(7929728)
-    const hsl = code.hsl()
+  test("From Teeworlds code to HSL", () => {
+    const code = new ColorCode(7929728);
+    const hsl = code.hsl();
 
     Logger.debug(hsl.toArray().toString());
 
-    expect(hsl.toArray()).toStrictEqual([169.41176470588235, 100, 75.09803921568627]);
+    expect(hsl.toArray()).toStrictEqual([
+      169.41176470588235, 100, 75.09803921568627,
+    ]);
   });
 
-  test('From HSL to Teeworlds code', () => {
+  test("From HSL to Teeworlds code", () => {
     const hsl = new ColorHSL(169.41176470588235, 100, 75.09803921568627);
     const code = hsl.twCode();
 

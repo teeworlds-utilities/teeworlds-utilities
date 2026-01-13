@@ -1,15 +1,20 @@
 // Has been migrated from JavaScript without refactor
 
-import Skin from './asset/skin';
-import {SceneError} from './error';
-import {Logger} from './logger';
-import {getCanvasFromFile, saveCanvas} from './utils/canvas';
-import {files} from './utils/files'
-import {argsChecker} from './utils/util';
-import Cache from './cache';
+import Skin from "./asset/skin";
+import { SceneError } from "./error";
+import { Logger } from "./logger";
+import { getCanvasFromFile, saveCanvas } from "./utils/canvas";
+import { files } from "./utils/files";
+import { argsChecker } from "./utils/util";
+import Cache from "./cache";
 
-import {Canvas, CanvasRenderingContext2D, createCanvas, ImageData} from 'canvas';
-import * as fs from 'fs';
+import {
+  Canvas,
+  CanvasRenderingContext2D,
+  createCanvas,
+  ImageData,
+} from "canvas";
+import * as fs from "fs";
 
 type RectangleData = [number, number, number, number];
 type Position = [number, number];
@@ -22,7 +27,7 @@ class Entity {
   constructor(imgData: ImageData) {
     this.imgData = imgData;
     this.canvas = createCanvas(imgData.width, imgData.height);
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext("2d");
 
     this.fillCanvas();
   }
@@ -42,10 +47,10 @@ class Part extends Entity {
 }
 
 class Scheme {
-  static readonly DEFAULT_KEYS = ['size', 'actions'];
+  static readonly DEFAULT_KEYS = ["size", "actions"];
 
   path: string;
-  data: {[key: string]: any};
+  data: { [key: string]: any };
 
   constructor(path: string) {
     this.path = path;
@@ -56,7 +61,7 @@ class Scheme {
     const args = Object.keys(this.data);
 
     if (argsChecker(args, ...Scheme.DEFAULT_KEYS) === false) {
-      throw new SceneError('Missing arguments for the scheme');
+      throw new SceneError("Missing arguments for the scheme");
     }
   }
 
@@ -66,7 +71,7 @@ class Scheme {
     } else if (scheme) {
       this.data = scheme;
     } else {
-      throw new SceneError('Missing scheme');
+      throw new SceneError("Missing scheme");
     }
 
     this.checkScheme();
@@ -89,12 +94,12 @@ class Action {
     this.needArgs = needArgs;
   }
 
-  async call(args: {[key: string]: any}) {
+  async call(args: { [key: string]: any }) {
     const argsNames = Object.keys(args);
     const argsGoodOrder = [];
 
     if (argsChecker(this.needArgs, ...argsNames) === false)
-      throw new SceneError('Missing args');
+      throw new SceneError("Missing args");
 
     for (const arg of this.needArgs) {
       argsGoodOrder.push(args[arg]);
@@ -108,7 +113,7 @@ class Action {
 }
 
 class Actions {
-  actions: {[key: string]: Action};
+  actions: { [key: string]: Action };
 
   constructor() {
     this.actions = {};
@@ -126,7 +131,7 @@ class Actions {
     return this.actions[name];
   }
 
-  async tryCall(name: string, args: {[key: string]: any}) {
+  async tryCall(name: string, args: { [key: string]: any }) {
     const action = this.get(name);
 
     if (action === null) return;
@@ -145,7 +150,7 @@ export default class Scene {
   readonly parts: Part[];
 
   constructor(path: string) {
-    this.cache = new Cache()
+    this.cache = new Cache();
     this.scheme = new Scheme(path);
     this.actions = new Actions();
     this.parts = [];
@@ -157,54 +162,43 @@ export default class Scene {
 
     // Add Action(s) in this.actions
     this.actions.add(
-      'addLine',
+      "addLine",
       this,
-      'addLine',
-      'mapres',
-      'source',
-      'point_source',
-      'point_destination'
+      "addLine",
+      "mapres",
+      "source",
+      "point_source",
+      "point_destination",
     );
 
     this.actions.add(
-      'addBlock',
+      "addBlock",
       this,
-      'addBlock',
-      'mapres',
-      'source',
-      'destination'
+      "addBlock",
+      "mapres",
+      "source",
+      "destination",
     );
 
     this.actions.add(
-      'setRandomBackground',
+      "setRandomBackground",
       this,
-      'setRandomBackground',
-      'folder'
+      "setRandomBackground",
+      "folder",
     );
 
-    this.actions.add(
-      'addTee',
-      this,
-      'addTee',
-      'skin',
-      'destination'
-    );
+    this.actions.add("addTee", this, "addTee", "skin", "destination");
+
+    this.actions.add("setBackground", this, "setBackground", "image");
 
     this.actions.add(
-      'setBackground',
+      "addSquare",
       this,
-      'setBackground',
-      'image'
-    );
-
-    this.actions.add(
-      'addSquare',
-      this,
-      'addSquare',
-      'mapres',
-      'source',
-      'topLeft',
-      'bottomRight'
+      "addSquare",
+      "mapres",
+      "source",
+      "topLeft",
+      "bottomRight",
     );
 
     // Init the scene canvas (with context)
@@ -214,11 +208,11 @@ export default class Scene {
   }
 
   initCanvas() {
-    const w = this.scheme.data['size']['w'];
-    const h = this.scheme.data['size']['h'];
+    const w = this.scheme.data["size"]["w"];
+    const h = this.scheme.data["size"]["h"];
 
     this.canvas = createCanvas(w, h);
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext("2d");
   }
 
   saveScene(path: string): this {
@@ -228,12 +222,12 @@ export default class Scene {
   }
 
   async execScheme(): Promise<this> {
-    const actions = this.scheme.data['actions'];
+    const actions = this.scheme.data["actions"];
 
     for (const action of actions) {
-      if (argsChecker(Object.keys(action), 'name', 'args') === false) continue;
+      if (argsChecker(Object.keys(action), "name", "args") === false) continue;
 
-      await this.actions.tryCall(action['name'], action['args']);
+      await this.actions.tryCall(action["name"], action["args"]);
     }
 
     return this;
@@ -249,7 +243,7 @@ export default class Scene {
         0,
         part.canvas.width,
         part.canvas.height,
-        ...part.destination
+        ...part.destination,
       );
     }
   }
@@ -258,31 +252,22 @@ export default class Scene {
     mapres: string,
     source: RectangleData,
     pointSource: Position,
-    pointDestination: Position
+    pointDestination: Position,
   ) {
     let [sx, sy] = pointSource;
     const [dx, dy] = pointDestination;
     const [w, h] = source.slice(2, 4);
 
     if (sx === dx && sy === dy) {
-      throw new SceneError('Wrong usage');
+      throw new SceneError("Wrong usage");
     }
 
     if (sx > dx && sy > dy) {
-      await this.addLine(
-          mapres,
-          source,
-          pointDestination,
-          pointSource
-      );
+      await this.addLine(mapres, source, pointDestination, pointSource);
     }
 
     while (sx <= dx && sy <= dy) {
-      await this.addBlock(
-        mapres,
-        source,
-        [sx, sy, w, h]
-      );
+      await this.addBlock(mapres, source, [sx, sy, w, h]);
 
       if (sx === dx && sy === dy) break;
       if (sx < dx) sx += w;
@@ -293,10 +278,10 @@ export default class Scene {
   async addBlock(
     mapres: string,
     source: RectangleData,
-    destination: RectangleData
+    destination: RectangleData,
   ) {
     const canvas = await this.getCanvasFromCache(mapres);
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     const imgData = ctx.getImageData(...source);
     const part = new Part(imgData, destination);
 
@@ -307,7 +292,7 @@ export default class Scene {
     mapres: string,
     source: RectangleData,
     topLeft: Position,
-    bottomRight: Position
+    bottomRight: Position,
   ) {
     const [w, h] = source.slice(2, 4);
     const [sx, sy] = topLeft;
@@ -341,29 +326,22 @@ export default class Scene {
     }
 
     const imgData = tee.renderCanvas
-    .getContext('2d')
-    .getImageData(
-      0,
-      0,
-      tee.renderCanvas.width,
-      tee.renderCanvas.height
-    );
-  
-    this.parts.push(
-      new Part(imgData, destination)
-    );
+      .getContext("2d")
+      .getImageData(0, 0, tee.renderCanvas.width, tee.renderCanvas.height);
+
+    this.parts.push(new Part(imgData, destination));
   }
 
   async setBackground(image: string) {
     const canvas = await this.getCanvasFromCache(image);
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const part = new Part(imgData, [
       0,
       0,
-      this.scheme.data['size']['w'],
-      this.scheme.data['size']['h'],
+      this.scheme.data["size"]["w"],
+      this.scheme.data["size"]["h"],
     ]);
 
     this.parts.push(part);
@@ -388,12 +366,18 @@ export default class Scene {
     dx: number,
     dy: number,
     dw: number,
-    dh: number
+    dh: number,
   ): this {
     this.ctx.drawImage(
       canvas,
-      0, 0, canvas.width, canvas.height,
-      dx, dy, dw, dh
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+      dx,
+      dy,
+      dw,
+      dh,
     );
 
     return this;

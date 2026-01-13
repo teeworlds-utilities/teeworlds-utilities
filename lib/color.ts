@@ -1,6 +1,6 @@
-import { ColorError } from './error';
+import { ColorError } from "./error";
 
-import convert from 'color-convert';
+import convert from "color-convert";
 
 interface IColorConvert {
   rgba: () => IColor;
@@ -22,15 +22,10 @@ type HSL = [number, number, number];
  * @param {number} to - Maximum value
  * @returns Color value
  */
-function setColorValueBase(
-  value: number,
-  from: number,
-  to: number
-): number {
+function setColorValueBase(value: number, from: number, to: number): number {
   if (value < from || value > to) {
     throw new ColorError(
-      'The color must be between ' + from.toString()
-      + ' and ' + to.toString()
+      "The color must be between " + from.toString() + " and " + to.toString(),
     );
   }
 
@@ -52,31 +47,42 @@ export class ColorRGBA implements IColor {
   private _g: number;
   private _b: number;
   private _a: number;
-  
-  constructor(
-    r: number,
-    g: number,
-    b: number,
-    a: number
-  ) {
-    this._r = r
-    this._g = g
-    this._b = b
-    this._a = a
+
+  constructor(r: number, g: number, b: number, a: number) {
+    this._r = r;
+    this._g = g;
+    this._b = b;
+    this._a = a;
   }
 
-  set r(value: number) { this._r = setColorValue(value, 255); };
-  set g(value: number) { this._g = setColorValue(value, 255); };
-  set b(value: number) { this._b = setColorValue(value, 255); };
-  set a(value: number) { this._a = setColorValue(value, 255); };
+  set r(value: number) {
+    this._r = setColorValue(value, 255);
+  }
+  set g(value: number) {
+    this._g = setColorValue(value, 255);
+  }
+  set b(value: number) {
+    this._b = setColorValue(value, 255);
+  }
+  set a(value: number) {
+    this._a = setColorValue(value, 255);
+  }
 
-  get r(): number { return this._r; };
-  get g(): number { return this._g; };
-  get b(): number { return this._b; };
-  get a(): number { return this._a; };
+  get r(): number {
+    return this._r;
+  }
+  get g(): number {
+    return this._g;
+  }
+  get b(): number {
+    return this._b;
+  }
+  get a(): number {
+    return this._a;
+  }
 
   toArray(): number[] {
-    return [this._r, this._g, this._b, this._a]
+    return [this._r, this._g, this._b, this._a];
   }
 
   rgba(): IColor {
@@ -84,17 +90,13 @@ export class ColorRGBA implements IColor {
   }
 
   hsl(): IColor {
-    const hsl = convert.rgb.hsl(
-      this._r,
-      this._g,
-      this._b
-    )
-  
+    const hsl = convert.rgb.hsl(this._r, this._g, this._b);
+
     return new ColorHSL(...hsl);
   }
 
   twCode(): IColor {
-    throw new ColorError('Not implemented');
+    throw new ColorError("Not implemented");
   }
 
   get average(): number {
@@ -108,12 +110,12 @@ export class ColorRGBA implements IColor {
    */
   blackAndWhite(): this {
     const average = this.average;
-  
+
     this._r = average;
     this._g = average;
     this._b = average;
-  
-    return this
+
+    return this;
   }
 
   /**
@@ -127,14 +129,14 @@ export class ColorRGBA implements IColor {
     this.g = (this._g * color.g) / 255;
     this.b = (this._b * color.b) / 255;
     this.a = (this._a * color.a) / 255;
-    
-    return this
+
+    return this;
   }
 }
 
-export class ColorRGB extends ColorRGBA implements IColor{
+export class ColorRGB extends ColorRGBA implements IColor {
   constructor(r: number, g: number, b: number) {
-    super(r, g, b, 255)
+    super(r, g, b, 255);
   }
 }
 
@@ -149,23 +151,32 @@ export class ColorHSL implements IColor {
     this.l = l;
   }
 
-  set h(value: number) { this._h = setColorValue(value, 360); };
-  set s(value: number) { this._s = setColorValue(value, 100); };
-  set l(value: number) { this._l = setColorValue(value, 100); };
+  set h(value: number) {
+    this._h = setColorValue(value, 360);
+  }
+  set s(value: number) {
+    this._s = setColorValue(value, 100);
+  }
+  set l(value: number) {
+    this._l = setColorValue(value, 100);
+  }
 
-  get h(): number { return this._h; };
-  get s(): number { return this._s; };
-  get l(): number { return this._l; };
+  get h(): number {
+    return this._h;
+  }
+  get s(): number {
+    return this._s;
+  }
+  get l(): number {
+    return this._l;
+  }
 
   toArray(): HSL {
     return [this.h, this.s, this.l];
   }
 
   rgba(): IColor {
-    return new ColorRGBA(
-      ...convert.hsl.rgb(this.toArray()),
-      255
-    );
+    return new ColorRGBA(...convert.hsl.rgb(this.toArray()), 255);
   }
 
   hsl(): IColor {
@@ -173,8 +184,8 @@ export class ColorHSL implements IColor {
   }
 
   twCode(): IColor {
-    const h = Math.round(this._h / 360 * 0xff);
-    const s = Math.round(this._s / 100 * 0xff);
+    const h = Math.round((this._h / 360) * 0xff);
+    const s = Math.round((this._s / 100) * 0xff);
     const d = Math.round(Math.max(0, (this._l - 50) / 50) * 0xff);
 
     return new ColorCode((h << 16) | (s << 8) | d);
@@ -183,7 +194,7 @@ export class ColorHSL implements IColor {
 
 export class ColorCode implements IColor {
   readonly code: number;
-  
+
   constructor(value: number) {
     this.code = setColorValue(value, 0xffffff);
   }
@@ -197,13 +208,11 @@ export class ColorCode implements IColor {
   }
 
   rgba(): IColor {
-    return this
-      .hsl()
-      .rgba();
+    return this.hsl().rgba();
   }
 
   hsl(): IColor {
-    let arr = this.toArray()
+    let arr = this.toArray();
 
     arr[0] = (arr.at(0) / 0xff) * 360;
     arr[1] = (arr.at(1) / 0xff) * 100;

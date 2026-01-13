@@ -1,12 +1,11 @@
 import { Md5 } from "ts-md5";
 
-
 /**
  * Cache
- * @template T 
+ * @template T
  */
 export default class Cache<T> {
-  private store: {[key: string]: T};
+  private store: { [key: string]: T };
 
   constructor() {
     this.store = {};
@@ -47,7 +46,7 @@ export default class Cache<T> {
     if (this.exists(key) === true) {
       return false;
     }
-    
+
     this.store[key] = value;
 
     return true;
@@ -59,7 +58,7 @@ export default class Cache<T> {
    */
   reset(): this {
     this.store = {};
-    
+
     return this;
   }
 }

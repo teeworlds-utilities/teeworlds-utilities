@@ -2,7 +2,7 @@ import { Position } from "../asset/base";
 
 export function isDigit(str: string): boolean {
   for (const char of str) {
-    if ('1234567890'.includes(char) === false) {
+    if ("1234567890".includes(char) === false) {
       return false;
     }
   }
@@ -49,24 +49,20 @@ export function argsChecker(args: string[], ...neededArgs: string[]): boolean {
 }
 
 export function getNameFromPath(path: string): string {
-  return  path
-    .split('/')
-    .at(-1)
-    .split(".")
-    .at(0)
+  return path.split("/").at(-1).split(".").at(0);
 }
 
 export function positionFromAngle(
   origin: Position,
   angle: number,
-  distance: number
+  distance: number,
 ): Position {
   const radian = angle * (Math.PI / 180.0);
-  
+
   return {
-    x: origin.x + (distance * Math.cos(radian)),
-    y: origin.y + (distance * Math.sin(radian))
-  };  
+    x: origin.x + distance * Math.cos(radian),
+    y: origin.y + distance * Math.sin(radian),
+  };
 }
 
 export const TOP = 1 << 1;

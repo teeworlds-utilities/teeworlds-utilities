@@ -1,10 +1,6 @@
-import {
-  Canvas,
-  CanvasRenderingContext2D,
-  createCanvas
-} from 'canvas';
+import { Canvas, CanvasRenderingContext2D, createCanvas } from "canvas";
 
-import { roundedImage } from './utils/canvas';
+import { roundedImage } from "./utils/canvas";
 
 export interface ITextDescriptor {
   value: string;
@@ -23,48 +19,48 @@ export type Margin = {
 };
 
 export interface ITextBox {
-  title?: ITextDescriptor,
-  content: ITextDescriptor,
-  margin: Margin,
+  title?: ITextDescriptor;
+  content: ITextDescriptor;
+  margin: Margin;
   color: string;
-  x: number,
-  y: number,
-  w: number,
-  h: number
+  x: number;
+  y: number;
+  w: number;
+  h: number;
 }
 
 abstract class AbstractTextZone implements ITextBox {
   title?: ITextDescriptor;
   content: ITextDescriptor;
   margin: Margin = {
-    top: 15, bottom: 15,
-    left: 15, right: 15
+    top: 15,
+    bottom: 15,
+    left: 15,
+    right: 15,
   };
-  color: string = 'rgba(0, 0, 0, 0)';
+  color: string = "rgba(0, 0, 0, 0)";
   x: number;
   y: number;
   w: number;
   h: number;
 
-  protected constructor() {
-
-  }
+  protected constructor() {}
 
   setTitle(title: ITextDescriptor): this {
     this.title = title;
-    
+
     return this;
   }
 
   setContent(content: ITextDescriptor): this {
     this.content = content;
-    
+
     return this;
   }
 
   setMargin(margin: Margin): this {
     this.margin = margin;
-    
+
     return this;
   }
 
@@ -76,7 +72,7 @@ abstract class AbstractTextZone implements ITextBox {
   setPos(x: number, y: number): this {
     this.x = x;
     this.y = y;
-    
+
     return this;
   }
 
@@ -96,15 +92,15 @@ class CanvasTextZone extends AbstractTextZone {
     this.h = height;
 
     this.canvas = createCanvas(width, height);
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext("2d");
   }
 
   private breakText(text: ITextDescriptor): this {
     this.ctx.save();
 
-    this.ctx.font = text.size.toString() + 'px ' + text.font;
+    this.ctx.font = text.size.toString() + "px " + text.font;
 
-    let newText = '';
+    let newText = "";
     let start = 0;
     let textY = text.y;
 
@@ -113,12 +109,12 @@ class CanvasTextZone extends AbstractTextZone {
       const valueWidth = this.ctx.measureText(value).width;
 
       if (valueWidth > this.maxWidth) {
-        newText += '\n';
+        newText += "\n";
         start = i;
-        textY += text.size + (text.size / 2);
+        textY += text.size + text.size / 2;
       }
 
-      if (textY > (this.h - this.margin.bottom - text.size)) {
+      if (textY > this.h - this.margin.bottom - text.size) {
         break;
       }
 
@@ -132,7 +128,7 @@ class CanvasTextZone extends AbstractTextZone {
     }
 
     this.ctx.restore();
-    
+
     return this;
   }
 
@@ -141,7 +137,7 @@ class CanvasTextZone extends AbstractTextZone {
 
     // Text configuration
     this.ctx.fillStyle = text.color;
-    this.ctx.font = text.size.toString() + 'px ' + text.font;
+    this.ctx.font = text.size.toString() + "px " + text.font;
 
     // Text drawing on the canvas context
     this.ctx.fillText(
@@ -151,37 +147,30 @@ class CanvasTextZone extends AbstractTextZone {
     );
 
     this.ctx.restore();
-    
+
     return this;
   }
 
   private alignCenter(text: ITextDescriptor): this {
-    this.ctx.save()
+    this.ctx.save();
 
-    this.ctx.font = text.size.toString() + 'px ' + text.font;
+    this.ctx.font = text.size.toString() + "px " + text.font;
 
     const textSize = this.ctx.measureText(text.value);
     text.x = (this.w - textSize.width) / 2 - this.margin.left;
 
-    this.ctx.restore()
-    
+    this.ctx.restore();
+
     return this;
   }
 
   private processBackground(): this {
-    roundedImage(
-      this.ctx,
-      0,
-      0,
-      this.canvas.width,
-      this.canvas.height,
-      15
-    );
+    roundedImage(this.ctx, 0, 0, this.canvas.width, this.canvas.height, 15);
 
     this.ctx.clip();
     this.ctx.fillStyle = this.color;
     this.ctx.fill();
-    
+
     return this;
   }
 
@@ -192,14 +181,12 @@ class CanvasTextZone extends AbstractTextZone {
       this.alignCenter(this.title);
       this.processText(this.title);
     }
-  
+
     this.breakText(this.content);
     this.processText(this.content);
-    
+
     return this;
   }
 }
 
-export {
-  CanvasTextZone
-};
+export { CanvasTextZone };

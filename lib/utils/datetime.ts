@@ -3,23 +3,27 @@ class FancyDate extends Date {
     super();
   }
 
-  date(separator: string = '-'): string {
+  date(separator: string = "-"): string {
     return (
-      this.getFullYear() + separator +
-      (this.getMonth() + 1) + separator +
+      this.getFullYear() +
+      separator +
+      (this.getMonth() + 1) +
+      separator +
       this.getDate()
     );
   }
 
-  time(separator: string = ':'): string {
+  time(separator: string = ":"): string {
     return (
-      this.getHours() + separator +
-      this.getMinutes() + separator +
+      this.getHours() +
+      separator +
+      this.getMinutes() +
+      separator +
       this.getSeconds()
     );
   }
 
-  datetime(separator: string = ' '): string {
+  datetime(separator: string = " "): string {
     return this.date() + separator + this.time();
   }
 }

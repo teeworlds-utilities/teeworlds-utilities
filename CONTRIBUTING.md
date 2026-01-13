@@ -12,4 +12,3 @@ If you want to modify the source code, you can do so by following these steps:
 2. Create a new branch.
 3. Make your changes.
 4. Create a pull request.
-

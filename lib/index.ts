@@ -4,11 +4,11 @@ import Particule from "./asset/particule";
 import Emoticon from "./asset/emoticon";
 import Mapres from "./asset/mapres";
 
-import Scene from './scene';
+import Scene from "./scene";
 
 export { Skin, SkinFull, Gameskin, Particule, Emoticon, Mapres };
 export { Scene };
-export { fixAssetSize } from './fix';
+export { fixAssetSize } from "./fix";
 export { PersonalCard } from "./card";
 
 export {
@@ -19,19 +19,11 @@ export {
   GameskinPart,
   ParticulePart,
   EmoticonPart,
-  AssetHelpSize
-} from './asset/part';
+  AssetHelpSize,
+} from "./asset/part";
 
-export {
-  IAsset
-} from './asset/base';
+export { IAsset } from "./asset/base";
 
-export {
-  IColor,
-  ColorCode,
-  ColorHSL,
-  ColorRGB,
-  ColorRGBA
-} from './color';
+export { IColor, ColorCode, ColorHSL, ColorRGB, ColorRGBA } from "./color";
 
-export { createSkinOverview } from './board';
+export { createSkinOverview } from "./board";

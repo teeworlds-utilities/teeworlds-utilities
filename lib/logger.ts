@@ -1,6 +1,6 @@
-import { FormattedDateTime } from './utils/datetime';
-import { files } from './utils/files';
-import dotenv from 'dotenv';
+import { FormattedDateTime } from "./utils/datetime";
+import { files } from "./utils/files";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -9,11 +9,11 @@ dotenv.config();
  * `CRITICAL` being the most important and `DEBUG` least one.
  */
 enum LogLevel {
-  CRITICAL = 'CRITICAL',
-  ERROR = 'ERROR',
-  WARNING = 'WARNING',
-  INFO = 'INFO',
-  DEBUG = 'DEBUG'
+  CRITICAL = "CRITICAL",
+  ERROR = "ERROR",
+  WARNING = "WARNING",
+  INFO = "INFO",
+  DEBUG = "DEBUG",
 }
 
 /**
@@ -22,7 +22,7 @@ enum LogLevel {
 export enum LogOutput {
   STDOUT,
   FILE,
-  ALL
+  ALL,
 }
 
 const DIR = process.env.LOG_DIR || ".";
@@ -30,7 +30,7 @@ const DIR = process.env.LOG_DIR || ".";
 /**
  * Log class is a TypeScript implementation of a logging utility that allows
  * users to set the logging level, message, and output destination.
-*/
+ */
 class Log {
   private level?: LogLevel;
   private message?: string;
@@ -49,7 +49,7 @@ class Log {
    */
   setLevel(level: LogLevel): this {
     this.level = level;
-    
+
     return this;
   }
 
@@ -60,7 +60,7 @@ class Log {
    */
   setMessage(message: string): this {
     this.message = message;
-    
+
     return this;
   }
 
@@ -106,16 +106,16 @@ class Log {
 
   /**
    * Write to the output
-   * @param output - Log output 
+   * @param output - Log output
    * @returns this
    */
   private writeOutput(output: LogOutput): this {
     switch (output) {
       case LogOutput.FILE:
-        const ext = '.log';
-        const filename = DIR + '/' + FormattedDateTime.date;
+        const ext = ".log";
+        const filename = DIR + "/" + FormattedDateTime.date;
 
-        files.append(filename + ext, this.message + '\n');
+        files.append(filename + ext, this.message + "\n");
         break;
       case LogOutput.STDOUT:
         this.logger(this.message);
@@ -135,29 +135,19 @@ class Log {
    * The "run" function sets the logger level and writes the output.
    */
   run() {
-    this
-      .setLoggerWithLevel()
-      .writeOutput(this.output);
+    this.setLoggerWithLevel().writeOutput(this.output);
   }
 }
 
 export class Logger {
-  private static send(
-    level: LogLevel,
-    message: string,
-    output: LogOutput
-  ) {
+  private static send(level: LogLevel, message: string, output: LogOutput) {
     const datetime = FormattedDateTime.datetime;
-    const levelString = '[' + level + ']';
+    const levelString = "[" + level + "]";
 
-    message = levelString + ' ' + '[' + datetime + '] ' + message;
+    message = levelString + " " + "[" + datetime + "] " + message;
 
-    new Log()
-      .setLevel(level)
-      .setMessage(message)
-      .setOutput(output)
-      .run();
-  };
+    new Log().setLevel(level).setMessage(message).setOutput(output).run();
+  }
 
   static critical(message: string, output: LogOutput = LogOutput.STDOUT) {
     this.send(LogLevel.CRITICAL, message, output);

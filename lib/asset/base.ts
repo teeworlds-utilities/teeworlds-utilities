@@ -3,15 +3,28 @@ import {
   loadImage,
   Image,
   createCanvas,
-  CanvasRenderingContext2D
+  CanvasRenderingContext2D,
 } from "canvas";
 
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-import { AssetKind, AssetHelpSize, AssetPart, IAssetPartMetadata, getAssetPartMetadata, getAssetPartsMetadata, scaleMetadata } from "./part";
+import {
+  AssetKind,
+  AssetHelpSize,
+  AssetPart,
+  IAssetPartMetadata,
+  getAssetPartMetadata,
+  getAssetPartsMetadata,
+  scaleMetadata,
+} from "./part";
 import { AssetError, FileError } from "../error";
 import { getNameFromPath } from "../utils/util";
-import { autoCropCanvas, canvasFromImageData, cloneCanvas, saveCanvas } from "../utils/canvas";
+import {
+  autoCropCanvas,
+  canvasFromImageData,
+  cloneCanvas,
+  saveCanvas,
+} from "../utils/canvas";
 import { ColorRGBA, IColor } from "../color";
 import Cache, { hashCacheKey } from "../cache";
 
@@ -22,12 +35,12 @@ import Cache, { hashCacheKey } from "../cache";
 export type Dimensions = {
   w: number;
   h: number;
-}
+};
 
 export type Position = {
   x: number;
   y: number;
-}
+};
 
 /**
  * The interface `IAssetMetadata` defines the metadata information about an asset.
@@ -36,28 +49,27 @@ export interface IAssetMetadata {
   baseSize: Dimensions;
   divisor: Dimensions;
   kind: AssetKind;
-  name?: string
+  name?: string;
 }
 
 export const DEFAULT_METADATA = {
-  baseSize: { w: 1, h: 1},
-  divisor: { w: 1, h: 1},
+  baseSize: { w: 1, h: 1 },
+  divisor: { w: 1, h: 1 },
   kind: AssetKind.UNKNOWN,
 };
 
-
 /**
  * Return a hash from a `IAssetMetadata` type.
- * @param metadata 
+ * @param metadata
  * @returns Returns a MD5 hash of `metadata`
  */
 function getCacheKey(metadata: IAssetMetadata): string {
-  return hashCacheKey(JSON.stringify(metadata))
+  return hashCacheKey(JSON.stringify(metadata));
 }
 
 /**
  * The `export interface ISave` defines an interface that specifies two methods:
- * 
+ *
  * `save` and `saveAs`. These methods are used to save an asset to a file.
  */
 export interface ISave {
@@ -68,15 +80,15 @@ export interface ISave {
 /**
  * This interface represents the miniman asset that can be used
  * in the whole library.
- * 
+ *
  * IAsset inherits this interface.
- * 
+ *
  * It has the basic method to manipulate an asset.
  */
 export interface IMinimalAsset extends ISave {
   canvas: Canvas;
   readonly metadata: IAssetMetadata;
-  
+
   setName: (name: string) => this;
   setColor: (color: IColor) => this;
   load: (path: string) => Promise<this>;
@@ -92,7 +104,7 @@ export class MinimalAsset implements IMinimalAsset {
 
   protected ctx: CanvasRenderingContext2D;
   protected originalCanvas: Canvas;
-  
+
   constructor(metadata: IAssetMetadata) {
     this.metadata = metadata;
   }
@@ -104,10 +116,10 @@ export class MinimalAsset implements IMinimalAsset {
    */
   get multiplier(): number {
     if (this.metadata.baseSize.w === 0) {
-      throw new AssetError('Invalid base size metadata.')
+      throw new AssetError("Invalid base size metadata.");
     }
 
-    return this.canvas.width / this.metadata.baseSize.w
+    return this.canvas.width / this.metadata.baseSize.w;
   }
 
   /**
@@ -120,51 +132,52 @@ export class MinimalAsset implements IMinimalAsset {
     return this.loadFromCanvas(
       createCanvas(
         this.metadata.baseSize.w * assetHelpSize,
-        this.metadata.baseSize.h * assetHelpSize
-      )
+        this.metadata.baseSize.h * assetHelpSize,
+      ),
     );
   }
 
   /**
    * Scale the canvas using depending on `assetHelpSize`
-   * @param assetHelpSize 
+   * @param assetHelpSize
    * @returns this
    */
   scale(assetHelpSize: AssetHelpSize): this {
     const w = this.metadata.baseSize.w * assetHelpSize;
     const h = this.metadata.baseSize.h * assetHelpSize;
 
-    if (
-      w === this.canvas.width
-      && h === this.canvas.height
-    ) {
+    if (w === this.canvas.width && h === this.canvas.height) {
       return this;
     }
 
     const canvas = createCanvas(w, h);
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     ctx.drawImage(
       this.canvas,
-      0, 0,
-      this.canvas.width, this.canvas.height,
-      0, 0,
-      w, h
+      0,
+      0,
+      this.canvas.width,
+      this.canvas.height,
+      0,
+      0,
+      w,
+      h,
     );
-    
+
     return this.loadFromCanvas(canvas);
   }
 
   /**
    * This function loads a canvas and its context for further use.
-   * @param {Canvas} canvas 
+   * @param {Canvas} canvas
    * @returns A Promise that resolves to the current instance of the class.
    */
   loadFromCanvas(canvas: Canvas): this {
     this.canvas = canvas;
     // Deep copy to restore later
     this.originalCanvas = cloneCanvas(canvas);
-    this.ctx = canvas.getContext('2d');
+    this.ctx = canvas.getContext("2d");
 
     return this;
   }
@@ -177,28 +190,21 @@ export class MinimalAsset implements IMinimalAsset {
    */
   async load(path: string): Promise<this> {
     let img: Image;
-  
+
     try {
       img = await loadImage(path);
     } catch (err) {
-      throw new FileError('Wrong path: ' + path);
+      throw new FileError("Wrong path: " + path);
     }
 
-    const canvas = createCanvas(
-      img.width,
-      img.height
-    );
-  
-    canvas
-      .getContext('2d')
-      .drawImage(img, 0, 0);
+    const canvas = createCanvas(img.width, img.height);
+
+    canvas.getContext("2d").drawImage(img, 0, 0);
 
     this.loadFromCanvas(canvas);
-  
-    this.setName(
-      getNameFromPath(path)
-    );
-    
+
+    this.setName(getNameFromPath(path));
+
     return this;
   }
 
@@ -211,8 +217,8 @@ export class MinimalAsset implements IMinimalAsset {
    */
   setName(name: string): this {
     this.metadata.name = name;
-    
-    return this
+
+    return this;
   }
 
   /**
@@ -223,7 +229,7 @@ export class MinimalAsset implements IMinimalAsset {
    */
   restore(): this {
     this.canvas = cloneCanvas(this.originalCanvas);
-    this.ctx = this.canvas.getContext('2d');
+    this.ctx = this.canvas.getContext("2d");
 
     return this;
   }
@@ -233,10 +239,7 @@ export class MinimalAsset implements IMinimalAsset {
    * @returns this
    */
   save(cropped: boolean = false): this {
-    return this.saveAs(
-      './' + this.metadata.name + '.png',
-      cropped
-    );
+    return this.saveAs("./" + this.metadata.name + ".png", cropped);
   }
 
   /**
@@ -247,9 +250,7 @@ export class MinimalAsset implements IMinimalAsset {
    * @returns this
    */
   saveAs(path: string, cropped: boolean = false): this {
-    const canvas = cropped === true
-      ? autoCropCanvas(this.canvas)
-      : this.canvas;
+    const canvas = cropped === true ? autoCropCanvas(this.canvas) : this.canvas;
 
     saveCanvas(path, canvas);
 
@@ -267,16 +268,16 @@ export class MinimalAsset implements IMinimalAsset {
 /**
  * Global variable for the minimal asset cache;
  */
-let cacheMinimalAsset = new Cache<IMinimalAsset>;
+let cacheMinimalAsset = new Cache<IMinimalAsset>();
 
 export interface IAsset<T extends AssetPart = AssetPart> extends IMinimalAsset {
   multiplier: number;
 
   setVerification: (value: boolean) => this;
-  getPartMetadata(assetPart: T): IAssetPartMetadata
+  getPartMetadata(assetPart: T): IAssetPartMetadata;
   getPartCanvas(assetPart: T): Canvas;
   colorPart: (color: IColor, assetPart: T) => this;
-  colorParts: (color: IColor, ...assetParts: T[]) => this 
+  colorParts: (color: IColor, ...assetParts: T[]) => this;
   copyPart: (asset: IAsset<T>, assetPart: T) => this;
   copyParts: (asset: IAsset<T>, ...assetParts: T[]) => this;
   setPartSaveDirectory: (directory: string) => this;
@@ -285,7 +286,10 @@ export interface IAsset<T extends AssetPart = AssetPart> extends IMinimalAsset {
   saveAllParts(): this;
 }
 
-export abstract class Asset<T extends AssetPart> extends MinimalAsset implements IAsset<T> {
+export abstract class Asset<T extends AssetPart>
+  extends MinimalAsset
+  implements IAsset<T>
+{
   declare canvas: Canvas;
   declare readonly metadata: IAssetMetadata;
 
@@ -295,11 +299,11 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   private partSaveDirectory: string;
   private verification: boolean;
   readonly id: string;
-  
+
   protected constructor(metadata: IAssetMetadata) {
     super(metadata);
 
-    this.partSaveDirectory = '.';
+    this.partSaveDirectory = ".";
     this.id = uuidv4();
     this.verification = true;
   }
@@ -312,7 +316,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    */
   setVerification(value: boolean): this {
     this.verification = value;
-    
+
     return this;
   }
 
@@ -322,10 +326,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * @returns Asset part metadata
    */
   protected _getPartMetadata(assetPart: T): IAssetPartMetadata {
-    return getAssetPartMetadata(
-      this.metadata.kind,
-      assetPart
-    );
+    return getAssetPartMetadata(this.metadata.kind, assetPart);
   }
 
   /**
@@ -334,37 +335,28 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * @returns Asset part metadata
    */
   getPartMetadata(assetPart: T): IAssetPartMetadata {
-    return scaleMetadata(
-      this._getPartMetadata(assetPart),
-      this.multiplier
-    );
+    return scaleMetadata(this._getPartMetadata(assetPart), this.multiplier);
   }
 
   /**
-   * 
+   *
    * @param assetPart Asset part
    * @returns Part as a Canvas
    */
   getPartCanvas(assetPart: T): Canvas {
     const metadataPart = this.getPartMetadata(assetPart);
 
-    const canvas = createCanvas(
-      metadataPart.w,
-      metadataPart.h
-    );
-    let ctx = canvas.getContext('2d');
-    
+    const canvas = createCanvas(metadataPart.w, metadataPart.h);
+    let ctx = canvas.getContext("2d");
+
     const imageData = this.ctx.getImageData(
       metadataPart.x,
       metadataPart.y,
       metadataPart.w,
-      metadataPart.h
+      metadataPart.h,
     );
 
-    ctx.putImageData(
-      imageData,
-      0, 0
-    );
+    ctx.putImageData(imageData, 0, 0);
 
     return canvas;
   }
@@ -377,14 +369,16 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * ratio or not.
    */
   private hasValidAspectRatio(canvas?: Canvas): boolean {
-    const _canvas = canvas || this.canvas
+    const _canvas = canvas || this.canvas;
 
     if (this.verification === false) {
       return true;
     }
 
-    return _canvas.width % this.metadata.divisor.w === 0
-      && _canvas.height % this.metadata.divisor.h === 0;
+    return (
+      _canvas.width % this.metadata.divisor.w === 0 &&
+      _canvas.height % this.metadata.divisor.h === 0
+    );
   }
 
   /**
@@ -395,23 +389,23 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    */
   loadFromCanvas(canvas: Canvas): this {
     if (this.hasValidAspectRatio(canvas) === false) {
-      throw new FileError('Wrong image ratio');
+      throw new FileError("Wrong image ratio");
     }
 
     return super.loadFromCanvas(canvas);
   }
 
   /**
-   * 
+   *
    * @param color Color
    * @param assetPart Asset part
    * @param callback A function applied on every canvas byte
-   * @returns 
+   * @returns
    */
   protected _colorPart(
     color: IColor,
     assetPart: T,
-    callback: (rgba: ColorRGBA, color: ColorRGBA) => void
+    callback: (rgba: ColorRGBA, color: ColorRGBA) => void,
   ): this {
     const partMetadata = this.getPartMetadata(assetPart);
 
@@ -433,7 +427,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
       byteColor.b = buffer[byte + 2];
       byteColor.a = buffer[byte + 3];
 
-      callback(byteColor, colorRGBA)
+      callback(byteColor, colorRGBA);
 
       buffer[byte] = byteColor.r;
       buffer[byte + 1] = byteColor.g;
@@ -441,12 +435,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
       buffer[byte + 3] = byteColor.a;
     }
 
-    this.ctx.putImageData(
-      imageData,
-      partMetadata.x,
-      partMetadata.y,
-    );
-    
+    this.ctx.putImageData(imageData, partMetadata.x, partMetadata.y);
+
     return this;
   }
 
@@ -459,16 +449,10 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * @returns this
    */
   colorPart(color: IColor, assetPart: T): this {
-    this._colorPart(
-      color,
-      assetPart,
-      (rgba, colorRGBA) => {
-        rgba
-          .blackAndWhite()
-          .applyColor(colorRGBA)
-      }
-    );
-    
+    this._colorPart(color, assetPart, (rgba, colorRGBA) => {
+      rgba.blackAndWhite().applyColor(colorRGBA);
+    });
+
     return this;
   }
 
@@ -495,12 +479,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   setColor(color: IColor): this {
     const parts = getAssetPartsMetadata(this.metadata.kind);
 
-    return this.colorParts(
-      color,
-      ...Object.keys(parts) as T[]
-    );
+    return this.colorParts(color, ...(Object.keys(parts) as T[]));
   }
-
 
   /**
    * This function copies a specific part of an asset onto another asset.
@@ -509,22 +489,23 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * @param {T} assetPart - Asset part
    * @returns this
    */
-  copyPart(asset: IAsset<T>, assetPart: T): this{
+  copyPart(asset: IAsset<T>, assetPart: T): this {
     let fromMetadata = asset.getPartMetadata(assetPart);
     let toMetadata = this.getPartMetadata(assetPart);
 
-    this.ctx.clearRect(
-      toMetadata.x, toMetadata.y,
-      toMetadata.w, toMetadata.h,
-    );
+    this.ctx.clearRect(toMetadata.x, toMetadata.y, toMetadata.w, toMetadata.h);
     this.ctx.drawImage(
       asset.canvas,
-      fromMetadata.x, fromMetadata.y,
-      fromMetadata.w, fromMetadata.h,
-      toMetadata.x, toMetadata.y,
-      toMetadata.w, toMetadata.h
+      fromMetadata.x,
+      fromMetadata.y,
+      fromMetadata.w,
+      fromMetadata.h,
+      toMetadata.x,
+      toMetadata.y,
+      toMetadata.w,
+      toMetadata.h,
     );
-  
+
     return this;
   }
 
@@ -551,8 +532,8 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
    * @returns this
    */
   setPartSaveDirectory(directory: string): this {
-    this.partSaveDirectory = directory
-    
+    this.partSaveDirectory = directory;
+
     return this;
   }
 
@@ -565,10 +546,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
   protected getPartCacheKey(assetPart: T): string {
     let metadata = this.metadata;
 
-    metadata.name = this.id
-      + this.metadata.name 
-      + '_' 
-      + assetPart;
+    metadata.name = this.id + this.metadata.name + "_" + assetPart;
 
     return getCacheKey(metadata);
   }
@@ -583,17 +561,17 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
     const cacheKey = this.getPartCacheKey(assetPart);
     let part = cacheMinimalAsset.get(cacheKey);
-    
+
     if (part === null) {
       const partMetadata = this.getPartMetadata(assetPart);
-  
+
       const imageData = this.ctx.getImageData(
         partMetadata.x,
         partMetadata.y,
         partMetadata.w,
-        partMetadata.h
+        partMetadata.h,
       );
-      
+
       canvas = canvasFromImageData(imageData);
 
       // Does not require valid metadata because
@@ -604,10 +582,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
       cacheMinimalAsset.set(cacheKey, part);
     }
 
-    part.saveAs(
-      this.partSaveDirectory + '/' + 
-      assetPart + '.png'
-    );
+    part.saveAs(this.partSaveDirectory + "/" + assetPart + ".png");
 
     return this;
   }
@@ -621,23 +596,15 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
     for (const assetPart of assetParts) {
       this.savePart(assetPart);
     }
-    
+
     return this;
   }
 
   saveAllParts(): this {
-    const partNames = Object.keys(
-      getAssetPartsMetadata(
-        this.metadata.kind
-      )
-    );
+    const partNames = Object.keys(getAssetPartsMetadata(this.metadata.kind));
 
-    const parts = partNames.map(
-      (p) => p as T
-    );
-    
-    return this.saveParts(
-      ...parts
-    );
+    const parts = partNames.map((p) => p as T);
+
+    return this.saveParts(...parts);
   }
 }

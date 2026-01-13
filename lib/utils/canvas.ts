@@ -1,9 +1,23 @@
-import { Image, Canvas, createCanvas, loadImage, ImageData, CanvasRenderingContext2D } from 'canvas';
-import { AssetError, FileError } from '../error';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
-import Cache from '../cache';
-import { Dimensions } from '../asset/base';
-import { DIRECTION_HORIZONTAL, DIRECTION_VERTICAL, DOWN, LEFT, RIGHT, TOP } from './util';
+import {
+  Image,
+  Canvas,
+  createCanvas,
+  loadImage,
+  ImageData,
+  CanvasRenderingContext2D,
+} from "canvas";
+import { AssetError, FileError } from "../error";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import Cache from "../cache";
+import { Dimensions } from "../asset/base";
+import {
+  DIRECTION_HORIZONTAL,
+  DIRECTION_VERTICAL,
+  DOWN,
+  LEFT,
+  RIGHT,
+  TOP,
+} from "./util";
 
 /**
  * The function draws a rounded rectangle on a canvas with a specified radius,
@@ -19,7 +33,7 @@ export function roundRect(
   r: number,
   w: number,
   h: number,
-  color: string
+  color: string,
 ) {
   ctx.beginPath();
 
@@ -53,7 +67,7 @@ export function roundedImage(
   y: number,
   width: number,
   height: number,
-  radius: number
+  radius: number,
 ) {
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -82,12 +96,12 @@ export async function getCanvasFromFile(path: string): Promise<Canvas> {
   try {
     img = await loadImage(path);
   } catch (err) {
-    throw new FileError('Unable to get the image ' + path);
+    throw new FileError("Unable to get the image " + path);
   }
 
   // If everything is OK, it creates the canvas and the context
   const canvas = createCanvas(img.width, img.height);
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   ctx.drawImage(img, 0, 0);
 
   return canvas;
@@ -104,20 +118,18 @@ export function saveCanvas(path: string, canvas: Canvas): boolean {
   if (path.length === 0) {
     return false;
   }
-  
+
   // Create directory if it doesnt exist
-  let dirs = path
-    .split('/')
-    .filter(dir => dir.length > 0);
-  
+  let dirs = path.split("/").filter((dir) => dir.length > 0);
+
   // Remove the filename
-  dirs.pop()
+  dirs.pop();
 
   // Creates directories if they don't exist
-  let currentDir = path.at(0) === '/' ? '/' : '';
+  let currentDir = path.at(0) === "/" ? "/" : "";
 
   for (const dir of dirs) {
-    currentDir += dir + '/';
+    currentDir += dir + "/";
 
     if (existsSync(currentDir) === false) {
       mkdirSync(currentDir);
@@ -125,7 +137,7 @@ export function saveCanvas(path: string, canvas: Canvas): boolean {
   }
 
   // Save the element, only PNGs
-  writeFileSync(path, canvas.toBuffer('image/png'));
+  writeFileSync(path, canvas.toBuffer("image/png"));
 
   return true;
 }
@@ -136,12 +148,9 @@ export function saveCanvas(path: string, canvas: Canvas): boolean {
  * @returns A new canvas
  */
 export function canvasFromImageData(imageData: ImageData): Canvas {
-  const canvas = createCanvas(
-    imageData.width,
-    imageData.height
-  );
+  const canvas = createCanvas(imageData.width, imageData.height);
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
 
   ctx.putImageData(imageData, 0, 0);
 
@@ -155,11 +164,8 @@ export function canvasFromImageData(imageData: ImageData): Canvas {
  * @returns A new canvas
  */
 export function cloneCanvas(oldCanvas: Canvas): Canvas {
-  const canvas = createCanvas(
-    oldCanvas.width,
-    oldCanvas.height
-  )
-  let ctx = canvas.getContext('2d');
+  const canvas = createCanvas(oldCanvas.width, oldCanvas.height);
+  let ctx = canvas.getContext("2d");
 
   ctx.drawImage(oldCanvas, 0, 0);
 
@@ -168,47 +174,35 @@ export function cloneCanvas(oldCanvas: Canvas): Canvas {
 
 /**
  * Flip a canvas
- * @param oldCanvas - A source canvas 
+ * @param oldCanvas - A source canvas
  * @param flipX
- * @param flipY 
+ * @param flipY
  * @returns A new canvas
  */
 export function canvasFlip(
   oldCanvas: Canvas,
   flipX: boolean = false,
-  flipY: boolean = false
+  flipY: boolean = false,
 ): Canvas {
-  if (flipX === false && flipY === false ) {
+  if (flipX === false && flipY === false) {
     return oldCanvas;
   }
 
-  const ret = createCanvas(
-    oldCanvas.width,
-    oldCanvas.height
-  )
-  
-  let retCtx = ret.getContext('2d');
+  const ret = createCanvas(oldCanvas.width, oldCanvas.height);
 
-  retCtx.translate(
-    flipX ? ret.width : 0,
-    flipY ? ret.height : 0
-  );
-  retCtx.scale(
-    flipX ? -1 : 1,
-    flipY ? -1 : 1
-  );
+  let retCtx = ret.getContext("2d");
 
-  retCtx.drawImage(
-    oldCanvas,
-    0, 0
-  );
-  
+  retCtx.translate(flipX ? ret.width : 0, flipY ? ret.height : 0);
+  retCtx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+
+  retCtx.drawImage(oldCanvas, 0, 0);
+
   return ret;
 }
 
 /**
  * Scale a cavas
- * @param oldCanvas - A source canvas 
+ * @param oldCanvas - A source canvas
  * @param factor - Scale factor
  * @returns A new canvas
  */
@@ -216,43 +210,37 @@ export function scaleCanvas(oldCanvas: Canvas, factor: number): Canvas {
   const w = oldCanvas.width * factor;
   const h = oldCanvas.height * factor;
 
-  return resizeCanvas(
-    oldCanvas,
-    {w: w, h: h}
-  );
+  return resizeCanvas(oldCanvas, { w: w, h: h });
 }
 /**
  * Raws scale canvas
- * @param oldCanvas 
+ * @param oldCanvas
  * @param factorW
  * @param factorH
- * @returns canvas 
+ * @returns canvas
  */
-export function rawScaleCanvas(oldCanvas: Canvas, factorW: number, factorH: number): Canvas {
+export function rawScaleCanvas(
+  oldCanvas: Canvas,
+  factorW: number,
+  factorH: number,
+): Canvas {
   const w = oldCanvas.width * factorW;
   const h = oldCanvas.height * factorH;
 
-  return resizeCanvas(
-    oldCanvas,
-    {w: w, h: h}
-  );
+  return resizeCanvas(oldCanvas, { w: w, h: h });
 }
 
 /**
- * 
+ *
  * @param oldCanvas - A source canvas
  * @param size - New canvas dimensions
  * @returns A new canvas
  */
 export function resizeCanvas(oldCanvas: Canvas, size: Dimensions): Canvas {
   const canvas = createCanvas(size.w, size.h);
-  let ctx = canvas.getContext('2d');
+  let ctx = canvas.getContext("2d");
 
-  ctx.drawImage(
-    oldCanvas,
-    0, 0,
-    size.w, size.h,
-  );
+  ctx.drawImage(oldCanvas, 0, 0, size.w, size.h);
 
   return canvas;
 }
@@ -267,7 +255,7 @@ export function resizeCanvas(oldCanvas: Canvas, size: Dimensions): Canvas {
 export function rotateCanvas(
   oldCanvas: Canvas,
   angle: number,
-  size?: number
+  size?: number,
 ): Canvas {
   angle %= 360;
 
@@ -275,19 +263,16 @@ export function rotateCanvas(
     angle *= -1;
   }
 
-  size = size || Math.max(
-    oldCanvas.width,
-    oldCanvas.height
-  );
+  size = size || Math.max(oldCanvas.width, oldCanvas.height);
 
   const canvas = createCanvas(size, size);
-  let ctx = canvas.getContext('2d');
+  let ctx = canvas.getContext("2d");
 
-  ctx.translate(canvas.width/2,canvas.height/2);
-  ctx.rotate(angle * Math.PI / 180);
-  ctx.drawImage(oldCanvas,-oldCanvas.width/2,-oldCanvas.height/2);
-  ctx.rotate(-(angle * Math.PI / 180));
-  ctx.translate(-canvas.width/2,-canvas.height/2);
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate((angle * Math.PI) / 180);
+  ctx.drawImage(oldCanvas, -oldCanvas.width / 2, -oldCanvas.height / 2);
+  ctx.rotate(-((angle * Math.PI) / 180));
+  ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
   return canvas;
 }
@@ -298,10 +283,7 @@ export function rotateCanvas(
  * @param from - Side where it starts to iterate
  * @returns X axis position
  */
-function findOpaqueHorizontal(
-  imageData: ImageData,
-  from: number,
-): number {
+function findOpaqueHorizontal(imageData: ImageData, from: number): number {
   let start: number;
   let end: number;
   let factor: number;
@@ -319,8 +301,8 @@ function findOpaqueHorizontal(
 
   for (; start !== end; start += factor) {
     for (let y = 0; y < imageData.height; y++) {
-      index = (y * imageData.width * 4) + (start * 4);
-  
+      index = y * imageData.width * 4 + start * 4;
+
       if (imageData.data[index + 3] > 0) {
         return start;
       }
@@ -336,10 +318,7 @@ function findOpaqueHorizontal(
  * @param from - Side where it starts to iterate
  * @returns Y axis position
  */
-function findOpaqueVertical(
-  imageData: ImageData,
-  from: number,
-): number {
+function findOpaqueVertical(imageData: ImageData, from: number): number {
   let start: number;
   let end: number;
   let factor: number;
@@ -356,10 +335,10 @@ function findOpaqueVertical(
   }
 
   for (start; start !== end; start += factor) {
-    index = (start * imageData.width * 4);
-    
-    for (let x = 0; x < imageData.width; x ++) {
-      if (imageData.data[index + (x * 4) + 3] > 0) {
+    index = start * imageData.width * 4;
+
+    for (let x = 0; x < imageData.width; x++) {
+      if (imageData.data[index + x * 4 + 3] > 0) {
         return start;
       }
     }
@@ -369,23 +348,16 @@ function findOpaqueVertical(
 }
 
 /**
- * 
+ *
  * @param canvas - A source canvas
  * @param from - Start side
  * @param to - End side
  * @returns A position on X or Y axis
  */
-export function findOpaque(
-  canvas: Canvas,
-  from: number,
-  to: number
-): number {
+export function findOpaque(canvas: Canvas, from: number, to: number): number {
   const data = canvas
-    .getContext('2d')
-    .getImageData(
-      0, 0,
-      canvas.width, canvas.height
-    );
+    .getContext("2d")
+    .getImageData(0, 0, canvas.width, canvas.height);
 
   switch (from | to) {
     case DIRECTION_HORIZONTAL:
@@ -393,7 +365,7 @@ export function findOpaque(
     case DIRECTION_VERTICAL:
       return findOpaqueVertical(data, from);
     default:
-      throw new AssetError('Unauthorize direction.');
+      throw new AssetError("Unauthorize direction.");
   }
 }
 
@@ -410,16 +382,8 @@ export function autoCropCanvas(oldCanvas: Canvas): Canvas {
 
   const [w, h] = [x2 - x1, y2 - y1];
   const canvas = createCanvas(w, h);
-  
-  canvas
-    .getContext('2d')
-    .drawImage(
-      oldCanvas,
-      x1, y1,
-      w, h,
-      0, 0,
-      w, h
-    );
+
+  canvas.getContext("2d").drawImage(oldCanvas, x1, y1, w, h, 0, 0, w, h);
 
   return canvas;
 }
@@ -427,6 +391,6 @@ export function autoCropCanvas(oldCanvas: Canvas): Canvas {
 /**
  * Global variable for the canvas cache;
  */
-let cacheCanvas = new Cache<Canvas>;
+let cacheCanvas = new Cache<Canvas>();
 
 export { cacheCanvas };

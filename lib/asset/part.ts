@@ -6,7 +6,7 @@ export enum AssetHelpSize {
   DEFAULT = 1,
   MINI_HD = 2,
   HD = 4,
-  FOUR_K = 8
+  FOUR_K = 8,
 }
 
 export interface IAssetPartMetadata {
@@ -31,21 +31,17 @@ export interface IAssetPartMetadata {
  */
 export function scaleMetadata(
   metadata: IAssetPartMetadata,
-  multiplier: number
+  multiplier: number,
 ): IAssetPartMetadata {
   return {
     x: metadata.x * multiplier,
     y: metadata.y * multiplier,
     w: metadata.w * multiplier,
-    h: metadata.h * multiplier
-  }
+    h: metadata.h * multiplier,
+  };
 }
 
-export type AssetPart =
-  | SkinPart
-  | GameskinPart
-  | EmoticonPart
-  | ParticulePart
+export type AssetPart = SkinPart | GameskinPart | EmoticonPart | ParticulePart;
 
 export enum SkinPart {
   BODY = "body",
@@ -63,7 +59,7 @@ export enum SkinPart {
   BLINK_EYE = "blink_eye",
 }
 
-export type EyeSkinPart = 
+export type EyeSkinPart =
   | SkinPart.DEFAULT_EYE
   | SkinPart.ANGRY_EYE
   | SkinPart.PAIN_EYE
@@ -71,7 +67,7 @@ export type EyeSkinPart =
   | SkinPart.CROSS_EYE
   | SkinPart.SCARY_EYE
   // Special case
-  | SkinPart.BLINK_EYE
+  | SkinPart.BLINK_EYE;
 
 export const BLINK_SCALE = 0.35;
 
@@ -126,13 +122,13 @@ export enum GameskinPart {
   FLAG_RED = "flag_red",
 }
 
-export type WeaponGameSkinPart = 
+export type WeaponGameSkinPart =
   | GameskinPart.HAMMER
   | GameskinPart.GUN
   | GameskinPart.SHOTGUN
   | GameskinPart.GRENADE
   | GameskinPart.NINJA
-  | GameskinPart.LASER
+  | GameskinPart.LASER;
 
 export enum EmoticonPart {
   PART_1_1 = "part_1_1",
@@ -169,12 +165,12 @@ export enum ParticulePart {
   BIG = "big",
 }
 
-export enum AssetKind{
+export enum AssetKind {
   SKIN = "skin",
   GAMESKIN = "gameskin",
   EMOTICON = "emoticon",
   PARTICULE = "particule",
-  UNKNOWN = "unknown"
+  UNKNOWN = "unknown",
 }
 
 export interface ITeeHandMetadata extends Position {
@@ -204,7 +200,7 @@ const EYES_FROM_EMOTICON: Record<EmoticonPart, EyeSkinPart> = {
   [EmoticonPart.PART_4_2]: SkinPart.SCARY_EYE,
   [EmoticonPart.PART_4_3]: SkinPart.HAPPY_EYE,
   [EmoticonPart.PART_4_4]: SkinPart.SCARY_EYE,
-}
+};
 
 export function getEyesFromEmoticon(emoticonPart: EmoticonPart): EyeSkinPart {
   return EYES_FROM_EMOTICON[emoticonPart];
@@ -212,7 +208,10 @@ export function getEyesFromEmoticon(emoticonPart: EmoticonPart): EyeSkinPart {
 
 // first and second represents the tee hand.
 // Their position is relative to the weapons the tee holds.
-export const TEE_WEAPON_METADATA: Record<WeaponGameSkinPart, ITeeWeaponMetadata> = {
+export const TEE_WEAPON_METADATA: Record<
+  WeaponGameSkinPart,
+  ITeeWeaponMetadata
+> = {
   [GameskinPart.HAMMER]: {
     scaleFactor: 0.88,
     move: { x: 20, y: -15 },
@@ -220,7 +219,7 @@ export const TEE_WEAPON_METADATA: Record<WeaponGameSkinPart, ITeeWeaponMetadata>
   },
   [GameskinPart.GUN]: {
     scaleFactor: 0.75,
-    move: { x: 53, y: 10},
+    move: { x: 53, y: 10 },
     hand: { x: 10, y: 17, angle: 220 },
   },
   [GameskinPart.SHOTGUN]: {
@@ -243,7 +242,7 @@ export const TEE_WEAPON_METADATA: Record<WeaponGameSkinPart, ITeeWeaponMetadata>
     move: { x: 0, y: 0 },
     hand: { x: 0, y: 0, angle: 0 },
   },
-}
+};
 
 const ASSET_PARTS: Record<AssetKind, Record<string, IAssetPartMetadata>> = {
   [AssetKind.SKIN]: {
@@ -344,7 +343,7 @@ const ASSET_PARTS: Record<AssetKind, Record<string, IAssetPartMetadata>> = {
     [ParticulePart.BIG]: { x: 0, y: 256, w: 256, h: 256 },
   },
   [AssetKind.UNKNOWN]: undefined,
-}
+};
 
 /**
  * This function retrieves metadata for a specific asset part based on its kind.
@@ -365,9 +364,9 @@ export function getAssetPartMetadata(
   }
 
   if (Object.hasOwn(ASSET_PARTS[kind], assetPart) === false) {
-    throw new AssetPartError(assetPart + ' is not a part of ' + kind + '.');
+    throw new AssetPartError(assetPart + " is not a part of " + kind + ".");
   }
-  
+
   return ASSET_PARTS[kind][assetPart];
 }
 
@@ -377,7 +376,7 @@ export function getAssetPartMetadata(
  * @returns Every parts metadata
  */
 export function getAssetPartsMetadata(
-  kind: AssetKind
+  kind: AssetKind,
 ): Record<string, IAssetPartMetadata> {
-  return ASSET_PARTS[kind]
+  return ASSET_PARTS[kind];
 }

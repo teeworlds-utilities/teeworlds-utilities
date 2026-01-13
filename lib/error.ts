@@ -12,24 +12,24 @@ abstract class BaseError extends Error {
 /**
  * File exceptions.
  */
-export class FileError extends BaseError { };
+export class FileError extends BaseError {}
 /**
  * Asset exceptions.
  */
-export class AssetError extends BaseError { };
+export class AssetError extends BaseError {}
 /**
  * Asset part exceptions.
  */
-export class AssetPartError extends BaseError { };
+export class AssetPartError extends BaseError {}
 /**
  * Scene exceptions.
  */
-export class SceneError extends BaseError { };
+export class SceneError extends BaseError {}
 /**
  * Color exceptions.
  */
-export class ColorError extends BaseError { };
+export class ColorError extends BaseError {}
 /**
  * Board exceptions.
  */
- export class BoardError extends BaseError { };
+export class BoardError extends BaseError {}
