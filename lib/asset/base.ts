@@ -126,7 +126,7 @@ export class MinimalAsset implements IMinimalAsset {
   }
 
   /**
-   * Scale the canvas using depending of `assetHelpSize`
+   * Scale the canvas using depending on `assetHelpSize`
    * @param assetHelpSize 
    * @returns this
    */
@@ -243,6 +243,7 @@ export class MinimalAsset implements IMinimalAsset {
    * This function saves the canvas as an image file at the specified path.
    * @param {string} path - A string representing the file path where the canvas
    * should be saved. This can include the file name and extension.
+   * @param cropped
    * @returns this
    */
   saveAs(path: string, cropped: boolean = false): this {
@@ -293,9 +294,9 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
 
   private partSaveDirectory: string;
   private verification: boolean;
-  private id: string;
+  readonly id: string;
   
-  constructor(metadata: IAssetMetadata) {
+  protected constructor(metadata: IAssetMetadata) {
     super(metadata);
 
     this.partSaveDirectory = '.';
@@ -595,7 +596,7 @@ export abstract class Asset<T extends AssetPart> extends MinimalAsset implements
       
       canvas = canvasFromImageData(imageData);
 
-      // Does not required valid metadata because
+      // Does not require valid metadata because
       // it is not an IAsset.
       part = new MinimalAsset(DEFAULT_METADATA);
       part.loadFromCanvas(canvas);

@@ -50,8 +50,8 @@ abstract class AbstractCanvasCard implements ICard {
   canvas: Canvas;
   protected ctx: CanvasRenderingContext2D;
 
-  constructor(witdh: number, height: number) {
-    this.canvas = createCanvas(witdh, height);
+  protected constructor(width: number, height: number) {
+    this.canvas = createCanvas(width, height);
     this.ctx = this.canvas.getContext('2d');
   }
 

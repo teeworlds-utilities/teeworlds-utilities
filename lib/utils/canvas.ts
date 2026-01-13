@@ -3,7 +3,7 @@ import { AssetError, FileError } from '../error';
 import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import Cache from '../cache';
 import { Dimensions } from '../asset/base';
-import { DIRECTION_HOZIRONTAL, DIRECTION_VERTICAL, DOWN, LEFT, RIGHT, TOP } from './util';
+import { DIRECTION_HORIZONTAL, DIRECTION_VERTICAL, DOWN, LEFT, RIGHT, TOP } from './util';
 
 /**
  * The function draws a rounded rectangle on a canvas with a specified radius,
@@ -261,6 +261,7 @@ export function resizeCanvas(oldCanvas: Canvas, size: Dimensions): Canvas {
  * Rotate a canvas
  * @param oldCanvas - A source canvas
  * @param angle - Angle
+ * @param size - Size
  * @returns A new canvas
  */
 export function rotateCanvas(
@@ -292,7 +293,7 @@ export function rotateCanvas(
 }
 
 /**
- * Find the first column where its not full of empty pixel
+ * Find the first column where it's not full of empty pixel
  * @param imageData - Image data
  * @param from - Side where it starts to iterate
  * @returns X axis position
@@ -330,7 +331,7 @@ function findOpaqueHorizontal(
 }
 
 /**
- * Find the first line where its not full of empty pixel
+ * Find the first line where it's not full of empty pixel
  * @param imageData - Image data
  * @param from - Side where it starts to iterate
  * @returns Y axis position
@@ -387,7 +388,7 @@ export function findOpaque(
     );
 
   switch (from | to) {
-    case DIRECTION_HOZIRONTAL:
+    case DIRECTION_HORIZONTAL:
       return findOpaqueHorizontal(data, from);
     case DIRECTION_VERTICAL:
       return findOpaqueVertical(data, from);

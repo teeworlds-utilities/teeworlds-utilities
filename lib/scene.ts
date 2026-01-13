@@ -2,13 +2,13 @@
 
 import Skin from './asset/skin';
 import {SceneError} from './error';
-import { Logger } from './logger';
-import { saveCanvas, getCanvasFromFile } from './utils/canvas';
-import { files } from './utils/files'
-import { argsChecker } from './utils/util';
+import {Logger} from './logger';
+import {getCanvasFromFile, saveCanvas} from './utils/canvas';
+import {files} from './utils/files'
+import {argsChecker} from './utils/util';
 import Cache from './cache';
 
-import {Canvas, createCanvas, CanvasRenderingContext2D, ImageData} from 'canvas';
+import {Canvas, CanvasRenderingContext2D, createCanvas, ImageData} from 'canvas';
 import * as fs from 'fs';
 
 type RectangleData = [number, number, number, number];
@@ -74,9 +74,7 @@ class Scheme {
 
   dataFromFile(filepath: string) {
     const raw = fs.readFileSync(filepath);
-    const scheme = JSON.parse(raw.toString());
-
-    this.data = scheme;
+    this.data = JSON.parse(raw.toString());
   }
 }
 
@@ -117,8 +115,7 @@ class Actions {
   }
 
   add(name: string, object: any, func: string, ...needArgs: string[]) {
-    const action = new Action(object, func, ...needArgs);
-    this.actions[name] = action;
+    this.actions[name] = new Action(object, func, ...needArgs);
   }
 
   get(name: string): Action | null {
@@ -145,7 +142,7 @@ export default class Scene {
   private cache: Cache<Canvas>;
   private scheme: Scheme;
   private actions: Actions;
-  private parts: Part[];
+  readonly parts: Part[];
 
   constructor(path: string) {
     this.cache = new Cache()
@@ -272,11 +269,11 @@ export default class Scene {
     }
 
     if (sx > dx && sy > dy) {
-      this.addLine(
-        mapres,
-        source,
-        pointDestination,
-        pointSource
+      await this.addLine(
+          mapres,
+          source,
+          pointDestination,
+          pointSource
       );
     }
 

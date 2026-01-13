@@ -1,6 +1,6 @@
 import { ColorError } from './error';
 
-import * as convert from 'color-convert';
+import convert from 'color-convert';
 
 interface IColorConvert {
   rgba: () => IColor;

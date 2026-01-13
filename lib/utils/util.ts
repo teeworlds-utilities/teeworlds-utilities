@@ -74,5 +74,5 @@ export const DOWN = 1 << 2;
 export const LEFT = 1 << 3;
 export const RIGHT = 1 << 4;
 
-export const DIRECTION_HOZIRONTAL = LEFT | RIGHT;
+export const DIRECTION_HORIZONTAL = LEFT | RIGHT;
 export const DIRECTION_VERTICAL = TOP | DOWN;
