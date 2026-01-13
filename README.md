@@ -1,6 +1,6 @@
 # ❤️ teeworlds-utilities
 
-![tests](https://github.com/teeworlds-utilities/teeworlds-utilities/actions/workflows/tests.yml/badge.svg) [![npm version](https://badge.fury.io/js/teeworlds-utilities.svg)](https://badge.fury.io/js/teeworlds-utilities) ![license](https://img.shields.io/badge/License-MIT-brightgreen.svg)
+![tests](https://github.com/teeworlds-utilities/teeworlds-utilities/actions/workflows/check_then_build.yml/badge.svg) [![npm version](https://badge.fury.io/js/teeworlds-utilities.svg)](https://badge.fury.io/js/teeworlds-utilities) ![license](https://img.shields.io/badge/License-MIT-brightgreen.svg)
 
 Formerly known as `tw-utils` or `@b0th/tw-utils`.
 
