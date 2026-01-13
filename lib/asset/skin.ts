@@ -198,7 +198,7 @@ export default class Skin extends Asset<SkinPart> {
   }
 
   /**
-   * This function reorders the body of a skin image so that the average grey is
+   * This function reorders the body of a skin image so that the average gray is
    * 192,192,192.
    * 
    * https://github.com/ddnet/ddnet/blob/master/src/game/client/components/skins.cpp#L227-L263
@@ -289,7 +289,7 @@ export default class Skin extends Asset<SkinPart> {
 
   /**
    * This function renders a tee.
-   * @param {EyeSkinPart} [eyeAssetPart] - Skin part, must be a eye kind
+   * @param {EyeSkinPart} [eyeAssetPart] - Skin part, must be an eye kind
    * @returns this
    */
   render(eyeAssetPart?: EyeSkinPart): this {

@@ -1,6 +1,6 @@
 import { unlinkSync } from 'fs';
 import { PersonalCard } from './card';
-;
+
 describe('Card', () => {
   test('Create a card without background', async () => {
     const card = new PersonalCard()

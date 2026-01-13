@@ -20,7 +20,7 @@ type BoardConfig= {
 }
 
 class Board<T> {
-  private cells: Cell<T>[];
+  readonly cells: Cell<T>[];
 
   config: BoardConfig;
   

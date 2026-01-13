@@ -46,7 +46,7 @@ abstract class AbstractTextZone implements ITextBox {
   w: number;
   h: number;
 
-  constructor() {
+  protected constructor() {
 
   }
 
@@ -87,15 +87,15 @@ abstract class AbstractTextZone implements ITextBox {
 
 class CanvasTextZone extends AbstractTextZone {
   canvas: Canvas;
-  private ctx: CanvasRenderingContext2D;
+  readonly ctx: CanvasRenderingContext2D;
 
-  constructor(witdh: number = 400, height: number = 256) {
+  constructor(width: number = 400, height: number = 256) {
     super();
 
-    this.w = witdh;
+    this.w = width;
     this.h = height;
 
-    this.canvas = createCanvas(witdh, height);
+    this.canvas = createCanvas(width, height);
     this.ctx = this.canvas.getContext('2d');
   }
 
