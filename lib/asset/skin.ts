@@ -40,6 +40,7 @@ export default class Skin extends Asset<SkinPart> {
   private renderCtx: CanvasRenderingContext2D;
   private eyeAssetPart: EyeSkinPart;
   private _orientation: number;
+  spectatorState: boolean;
 
   constructor() {
     super({
@@ -49,6 +50,7 @@ export default class Skin extends Asset<SkinPart> {
     });
 
     this._orientation = 0;
+    this.spectatorState = false;
     this.eyeAssetPart = SkinPart.DEFAULT_EYE;
   }
 
@@ -83,6 +85,15 @@ export default class Skin extends Asset<SkinPart> {
 
     this._orientation = value;
 
+    return this;
+  }
+
+  /**
+   * This function sets the spectator state
+   * @returns this
+   */
+  setSpectatorState(): this {
+    this.spectatorState = true;
     return this;
   }
 
@@ -249,20 +260,37 @@ export default class Skin extends Asset<SkinPart> {
    * metadata.
    * @param {Canvas} canvas - Canvas
    * @param {IAssetPartMetadata} metadata - Asset part metadata
+   * @param rotation - Part rotation
    * @returns this
    */
-  private drawPart(canvas: Canvas, metadata: IAssetPartMetadata): this {
-    this.renderCtx.drawImage(
+  private drawPart(
+    canvas: Canvas,
+    metadata: IAssetPartMetadata,
+    rotation: number = 0,
+  ): this {
+    const ctx = this.renderCtx;
+
+    ctx.save();
+
+    const cx = metadata.x + metadata.w / 2;
+    const cy = metadata.y + metadata.h / 2;
+
+    ctx.translate(cx, cy);
+    ctx.rotate(rotation);
+
+    ctx.drawImage(
       canvas,
       0,
       0,
       canvas.width,
       canvas.height,
-      metadata.x,
-      metadata.y,
+      -metadata.w / 2,
+      -metadata.h / 2,
       metadata.w,
       metadata.h,
     );
+
+    ctx.restore();
 
     return this;
   }
@@ -283,7 +311,17 @@ export default class Skin extends Asset<SkinPart> {
     const multiplier = this.multiplier;
     const cx = 6 * multiplier;
 
-    const eyePart = eyeAssetPart || this.eyeAssetPart;
+    const eyePart = this.spectatorState
+      ? SkinPart.BLINK_EYE
+      : eyeAssetPart || this.eyeAssetPart;
+
+    const isLeft = this.orientation >= 90 && this.orientation <= 270;
+
+    const footSide = isLeft ? 1 : -1;
+    const specFootX1 = isLeft ? -7 : 37;
+    const specFootX2 = isLeft ? 0 : 30;
+
+    const specRotation = 0.6 * footSide;
 
     const footShadow = this.getPartCanvas(SkinPart.FOOT_SHADOW);
     const foot = this.getPartCanvas(SkinPart.FOOT);
@@ -302,30 +340,48 @@ export default class Skin extends Asset<SkinPart> {
       eye = rawScaleCanvas(eye, 1, BLINK_SCALE);
     }
 
-    this.drawPart(footShadow, {
-      x: -cx + 2 * multiplier,
-      y: cx + 45 * multiplier,
-      w: footShadow.width * 1.43,
-      h: footShadow.height * 1.45,
-    })
+    this.drawPart(
+      canvasFlip(footShadow, this.spectatorState && isLeft),
+      {
+        x: this.spectatorState
+          ? -cx + specFootX1 * multiplier
+          : -cx + 2 * multiplier,
+        y: this.spectatorState ? cx + 40 * multiplier : cx + 45 * multiplier,
+        w: footShadow.width * 1.43,
+        h: footShadow.height * 1.45,
+      },
+      this.spectatorState ? specRotation : 0,
+    )
       .drawPart(bodyShadow, {
         x: -cx + 12 * multiplier,
         y: cx,
         w: bodyShadow.width,
         h: bodyShadow.height,
       })
-      .drawPart(footShadow, {
-        x: -cx + 24 * multiplier,
-        y: cx + 45 * multiplier,
-        w: footShadow.width * 1.43,
-        h: footShadow.height * 1.45,
-      })
-      .drawPart(foot, {
-        x: -cx + 2 * multiplier,
-        y: cx + 45 * multiplier,
-        w: foot.width * 1.43,
-        h: foot.height * 1.45,
-      })
+      .drawPart(
+        canvasFlip(footShadow, this.spectatorState && isLeft),
+        {
+          x: this.spectatorState
+            ? -cx + specFootX2 * multiplier
+            : -cx + 24 * multiplier,
+          y: this.spectatorState ? cx + 41 * multiplier : cx + 45 * multiplier,
+          w: footShadow.width * 1.43,
+          h: footShadow.height * 1.45,
+        },
+        this.spectatorState ? specRotation : 0,
+      )
+      .drawPart(
+        canvasFlip(foot, this.spectatorState && isLeft),
+        {
+          x: this.spectatorState
+            ? -cx + specFootX1 * multiplier
+            : -cx + 2 * multiplier,
+          y: this.spectatorState ? cx + 40 * multiplier : cx + 45 * multiplier,
+          w: foot.width * 1.43,
+          h: foot.height * 1.45,
+        },
+        this.spectatorState ? specRotation : 0,
+      )
       .drawPart(body, {
         x: -cx + 12 * multiplier,
         y: cx,
@@ -344,12 +400,18 @@ export default class Skin extends Asset<SkinPart> {
         w: eye.width * 1.15,
         h: eye.height * 1.22,
       })
-      .drawPart(foot, {
-        x: -cx + 24 * multiplier,
-        y: cx + 45 * multiplier,
-        w: foot.width * 1.43,
-        h: foot.height * 1.45,
-      });
+      .drawPart(
+        canvasFlip(foot, this.spectatorState && isLeft),
+        {
+          x: this.spectatorState
+            ? -cx + specFootX2 * multiplier
+            : -cx + 24 * multiplier,
+          y: this.spectatorState ? cx + 41 * multiplier : cx + 45 * multiplier,
+          w: foot.width * 1.43,
+          h: foot.height * 1.45,
+        },
+        this.spectatorState ? specRotation : 0,
+      );
 
     return this;
   }
@@ -390,6 +452,8 @@ export class SkinFull extends MinimalAsset {
   private weaponMetadata: ITeeWeaponMetadata;
   private emoticonPart: EmoticonPart;
 
+  private afkState: boolean;
+
   constructor() {
     super({
       baseSize: { w: 250, h: 250 },
@@ -405,6 +469,8 @@ export class SkinFull extends MinimalAsset {
     this.emoticonPart = EmoticonPart.PART_1_1;
 
     this.emoticon = null;
+
+    this.afkState = false;
 
     this.empty();
   }
@@ -458,7 +524,7 @@ export class SkinFull extends MinimalAsset {
     this.emoticon = value.scale(AssetHelpSize.DEFAULT);
 
     if (part) {
-      this.setEmoticonPart(part);
+      this.setEmoticonPart(this.afkState ? EmoticonPart.PART_4_1 : part);
     }
     return this;
   }
@@ -480,6 +546,21 @@ export class SkinFull extends MinimalAsset {
     this.emoticon = null;
 
     this.skin.setEyeAssetPart(SkinPart.DEFAULT_EYE);
+
+    return this;
+  }
+
+  /**
+   * Set AFK state
+   * @param emoticon - Emoticon for sleep emote
+   * @returns this
+   */
+  setAfkState(emoticon: Emoticon): this {
+    this.emoticon = emoticon;
+    this.afkState = true;
+    this.skin.spectatorState = true;
+
+    this.setEmoticonPart(EmoticonPart.PART_4_1);
 
     return this;
   }
@@ -526,7 +607,7 @@ export class SkinFull extends MinimalAsset {
       this.weaponMetadata.move.x * this.skin.multiplier,
     );
 
-    const side = orientation > 90 && orientation < 270 ? -1 : 1;
+    const side = orientation >= 90 && orientation <= 270 ? -1 : 1;
 
     ret = positionFromAngle(
       ret,
@@ -553,7 +634,7 @@ export class SkinFull extends MinimalAsset {
 
     // Hammer special case
     const rotate =
-      orientation > 90 && orientation < 270
+      orientation >= 90 && orientation <= 270
         ? this.weapon !== GameskinPart.HAMMER
         : this.weapon === GameskinPart.HAMMER;
 
@@ -594,8 +675,10 @@ export class SkinFull extends MinimalAsset {
 
     this.ctx.drawImage(
       emoticonCanvas,
-      (this.canvas.width - emoticonCanvas.width) / 2,
-      0,
+      this.afkState
+        ? (this.canvas.width - emoticonCanvas.width) / 1.5
+        : (this.canvas.width - emoticonCanvas.width) / 2,
+      this.afkState ? (this.canvas.height - emoticonCanvas.height) / 6 : 0,
     );
 
     return this;
@@ -614,7 +697,11 @@ export class SkinFull extends MinimalAsset {
     orientation = orientation || this.skin.orientation;
 
     if (this.weapon == GameskinPart.HAMMER) {
-      orientation = orientation > 90 && orientation < 270 ? 300 : 240;
+      if (this.skin.spectatorState || this.afkState) {
+        orientation = orientation >= 90 && orientation <= 270 ? 330 : 210;
+      } else {
+        orientation = orientation >= 90 && orientation <= 270 ? 305 : 235;
+      }
     }
 
     this.putWeapon(orientation);

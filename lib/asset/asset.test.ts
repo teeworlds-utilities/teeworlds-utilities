@@ -182,7 +182,7 @@ describe("Abstract class Asset", () => {
     const path = "tee_with_weapon.png";
 
     const skin = new Skin();
-    await skin.load("data/skins/debug.png");
+    await skin.load("data/skins/nanami.png");
 
     skin
       .colorTee(new ColorRGB(255, 0, 0), new ColorRGB(255, 255, 255))
@@ -200,7 +200,7 @@ describe("Abstract class Asset", () => {
     unlinkSync(path);
   });
 
-  test("Create a tee with a weapon", async () => {
+  test("Create a tee with a weapon and emoticon", async () => {
     const path = "tee_with_weapon_and_emoticon.png";
 
     const skin = new Skin();
@@ -220,6 +220,56 @@ describe("Abstract class Asset", () => {
       .setSkin(skin)
       .setGameskin(gameskin, GameskinPart.GRENADE)
       .setEmoticon(emoticon, EmoticonPart.PART_1_4)
+      .process()
+      .saveAs(path, true);
+
+    unlinkSync(path);
+  });
+
+  test("Create a spectating tee with a weapon and emoticon", async () => {
+    const path = "spectating_tee_with_weapon_and_emoticon.png";
+
+    const skin = new Skin();
+    await skin.load("data/skins/nanami.png");
+
+    const emoticon = new Emoticon();
+    await emoticon.load("data/emoticons/default.png");
+
+    skin
+      .colorTee(new ColorRGB(255, 0, 0), new ColorRGB(255, 255, 255))
+      .setSpectatorState();
+
+    const gameskin = new Gameskin();
+    await gameskin.load("data/gameskins/0_6.png");
+
+    new SkinFull()
+      .setSkin(skin)
+      .setGameskin(gameskin, GameskinPart.GRENADE)
+      .setEmoticon(emoticon, EmoticonPart.PART_1_4)
+      .process()
+      .saveAs(path, true);
+
+    unlinkSync(path);
+  });
+
+  test("Create a afk tee with weapon and emoticon", async () => {
+    const path = "afk_tee_with_weapon_and_emoticon.png";
+
+    const skin = new Skin();
+    await skin.load("data/skins/nanami.png");
+
+    const emoticon = new Emoticon();
+    await emoticon.load("data/emoticons/default.png");
+
+    skin.colorTee(new ColorRGB(255, 0, 0), new ColorRGB(255, 255, 255));
+
+    const gameskin = new Gameskin();
+    await gameskin.load("data/gameskins/0_6.png");
+
+    new SkinFull()
+      .setSkin(skin)
+      .setGameskin(gameskin, GameskinPart.GRENADE)
+      .setAfkState(emoticon)
       .process()
       .saveAs(path, true);
 
